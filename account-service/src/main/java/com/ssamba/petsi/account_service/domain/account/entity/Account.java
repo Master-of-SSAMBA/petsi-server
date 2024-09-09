@@ -8,25 +8,27 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import com.ssamba.petsi.account_service.domain.account.enums.AccountStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="account")
+@Table(name = "account")
 @Getter
 @NoArgsConstructor
 public class Account {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(nullable = false)
+	@Column(name = "account_id", nullable = false)
 	private Long accountId;
 
 	@Column(nullable = false)
@@ -49,6 +51,9 @@ public class Account {
 
 	@Column(nullable = false)
 	private String password;
+
+	@OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+	private LinkedAccount linkedAccount;
 
 	@CreatedDate
 	private LocalDateTime createdAt;
