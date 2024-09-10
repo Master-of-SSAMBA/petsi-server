@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiHeaderDto;
+import com.ssamba.petsi.account_service.domain.account.dto.request.CheckAccountAuthRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllProductsResponseDto;
 import com.ssamba.petsi.account_service.domain.account.enums.FinApiUrl;
@@ -63,4 +64,30 @@ public class AccountService {
 
 	}
 
+	public void checkAccountAuth(CheckAccountAuthRequestDto checkAccountAuthRequestDto, String userKey) {
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			//todo: accountNo로  bankName 일치하는지 확인 (유효한 계좌)
+
+			FinApiHeaderDto Header = new FinApiHeaderDto(FinApiUrl.openAccountAuth.name(),
+				FinApiUrl.openAccountAuth.name());
+			Header.setUserKey(userKey);
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+
+			Map<String, Object> finApiDto = new HashMap<>();
+			finApiDto.put("Header", Header);
+			finApiDto.put("accountNo", checkAccountAuthRequestDto.getAccountNo());
+			finApiDto.put("authText", "petsi");
+			finApiDto.put("authCode", checkAccountAuthRequestDto.getCode());
+
+			HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+
+			ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.openAccountAuth.getUrl(), request,
+				String.class);
+		} catch (Exception e) {
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

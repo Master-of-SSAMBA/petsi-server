@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public enum FinApiUrl {
-	openAccountAuth("https://finopenapi.ssafy.io/ssafy/api/v1/edu/accountAuth/openAccountAuth");
+	openAccountAuth("https://finopenapi.ssafy.io/ssafy/api/v1/edu/accountAuth/openAccountAuth"),
+	checkAccountAuth("https://finopenapi.ssafy.io/ssafy/api/v1/edu/accountAuth/checkAuthCode");
 	private String url;
 
 	FinApiUrl(String url) {
