@@ -28,6 +28,7 @@ const Input = (props: InputProps) => {
         placeholder={`Enter your ${label.toLowerCase()}`}
         className="input-field"
       /> */}
+      
     </div>
   );
 };
