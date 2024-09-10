@@ -1,6 +1,20 @@
+import { headerState } from "@/stores/useNavigationStore";
+import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 
 const Home = () => {
+    const setHeaderState = useSetRecoilState(headerState);
+
+    useEffect(() => {
+        setHeaderState({
+            left: "",
+            right: "",
+            text: "",
+            isVisible: false,
+        });
+    }, [setHeaderState]);
+
     return (
         <>
             <h1>Home</h1>
