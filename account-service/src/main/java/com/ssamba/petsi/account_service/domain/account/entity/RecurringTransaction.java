@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import com.ssamba.petsi.account_service.domain.account.enums.AccountStatus;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,7 +44,7 @@ public class RecurringTransaction {
 	private LocalDateTime nextTransactionDate;
 
 	@Column(nullable = false)
-	private boolean status;
+	private String status;
 	@CreatedDate
 	private LocalDateTime createdAt;
 	@LastModifiedDate
@@ -52,7 +54,7 @@ public class RecurringTransaction {
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();
 		this.updatedAt = LocalDateTime.now();
-		this.status = true;
+		this.status = AccountStatus.ACTIVATED.getValue();
 	}
 
 }
