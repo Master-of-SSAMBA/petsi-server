@@ -4,6 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum ExceptionCode {
+
+	TEST_EXCEPTION(1, "test");
+
+
 	private final int status;
 	private final String message;
 

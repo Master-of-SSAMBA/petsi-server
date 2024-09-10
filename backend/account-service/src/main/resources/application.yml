@@ -17,8 +17,11 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     show-sql: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
       format_sql: true
   output:
     ansi:
       enabled: always
+springdoc:
+  swagger-ui:
+    path: /petsi/swagger-ui.html
