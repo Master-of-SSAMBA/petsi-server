@@ -64,6 +64,10 @@ const GlobalStyles = createGlobalStyle`
         --font-body-h4: 1rem;
         --font-body-h5: 0.75rem;
         --font-body-h6: 0.5rem;
+
+        width: 390px;
+        height: 844px;
+        margin: auto;
     }
 
     h1, h2, h3, h4, h5, h6 {

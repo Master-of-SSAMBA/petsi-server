@@ -8,7 +8,7 @@ import prettierConfig from "eslint-config-prettier";
 import globals from "globals";
 
 export default [
-    eslint.configs.recommended,
+    // eslint.configs.recommended,
     prettierConfig,
     {
         files: ["src/**/*.{js,jsx,ts,tsx}"], // src 폴더 내부 파일만 검사
