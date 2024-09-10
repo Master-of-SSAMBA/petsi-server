@@ -11,7 +11,7 @@ export default [
     eslint.configs.recommended,
     prettierConfig,
     {
-        files: ["**/*.{js,jsx,ts,tsx}"],
+        files: ["src/**/*.{js,jsx,ts,tsx}"], // src 폴더 내부 파일만 검사
         plugins: {
             "@typescript-eslint": tseslint,
             react: reactPlugin,
@@ -25,22 +25,50 @@ export default [
                 ...globals.browser,
             },
             parserOptions: {
+                projectService: true, // TypeScript 프로젝트 서비스 활성화
                 ecmaVersion: "latest",
                 sourceType: "module",
                 ecmaFeatures: {
                     jsx: true,
                 },
+                project: "./tsconfig.json",  // tsconfig.json 파일 경로 지정
             },
         },
         rules: {
+            // React related rules
             "react/react-in-jsx-scope": "off",
             "react/prop-types": "off",
             "react-hooks/rules-of-hooks": "error",
             "react-hooks/exhaustive-deps": "warn",
+            "react/jsx-no-bind": ["warn", { allowArrowFunctions: true }],
+            "react/jsx-boolean-value": ["error", "always"],
+            "react/jsx-no-useless-fragment": "warn",
+
+            // TypeScript related rules
             "@typescript-eslint/explicit-function-return-type": "off",
             "@typescript-eslint/explicit-module-boundary-types": "off",
             "@typescript-eslint/no-explicit-any": "warn",
+            "@typescript-eslint/no-unused-vars": [
+                "error",
+                { argsIgnorePattern: "^_" },
+            ],
+            "@typescript-eslint/consistent-type-definitions": [
+                "error",
+                "interface",
+            ],
+            "@typescript-eslint/no-non-null-assertion": "error",
+            "@typescript-eslint/no-inferrable-types": "error",  // 추가: 추론 가능한 타입에 대한 명시적 타입 지정 금지
+            "@typescript-eslint/strict-boolean-expressions": "warn",  // 추가: 불리언 표현식에 대한 엄격한 검사
+
+            // Prettier
             "prettier/prettier": "error",
+
+            // General best practices
+            "no-console": "warn",
+            "no-debugger": "error",
+            "no-duplicate-imports": "error",
+            "prefer-const": "error",
+            eqeqeq: ["error", "always"],
         },
         settings: {
             react: {
