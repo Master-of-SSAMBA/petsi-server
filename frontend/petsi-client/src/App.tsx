@@ -1,13 +1,13 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login";
-import Main from "./pages/Home";
+import Home from "./pages/Home";
 import Account from "./pages/Account";
 
-function App() {
+const App = () => {
     const router = createBrowserRouter([
         {
             path: "/",
-            element: <Main />,
+            element: <Home />,
         },
         {
             path: "/login/",
@@ -20,6 +20,6 @@ function App() {
     ]);
 
     return <RouterProvider router={router} />;
-}
+};
 
 export default App;

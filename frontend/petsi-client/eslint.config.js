@@ -57,8 +57,8 @@ export default [
                 "interface",
             ],
             "@typescript-eslint/no-non-null-assertion": "error",
-            "@typescript-eslint/no-inferrable-types": "error",  // 추가: 추론 가능한 타입에 대한 명시적 타입 지정 금지
-            "@typescript-eslint/strict-boolean-expressions": "warn",  // 추가: 불리언 표현식에 대한 엄격한 검사
+            "@typescript-eslint/no-inferrable-types": "error", 
+            "@typescript-eslint/strict-boolean-expressions": "warn", 
 
             // Prettier
             "prettier/prettier": "error",
