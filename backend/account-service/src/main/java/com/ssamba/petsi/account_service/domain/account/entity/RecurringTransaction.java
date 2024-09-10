@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "RecurringTransaction")
@@ -45,6 +46,7 @@ public class RecurringTransaction {
 	@Column(nullable = false)
 	private int frequency;
 
+	@Setter
 	@Column(nullable = false)
 	private LocalDate nextTransactionDate;
 

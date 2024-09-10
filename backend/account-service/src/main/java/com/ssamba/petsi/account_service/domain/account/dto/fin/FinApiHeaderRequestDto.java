@@ -8,10 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Component
 public class FinApiHeaderRequestDto {
 
@@ -38,10 +40,10 @@ public class FinApiHeaderRequestDto {
 		this.transmissionDate = date;
 		this.transmissionTime = time;
 		String iTUN = "000000" + Integer.toString(seq++);
-		iTUN = iTUN.substring(iTUN.length()-6);
+		iTUN = iTUN.substring(iTUN.length() - 6);
 		this.institutionTransactionUniqueNo = date + time + iTUN;
 
-		if(seq >= 990000) {
+		if (seq >= 990000) {
 			seq = 0;
 		}
 	}

@@ -3,7 +3,6 @@ package com.ssamba.petsi.account_service.domain.account.dto.response;
 import com.ssamba.petsi.account_service.domain.account.entity.AccountProduct;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class GetAllProductsResponseDto {

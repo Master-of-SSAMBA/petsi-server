@@ -33,15 +33,24 @@ public class AccountController {
 
 	@PostMapping("/open-account-auth")
 	@Operation(summary = "1원 송금")
-	public ResponseEntity<?> openAccountAuth(@RequestHeader("X-User-Key") String userKey, @RequestBody OpenAccountAuthRequestDto openAccountAuthRequestDto) {
+	public ResponseEntity<?> openAccountAuth(@RequestHeader("X-User-Key") String userKey,
+		@RequestBody OpenAccountAuthRequestDto openAccountAuthRequestDto) {
 		accountService.openAccountAuth(openAccountAuthRequestDto, userKey);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
 
 	@PostMapping("/account")
 	@Operation(summary = "1원 송금 인증 및 계좌 생성")
-	public ResponseEntity<?> checkAccountAuth(@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Key") String userKey, @RequestBody CreateAccountRequestDto createAccountRequestDto) {
+	public ResponseEntity<?> checkAccountAuth(@RequestHeader("X-User-Id") Long userId,
+		@RequestHeader("X-User-Key") String userKey, @RequestBody CreateAccountRequestDto createAccountRequestDto) {
 		accountService.createAccountBySteps(createAccountRequestDto, userKey, userId);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
+
+	@GetMapping("/account")
+	@Operation(summary = "계좌 전체 조회")
+	public ResponseEntity<?> getAllAccounts(@RequestHeader("X-User-Id") Long userId) {
+		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAllAccounts(userId));
+	}
+	
 }
