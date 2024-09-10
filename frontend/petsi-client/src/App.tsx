@@ -3,7 +3,7 @@ import Home from "@/pages/Home";
 import Login from "@/pages/login/Login";
 import Account from "@/pages/Account";
 import HeaderNav from "@/components/header-navigation/HeaderNav";
-import BottomNav from "@/components/bottom-navigation/BottomNav";
+// import BottomNav from "@/components/bottom-navigation/BottomNav";
 import { RecoilRoot } from "recoil";
 
 // 레이아웃 컴포넌트
@@ -14,7 +14,7 @@ const Layout = () => {
             <div className="Content-container">
                 <Outlet />
             </div>
-            <BottomNav />
+            {/* <BottomNav /> */}
         </div>
     );
 };
@@ -43,7 +43,7 @@ const App = () => {
 
     return (
         <RecoilRoot>
-            <RouterProvider router={router} />;
+            <RouterProvider router={router} />
         </RecoilRoot>
     );
 };
