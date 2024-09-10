@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ExceptionCode {
 
-	TEST_EXCEPTION(1, "test");
+	INTERNAL_SERVER_ERROR(500, "알 수 없는 오류가 발생했습니다.");
 
 
 	private final int status;
