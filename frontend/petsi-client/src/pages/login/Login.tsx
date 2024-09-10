@@ -12,7 +12,7 @@ const Login = ({}: LoginProps) => {
     const handlePwChange = (val: string) => setPassword(val);
 
     return (
-        <div>
+        <>
             <St.Message>Welcome to Petsi !</St.Message>
             <Input
                 type="text"
@@ -26,7 +26,7 @@ const Login = ({}: LoginProps) => {
                 onChange={handlePwChange}
                 label="비밀번호"
             />
-        </div>
+        </>
     );
 };
 
