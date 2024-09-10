@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 
-export default function Main() {
+const Home = () => {
     return (
         <>
             <h1>Home</h1>
@@ -8,4 +8,6 @@ export default function Main() {
             <NavLink to="/account">계좌 페이지로 이동하기</NavLink>
         </>
     );
-}
+};
+
+export default Home;
