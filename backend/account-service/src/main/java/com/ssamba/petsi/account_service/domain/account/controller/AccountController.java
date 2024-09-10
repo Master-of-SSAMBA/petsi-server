@@ -9,13 +9,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssamba.petsi.account_service.domain.account.dto.request.CheckAccountAuthRequestDto;
+import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccountRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
 import com.ssamba.petsi.account_service.domain.account.service.AccountService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -39,10 +38,10 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
 
-	@PostMapping("/check-account-auth")
-	@Operation(summary = "1원 송금 인증")
-	public ResponseEntity<?> checkAccountAuth(@RequestHeader("X-User-Key") String userKey, @RequestBody CheckAccountAuthRequestDto checkAccountAuthRequestDto) {
-		accountService.checkAccountAuth(checkAccountAuthRequestDto, userKey);
+	@PostMapping("/account")
+	@Operation(summary = "1원 송금 인증 및 계좌 생성")
+	public ResponseEntity<?> checkAccountAuth(@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Key") String userKey, @RequestBody CreateAccountRequestDto createAccountRequestDto) {
+		accountService.createAccountBySteps(createAccountRequestDto, userKey, userId);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
 }

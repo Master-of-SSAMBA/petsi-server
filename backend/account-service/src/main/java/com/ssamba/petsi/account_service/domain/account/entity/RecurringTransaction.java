@@ -1,5 +1,6 @@
 package com.ssamba.petsi.account_service.domain.account.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -16,6 +17,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +26,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "RecurringTransaction")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class RecurringTransaction {
 
 	@Id
@@ -41,7 +46,7 @@ public class RecurringTransaction {
 	private int frequency;
 
 	@Column(nullable = false)
-	private LocalDateTime nextTransactionDate;
+	private LocalDate nextTransactionDate;
 
 	@Column(nullable = false)
 	private String status;

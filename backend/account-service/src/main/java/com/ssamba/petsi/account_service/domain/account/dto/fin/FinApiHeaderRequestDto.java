@@ -2,7 +2,6 @@ package com.ssamba.petsi.account_service.domain.account.dto.fin;
 
 import java.time.LocalDateTime;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -14,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Component
-public class FinApiHeaderDto {
+public class FinApiHeaderRequestDto {
 
 	private static int seq = 1;
 
@@ -30,7 +29,7 @@ public class FinApiHeaderDto {
 	@Setter
 	private String userKey;
 
-	public FinApiHeaderDto(String apiName, String apiServiceCode) {
+	public FinApiHeaderRequestDto(String apiName, String apiServiceCode) {
 		String[] timeUnits = LocalDateTime.now().toString().split("T");
 		String date = timeUnits[0].replaceAll("-", "");
 		String time = timeUnits[1].replaceAll(":", "").replaceAll("\\.\\d+", "");
