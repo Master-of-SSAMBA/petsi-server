@@ -20,13 +20,18 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "account")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Account {
 
 	@Id
@@ -59,6 +64,7 @@ public class Account {
 	@OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
 	private LinkedAccount linkedAccount;
 
+	@Setter
 	@OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
 	private RecurringTransaction recurringTransaction;
 
