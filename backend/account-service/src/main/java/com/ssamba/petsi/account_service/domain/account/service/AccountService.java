@@ -1,5 +1,7 @@
 package com.ssamba.petsi.account_service.domain.account.service;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.client.RestTemplate;
 
 import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiHeaderRequestDto;
@@ -23,11 +24,11 @@ import com.ssamba.petsi.account_service.domain.account.dto.request.CheckAccountA
 import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccountRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateAccountNameRequestDto;
+import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateRecurringTransactionRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllAcountsResponseDto;
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllProductsResponseDto;
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
 import com.ssamba.petsi.account_service.domain.account.entity.AccountProduct;
-import com.ssamba.petsi.account_service.domain.account.entity.LinkedAccount;
 import com.ssamba.petsi.account_service.domain.account.entity.RecurringTransaction;
 import com.ssamba.petsi.account_service.domain.account.enums.AccountStatus;
 import com.ssamba.petsi.account_service.domain.account.enums.FinApiUrl;
@@ -176,7 +177,7 @@ public class AccountService {
 
 	@Transactional
 	public void deleteAccount(Long userId, String userKey, Long accountId) {
-		Account account = accountRepository.findByIdForDeleteAccount(accountId);
+		Account account = accountRepository.findByIdWithRecurringTransaction(accountId);
 		if(userId != account.getUserId()) {
 			//todo: 계좌주와 로그인 유저 불일치 에러
 			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
@@ -217,6 +218,45 @@ public class AccountService {
 		} catch (Exception e) {
 			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@Transactional
+	public void updateRecurringTransaction(UpdateRecurringTransactionRequestDto updateRecurringTransactionRequestDto, Long userId) {
+		Account account = accountRepository.findByIdWithRecurringTransaction(updateRecurringTransactionRequestDto.getAccountId());
+
+		if(userId != account.getUserId()) {
+			//계좌주 로그인 유저 불일치 에러
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
+
+		if(!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
+			//활성 상태가 아닌 계좌 에러
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
+
+		if(account.getRecurringTransaction().getAmount() == updateRecurringTransactionRequestDto.getAmount()
+			&& account.getRecurringTransaction().getFrequency() == updateRecurringTransactionRequestDto.getDay()) {
+			//변동 사항 없음
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
+
+		account.getRecurringTransaction().setAmount(updateRecurringTransactionRequestDto.getAmount());
+		account.getRecurringTransaction().setFrequency(updateRecurringTransactionRequestDto.getDay());
+
+		LocalDate nextTransactionDate = account.getRecurringTransaction().getNextTransactionDate();
+		int day = account.getRecurringTransaction().getFrequency();
+
+		int year = nextTransactionDate.getYear();
+		int month = nextTransactionDate.getMonthValue();
+
+		YearMonth yearMonth = YearMonth.of(year, month);
+		int lastDayOfMonth = yearMonth.lengthOfMonth();
+
+		int validDay = Math.min(day, lastDayOfMonth);
+
+		LocalDate updatedDate = LocalDate.of(year, month, validDay);
+		account.getRecurringTransaction().setNextTransactionDate(updatedDate);
+
 	}
 
 	@Transactional

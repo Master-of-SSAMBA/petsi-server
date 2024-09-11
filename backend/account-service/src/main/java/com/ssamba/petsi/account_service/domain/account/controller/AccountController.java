@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccountRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateAccountNameRequestDto;
+import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateRecurringTransactionRequestDto;
 import com.ssamba.petsi.account_service.domain.account.service.AccountService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -70,6 +72,14 @@ public class AccountController {
 	@Operation(summary = "사용자 계좌명 변경")
 	public ResponseEntity<?> updateAccountName(@RequestHeader("X-User-Id") Long userId, @RequestBody UpdateAccountNameRequestDto updateAccountNameRequestDto) {
 		accountService.updateAccountName(updateAccountNameRequestDto, userId);
+		return ResponseEntity.status(HttpStatus.OK).body(null);
+	}
+
+
+	@PatchMapping("/account")
+	@Operation(summary = "자동 이체 금액 혹은 일자 변경")
+	public ResponseEntity<?> updateRecurringTransaction(@RequestHeader("X-User-Id") Long userId, @RequestBody @Valid UpdateRecurringTransactionRequestDto updateRecurringTransactionRequestDto) {
+		accountService.updateRecurringTransaction(updateRecurringTransactionRequestDto, userId);
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 

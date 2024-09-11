@@ -1,7 +1,6 @@
 package com.ssamba.petsi.account_service.domain.account.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,5 +14,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	List<Account> findAllByUserIdAndStatus(Long userId, String status);
 
 	@Query("SELECT a FROM Account a LEFT JOIN FETCH a.recurringTransaction WHERE a.accountId = :accountId")
-	Account findByIdForDeleteAccount(@Param("accountId") Long accountId);
+	Account findByIdWithRecurringTransaction(@Param("accountId") Long accountId);
 }
