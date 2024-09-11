@@ -22,6 +22,7 @@ import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiResponseDto
 import com.ssamba.petsi.account_service.domain.account.dto.request.CheckAccountAuthDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccountRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
+import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateAccountNameRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllAcountsResponseDto;
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllProductsResponseDto;
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
@@ -52,6 +53,7 @@ public class AccountService {
 	@Value("${spring.fin.api-key}")
 	private String apiKey;
 
+	@Transactional(readOnly = true)
 	public List<GetAllProductsResponseDto> getAllProducts() {
 		return accountProductRepository.findAll().stream()
 			.map(GetAllProductsResponseDto::from)
@@ -113,7 +115,7 @@ public class AccountService {
 
 	}
 
-	public void checkAccountAuth(CheckAccountAuthDto checkAccountAuthDto) throws BusinessLogicException {
+	private void checkAccountAuth(CheckAccountAuthDto checkAccountAuthDto) throws BusinessLogicException {
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.checkAuthCode.name(),
 			FinApiUrl.checkAuthCode.name());
 		header.setUserKey(checkAccountAuthDto.getUserKey());
@@ -135,7 +137,7 @@ public class AccountService {
 
 	}
 
-	public String makeAccount(String accountTypeUniqueNo, String userKey) {
+	private String makeAccount(String accountTypeUniqueNo, String userKey) {
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.createDemandDepositAccount.name(),
 			FinApiUrl.createDemandDepositAccount.name());
 		header.setUserKey(userKey);
@@ -163,10 +165,11 @@ public class AccountService {
 		return response.getBody().getRec().getAccountNo();
 	}
 
+	@Transactional(readOnly = true)
 	public List<?> getAllAccounts(Long userId) {
 		//todo: 월별 사진 인증 횟수 및 이자율 계산해서 같이 return
 		//todo: 계좌 내 매핑된 pet의 사진 같이 return
-		return accountRepository.findAllByUserId(userId).stream()
+		return accountRepository.findAllByUserIdAndStatus(userId, AccountStatus.ACTIVATED.getValue()).stream()
 			.map(GetAllAcountsResponseDto::from)
 			.collect(Collectors.toList());
 	}
@@ -214,5 +217,19 @@ public class AccountService {
 		} catch (Exception e) {
 			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@Transactional
+	public void updateAccountName(UpdateAccountNameRequestDto updateAccountNameRequestDto, Long userId) {
+		Account account = accountRepository.findById(updateAccountNameRequestDto.getAccountId()).orElseThrow();
+		if(!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
+			//활성화 상태가 아닐 때 에러
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
+		if(account.getUserId() != userId) {
+			//계좌주와 로그인 유저 불일치 에러
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
+		account.setName(updateAccountNameRequestDto.getName());
 	}
 }
