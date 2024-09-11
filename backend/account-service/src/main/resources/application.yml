@@ -2,7 +2,7 @@ spring:
   application:
     name: account-service
   server:
-    port: 9003
+    port: 8080
     servlet:
       context-path: /petsi
   datasource:
