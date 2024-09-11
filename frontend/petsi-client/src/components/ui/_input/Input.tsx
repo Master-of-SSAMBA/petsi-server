@@ -5,10 +5,11 @@ interface InputProps {
     value: string;
     label: string;
     onChange: (value: string) => void;
+    shadow: boolean;
 }
 
 const Input = (props: InputProps) => {
-    const { type, value, label, onChange } = props;
+    const { type, value, label, onChange, shadow } = props;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onChange(e.target.value);
     };
@@ -21,6 +22,7 @@ const Input = (props: InputProps) => {
                 onChange={handleChange}
                 placeholder=""
                 id={`input-${label}`}
+                shadow={shadow}
             />
             <St.InputLabel htmlFor={`input-${label}`}>{label}</St.InputLabel>
         </St.InputContainer>
