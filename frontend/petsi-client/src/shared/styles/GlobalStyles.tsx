@@ -90,7 +90,7 @@ const GlobalStyles = createGlobalStyle`
     }
 
 
-     h1 {
+    h1 {
         font-size: var(--font-title-h1);
     }
 
