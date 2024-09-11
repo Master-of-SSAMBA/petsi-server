@@ -24,23 +24,20 @@ const FindPassword = () => {
     return (
         <St.Layout>
             <St.TitleMsg>
-                가입하신 이메일을 <br />입력해주세요
+                가입하신 이메일을 <br />
+                입력해주세요
             </St.TitleMsg>
             <St.InputSection>
-            <Input
-                type="text"
-                value={email}
-                onChange={handleEmailChange}
-                label="이메일"
-                shadow={false}
-            />
+                <Input
+                    type="text"
+                    value={email}
+                    onChange={handleEmailChange}
+                    label="이메일"
+                    shadow={false}
+                />
             </St.InputSection>
             <St.BtnSection>
-                <Button
-                    color="yellow"
-                    text="이메일 전송"
-                    shadow={true}
-                />
+                <Button color="yellow" text="이메일 전송" shadow={true} />
                 <Button
                     color="lightgray"
                     text="로그인하러 가기"
