@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { headerState } from "@/stores/useNavigationStore";
 import { useSetRecoilState } from "recoil";
 import Input from "@/components/ui/_input/Input";
@@ -7,30 +6,27 @@ import Button from "@/components/ui/_button/Button";
 import { AppPaths } from "@/interfaces/AppPaths";
 import * as St from "./Login.style";
 
-interface LoginProps {}
-
-const Login = ({}: LoginProps) => {
-    const setHeaderState = useSetRecoilState(headerState);
-    const navigate = useNavigate();
-
+const FindPassword = () => {
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const setHeaderState = useSetRecoilState(headerState);
 
     useEffect(() => {
         setHeaderState({
             left: "backArrow",
             right: "empty",
-            text: "로그인",
+            text: "비밀번호 찾기",
             isVisible: true,
         });
     }, [setHeaderState]);
 
     const handleEmailChange = (val: string) => setEmail(val);
-    const handlePwChange = (val: string) => setPassword(val);
 
     return (
         <St.Layout>
-            <St.TitleMsg>Welcome to Petsi !</St.TitleMsg>
+            <St.TitleMsg>
+                가입하신 이메일을 <br />
+                입력해주세요
+            </St.TitleMsg>
             <St.InputSection>
                 <Input
                     type="text"
@@ -39,21 +35,13 @@ const Login = ({}: LoginProps) => {
                     label="이메일"
                     shadow={false}
                 />
-                <Input
-                    type="password"
-                    value={password}
-                    onChange={handlePwChange}
-                    label="비밀번호"
-                    shadow={false}
-                />
-                <St.FindPassword onClick={()=>{navigate(AppPaths.FIND_PASSWORD)}}>비밀번호를 잊으셨나요?</St.FindPassword>
             </St.InputSection>
             <St.BtnSection>
-                <Button color="yellow" text="로그인" shadow={true} />
+                <Button color="yellow" text="이메일 전송" shadow={true} />
                 <Button
                     color="lightgray"
-                    text="회원가입"
-                    to={AppPaths.SIGNUP}
+                    text="로그인하러 가기"
+                    to={AppPaths.LOGIN}
                     shadow={true}
                 />
             </St.BtnSection>
@@ -61,4 +49,4 @@ const Login = ({}: LoginProps) => {
     );
 };
 
-export default Login;
+export default FindPassword;

@@ -1,10 +1,12 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { RecoilRoot } from "recoil";
 import Home from "@/pages/Home";
 import Login from "@/pages/login/Login";
+import SignUp from "@/pages/signup/SignUp";
 import Account from "@/pages/Account";
+import FindPassword from "@/pages/login/FindPassword";
 import HeaderNav from "@/components/header-navigation/HeaderNav";
 // import BottomNav from "@/components/bottom-navigation/BottomNav";
-import { RecoilRoot } from "recoil";
 
 // 레이아웃 컴포넌트
 const Layout = () => {
@@ -32,6 +34,14 @@ const App = () => {
                 {
                     path: "/login",
                     element: <Login />,
+                },
+                {
+                    path: "/signup",
+                    element: <SignUp />,
+                },
+                {
+                    path: "/find-password",
+                    element: <FindPassword />,
                 },
                 {
                     path: "/account",

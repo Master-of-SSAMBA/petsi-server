@@ -13,4 +13,13 @@ const NavIcon = styled.img`
     height: 2.2857rem;
 `;
 
-export { NavContainer, NavIcon };
+const NavText = styled.h4`
+    text-align: center;
+`;
+
+const PlaceholderDiv = styled.div`
+    width: 2.2857rem;
+    height: 2.2857rem;
+`;
+
+export { NavContainer, NavIcon, PlaceholderDiv, NavText };
