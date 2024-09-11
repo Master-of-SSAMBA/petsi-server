@@ -1,7 +1,10 @@
 package com.ssamba.petsi.account_service.domain.account.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,6 +54,14 @@ public class AccountController {
 	@Operation(summary = "계좌 전체 조회")
 	public ResponseEntity<?> getAllAccounts(@RequestHeader("X-User-Id") Long userId) {
 		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAllAccounts(userId));
+	}
+
+	@DeleteMapping("/account")
+	@Operation(summary = "계좌 해지")
+	public ResponseEntity<?> deleteAccount(@RequestHeader("X-User-Id") Long userId,
+		@RequestHeader("X-User-Key") String userKey, @RequestBody Map<String, Long> request) {
+		accountService.deleteAccount(userId, userKey, request.get("accountId"));
+		return null;
 	}
 	
 }

@@ -5,7 +5,8 @@ import lombok.Getter;
 @Getter
 public enum AccountStatus {
 	ACTIVATED("활성"),
-	INACTIVATED("비활성");
+	INACTIVATED("비활성"),
+	EXPIRED("만기");
 
 	private final String value;
 

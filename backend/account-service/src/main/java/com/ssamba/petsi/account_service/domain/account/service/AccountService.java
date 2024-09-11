@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.client.RestTemplate;
 
 import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiHeaderRequestDto;
@@ -24,7 +26,9 @@ import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllAcount
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllProductsResponseDto;
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
 import com.ssamba.petsi.account_service.domain.account.entity.AccountProduct;
+import com.ssamba.petsi.account_service.domain.account.entity.LinkedAccount;
 import com.ssamba.petsi.account_service.domain.account.entity.RecurringTransaction;
+import com.ssamba.petsi.account_service.domain.account.enums.AccountStatus;
 import com.ssamba.petsi.account_service.domain.account.enums.FinApiUrl;
 import com.ssamba.petsi.account_service.domain.account.repository.AccountProductRepository;
 import com.ssamba.petsi.account_service.domain.account.repository.AccountRepository;
@@ -44,6 +48,9 @@ public class AccountService {
 	private final AccountRepository accountRepository;
 	private final RecurringTransactionRepository recurringTransactionRepository;
 
+	@Value("${spring.fin.api-key}")
+	private String apiKey;
+
 	public List<GetAllProductsResponseDto> getAllProducts() {
 		return accountProductRepository.findAll().stream()
 			.map(GetAllProductsResponseDto::from)
@@ -58,6 +65,7 @@ public class AccountService {
 			FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.openAccountAuth.name(),
 				FinApiUrl.openAccountAuth.name());
 			header.setUserKey(userKey);
+			header.setApiKey(apiKey);
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
@@ -72,7 +80,8 @@ public class AccountService {
 			ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.openAccountAuth.getUrl(), request,
 				String.class);
 		} catch (Exception e) {
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			// throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			throw e;
 		}
 
 	}
@@ -110,6 +119,7 @@ public class AccountService {
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.checkAuthCode.name(),
 			FinApiUrl.checkAuthCode.name());
 		header.setUserKey(checkAccountAuthDto.getUserKey());
+		header.setApiKey(apiKey);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -133,6 +143,7 @@ public class AccountService {
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.createDemandDepositAccount.name(),
 			FinApiUrl.createDemandDepositAccount.name());
 		header.setUserKey(userKey);
+		header.setApiKey(apiKey);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -162,5 +173,52 @@ public class AccountService {
 		return accountRepository.findAllByUserId(userId).stream()
 			.map(GetAllAcountsResponseDto::from)
 			.collect(Collectors.toList());
+	}
+
+	public void deleteAccount(Long userId, String userKey, Long accountId) {
+		Account account = accountRepository.findByIdForDeleteAccount(accountId);
+		if(userId != account.getUserId()) {
+			//todo: 계좌주와 로그인 유저 불일치 에러
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
+
+		if(!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
+			//todo: 계좌 활성 상태가 아님
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
+
+		account.setStatus(AccountStatus.INACTIVATED.getValue());
+		if(account.getRecurringTransaction() != null) {
+			account.getRecurringTransaction().setStatus(AccountStatus.INACTIVATED.getValue());
+		}
+		accountRepository.save(account);
+
+		String accountNo = account.getAccountNo();
+		String refundAccountNo = account.getLinkedAccount().getAccountNumber();
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.deleteDemandDepositAccount.name(),
+			FinApiUrl.deleteDemandDepositAccount.name());
+		header.setUserKey(userKey);
+		header.setApiKey(apiKey);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		Map<String, Object> finApiDto = new HashMap<>();
+		finApiDto.put("Header", header);
+		finApiDto.put("accountNo", accountNo);
+		finApiDto.put("refundAccountNo", refundAccountNo);
+
+		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+
+		try {
+			ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.deleteDemandDepositAccount.getUrl(),
+				request,
+				String.class);
+		} catch (Exception e) {
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
