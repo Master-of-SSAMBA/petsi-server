@@ -5,14 +5,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccountRequestDto;
+import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
 import com.ssamba.petsi.account_service.domain.account.service.AccountService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,4 +30,27 @@ public class AccountController {
 	public ResponseEntity<?> getAllProducts() {
 		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAllProducts());
 	}
+
+	@PostMapping("/open-account-auth")
+	@Operation(summary = "1원 송금")
+	public ResponseEntity<?> openAccountAuth(@RequestHeader("X-User-Key") String userKey,
+		@RequestBody OpenAccountAuthRequestDto openAccountAuthRequestDto) {
+		accountService.openAccountAuth(openAccountAuthRequestDto, userKey);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+	}
+
+	@PostMapping("/account")
+	@Operation(summary = "1원 송금 인증 및 계좌 생성")
+	public ResponseEntity<?> checkAccountAuth(@RequestHeader("X-User-Id") Long userId,
+		@RequestHeader("X-User-Key") String userKey, @RequestBody CreateAccountRequestDto createAccountRequestDto) {
+		accountService.createAccountBySteps(createAccountRequestDto, userKey, userId);
+		return ResponseEntity.status(HttpStatus.CREATED).body(null);
+	}
+
+	@GetMapping("/account")
+	@Operation(summary = "계좌 전체 조회")
+	public ResponseEntity<?> getAllAccounts(@RequestHeader("X-User-Id") Long userId) {
+		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAllAccounts(userId));
+	}
+	
 }

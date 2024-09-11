@@ -22,7 +22,7 @@ public class SwaggerConfig {
 
 	private Info apiInfo() {
 		return new Info()
-			.title("SSAFIT")
+			.title("Petsi")
 			.description("<h3>Petsi에서 사용되는 RESTAPI에 대한 문서를 제공한다.</h3>")
 			.version("1.0.0");
 	}

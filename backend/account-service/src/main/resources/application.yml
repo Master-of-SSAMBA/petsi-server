@@ -6,10 +6,12 @@ spring:
     servlet:
       context-path: /petsi
   datasource:
-    url: jdbc:mysql://localhost:3306/petsi_account?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3308/petsi_account?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: petsi
     password: petsi0909!
+  flyway:
+    enabled: false
   jpa:
     database: mysql
     properties:
@@ -22,6 +24,8 @@ spring:
   output:
     ansi:
       enabled: always
+  fin:
+    api_key: 2443ab151bab467083ba59ec8b9f6ef5
 springdoc:
   swagger-ui:
     path: /petsi/swagger-ui.html
