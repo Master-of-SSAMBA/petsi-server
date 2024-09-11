@@ -9,10 +9,10 @@ import lombok.Setter;
 @Setter
 public class FinApiResponseDto<T> {
 	@JsonProperty("Header")
-	private FinApiHeaderResponseDto header;  // Use lowercase 'header' to match naming convention
+	private FinApiHeaderResponseDto header;
 
 	@JsonProperty("REC")
-	private T rec;  // Make sure to use "rec" for the field to match the JSON key
+	private T rec;
 
 	@Getter
 	public static class CreateAccountResponseDto {

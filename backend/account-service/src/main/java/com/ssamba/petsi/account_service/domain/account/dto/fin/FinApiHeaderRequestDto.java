@@ -2,6 +2,7 @@ package com.ssamba.petsi.account_service.domain.account.dto.fin;
 
 import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -27,7 +28,8 @@ public class FinApiHeaderRequestDto {
 
 	private String apiServiceCode;
 	private String institutionTransactionUniqueNo;
-	private final String apiKey = "2443ab151bab467083ba59ec8b9f6ef5";
+	@Value("${spring.fin.api_key}")
+	private String apiKey;
 	@Setter
 	private String userKey;
 

@@ -134,8 +134,6 @@ public class AccountService {
 			FinApiUrl.createDemandDepositAccount.name());
 		header.setUserKey(userKey);
 
-		System.out.println(header.toString());
-
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -147,7 +145,6 @@ public class AccountService {
 
 		ParameterizedTypeReference<FinApiResponseDto<FinApiResponseDto.CreateAccountResponseDto>> responseType =
 			new ParameterizedTypeReference<>() {
-
 			};
 
 		ResponseEntity<FinApiResponseDto<FinApiResponseDto.CreateAccountResponseDto>> response = restTemplate.exchange(
@@ -156,11 +153,6 @@ public class AccountService {
 			request,
 			responseType
 		);
-
-		System.out.println(response.toString());
-		System.out.println(response.getBody());
-		System.out.println(response.getBody().toString());
-
 		return response.getBody().getRec().getAccountNo();
 	}
 
