@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Input from "@/components/ui/_input/Input";
-import * as St from "./Login.style"
+import * as St from "./Login.style";
 
 interface LoginProps {}
 
