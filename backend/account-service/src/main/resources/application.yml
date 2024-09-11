@@ -6,7 +6,7 @@ spring:
     servlet:
       context-path: /petsi
   datasource:
-    url: jdbc:mysql://127.0.0.1:3308/petsi_account?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://mysql_account_service:3306/petsi_account?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: petsi
     password: petsi0909!
