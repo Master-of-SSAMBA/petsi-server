@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccountRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
+import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateAccountNameRequestDto;
 import com.ssamba.petsi.account_service.domain.account.service.AccountService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,5 +65,12 @@ public class AccountController {
 		accountService.deleteAccount(userId, userKey, request.get("accountId"));
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
-	
+
+	@PatchMapping("/account/name")
+	@Operation(summary = "사용자 계좌명 변경")
+	public ResponseEntity<?> updateAccountName(@RequestHeader("X-User-Id") Long userId, @RequestBody UpdateAccountNameRequestDto updateAccountNameRequestDto) {
+		accountService.updateAccountName(updateAccountNameRequestDto, userId);
+		return ResponseEntity.status(HttpStatus.OK).body(null);
+	}
+
 }

@@ -1,15 +1,17 @@
 spring:
   application:
     name: account-service
+  config:
+    import: optional:file:.env[.properties]
   server:
     port: 8080
     servlet:
       context-path: /petsi
   datasource:
-    url: jdbc:mysql://mysql_account_service:3306/petsi_account?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: ${SPRING_DATASOURCE_URL}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: petsi
-    password: petsi0909!
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   flyway:
     enabled: false
   jpa:
@@ -25,7 +27,7 @@ spring:
     ansi:
       enabled: always
   fin:
-    api_key: 2443ab151bab467083ba59ec8b9f6ef5
+    api_key: ${FIN_API_KEY}
 springdoc:
   swagger-ui:
     path: /petsi/swagger-ui.html

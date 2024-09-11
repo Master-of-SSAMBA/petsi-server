@@ -12,7 +12,7 @@ import com.ssamba.petsi.account_service.domain.account.entity.Account;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-	List<Account> findAllByUserId(Long userId);
+	List<Account> findAllByUserIdAndStatus(Long userId, String status);
 
 	@Query("SELECT a FROM Account a LEFT JOIN FETCH a.recurringTransaction WHERE a.accountId = :accountId")
 	Account findByIdForDeleteAccount(@Param("accountId") Long accountId);

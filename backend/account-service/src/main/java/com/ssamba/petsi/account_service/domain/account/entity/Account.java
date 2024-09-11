@@ -45,6 +45,7 @@ public class Account {
 	@Column(nullable = false, unique = true)
 	private String accountNo;
 
+	@Setter
 	@Column(nullable = false)
 	private String name;
 
