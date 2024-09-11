@@ -3,6 +3,7 @@ package com.ssamba.petsi.account_service.domain.account.dto.fin;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -15,7 +16,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Component
 public class FinApiHeaderRequestDto {
 
 	private static int seq = 1;
@@ -28,7 +28,7 @@ public class FinApiHeaderRequestDto {
 
 	private String apiServiceCode;
 	private String institutionTransactionUniqueNo;
-	@Value("${spring.fin.api_key}")
+	@Setter
 	private String apiKey;
 	@Setter
 	private String userKey;

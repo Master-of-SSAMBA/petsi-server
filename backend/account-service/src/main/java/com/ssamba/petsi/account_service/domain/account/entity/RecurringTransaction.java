@@ -50,6 +50,7 @@ public class RecurringTransaction {
 	@Column(nullable = false)
 	private LocalDate nextTransactionDate;
 
+	@Setter
 	@Column(nullable = false)
 	private String status;
 	@CreatedDate

@@ -77,6 +77,7 @@ public class Account {
 	@Column(nullable = false)
 	private LocalDate maturityDate;
 
+	@Setter
 	@Column(nullable = false)
 	private String status;
 
