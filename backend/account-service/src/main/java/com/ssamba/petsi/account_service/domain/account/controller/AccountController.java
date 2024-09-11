@@ -61,7 +61,7 @@ public class AccountController {
 	public ResponseEntity<?> deleteAccount(@RequestHeader("X-User-Id") Long userId,
 		@RequestHeader("X-User-Key") String userKey, @RequestBody Map<String, Long> request) {
 		accountService.deleteAccount(userId, userKey, request.get("accountId"));
-		return null;
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
 	
 }

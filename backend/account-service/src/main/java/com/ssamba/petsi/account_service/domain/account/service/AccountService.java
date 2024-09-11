@@ -47,6 +47,7 @@ public class AccountService {
 	private final AccountProductRepository accountProductRepository;
 	private final AccountRepository accountRepository;
 	private final RecurringTransactionRepository recurringTransactionRepository;
+	private final RestTemplate restTemplate;
 
 	@Value("${spring.fin.api-key}")
 	private String apiKey;
@@ -59,7 +60,6 @@ public class AccountService {
 
 	public void openAccountAuth(OpenAccountAuthRequestDto openAccountAuthRequestDto, String userKey) {
 		try {
-			RestTemplate restTemplate = new RestTemplate();
 			//todo: accountNo로  bankName 일치하는지 확인 (유효한 계좌)
 
 			FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.openAccountAuth.name(),
@@ -114,8 +114,6 @@ public class AccountService {
 	}
 
 	public void checkAccountAuth(CheckAccountAuthDto checkAccountAuthDto) throws BusinessLogicException {
-		RestTemplate restTemplate = new RestTemplate();
-
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.checkAuthCode.name(),
 			FinApiUrl.checkAuthCode.name());
 		header.setUserKey(checkAccountAuthDto.getUserKey());
@@ -138,8 +136,6 @@ public class AccountService {
 	}
 
 	public String makeAccount(String accountTypeUniqueNo, String userKey) {
-		RestTemplate restTemplate = new RestTemplate();
-
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.createDemandDepositAccount.name(),
 			FinApiUrl.createDemandDepositAccount.name());
 		header.setUserKey(userKey);
@@ -175,6 +171,7 @@ public class AccountService {
 			.collect(Collectors.toList());
 	}
 
+	@Transactional
 	public void deleteAccount(Long userId, String userKey, Long accountId) {
 		Account account = accountRepository.findByIdForDeleteAccount(accountId);
 		if(userId != account.getUserId()) {
@@ -189,14 +186,11 @@ public class AccountService {
 
 		account.setStatus(AccountStatus.INACTIVATED.getValue());
 		if(account.getRecurringTransaction() != null) {
-			account.getRecurringTransaction().setStatus(AccountStatus.INACTIVATED.getValue());
+			recurringTransactionRepository.delete(account.getRecurringTransaction());
 		}
-		accountRepository.save(account);
 
 		String accountNo = account.getAccountNo();
 		String refundAccountNo = account.getLinkedAccount().getAccountNumber();
-
-		RestTemplate restTemplate = new RestTemplate();
 
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.deleteDemandDepositAccount.name(),
 			FinApiUrl.deleteDemandDepositAccount.name());
