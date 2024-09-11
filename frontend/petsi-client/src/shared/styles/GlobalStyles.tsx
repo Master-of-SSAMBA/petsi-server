@@ -47,6 +47,7 @@ const GlobalStyles = createGlobalStyle`
         --color-red: #E76C6C;
         --color-lime: #EFFFC0;
         --color-gray: #6E6E6E;
+        --color-lightgray: #EDEDED;
         --color-green: #5CC238;
         --color-yellow: #FFE845;
 
@@ -65,8 +66,11 @@ const GlobalStyles = createGlobalStyle`
         --font-body-h5: 0.75rem;
         --font-body-h6: 0.5rem;
 
-        width: 390px;
-        height: 844px;
+        /* Box shadow styles */
+        --box-shadow-default: -2px 2px 0px 0px var(--color-black);
+
+        max-width: 390px;
+        max-height: 844px;
         margin: auto;
     }
 
