@@ -53,6 +53,7 @@ public class AccountService {
 	@Value("${spring.fin.api-key}")
 	private String apiKey;
 
+	@Transactional(readOnly = true)
 	public List<GetAllProductsResponseDto> getAllProducts() {
 		return accountProductRepository.findAll().stream()
 			.map(GetAllProductsResponseDto::from)
@@ -114,7 +115,7 @@ public class AccountService {
 
 	}
 
-	public void checkAccountAuth(CheckAccountAuthDto checkAccountAuthDto) throws BusinessLogicException {
+	private void checkAccountAuth(CheckAccountAuthDto checkAccountAuthDto) throws BusinessLogicException {
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.checkAuthCode.name(),
 			FinApiUrl.checkAuthCode.name());
 		header.setUserKey(checkAccountAuthDto.getUserKey());
@@ -136,7 +137,7 @@ public class AccountService {
 
 	}
 
-	public String makeAccount(String accountTypeUniqueNo, String userKey) {
+	private String makeAccount(String accountTypeUniqueNo, String userKey) {
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.createDemandDepositAccount.name(),
 			FinApiUrl.createDemandDepositAccount.name());
 		header.setUserKey(userKey);
@@ -164,6 +165,7 @@ public class AccountService {
 		return response.getBody().getRec().getAccountNo();
 	}
 
+	@Transactional(readOnly = true)
 	public List<?> getAllAccounts(Long userId) {
 		//todo: 월별 사진 인증 횟수 및 이자율 계산해서 같이 return
 		//todo: 계좌 내 매핑된 pet의 사진 같이 return
