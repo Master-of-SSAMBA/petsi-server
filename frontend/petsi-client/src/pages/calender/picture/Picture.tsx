@@ -2,15 +2,9 @@ import { headerState } from "@/stores/useNavigationStore";
 import { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 import Container from "@/components/ui/_container/Container";
-import styled from "styled-components";
 import { AppPaths } from "@/interfaces/AppPaths";
+import * as St from "./Picture.style";
 
-const Layout = styled.div`
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-`;
 const Picture = () => {
     const setHeaderState = useSetRecoilState(headerState);
 
@@ -24,11 +18,17 @@ const Picture = () => {
     }, [setHeaderState]);
 
     return (
-        <Layout>
+        <St.ContinerLayout>
             <Container color="white" shadow={true} path={AppPaths.LOGIN}>
-                Hello <br /> hello hello
+                사진 인증하기
             </Container>
-        </Layout>
+            <Container color="white" shadow={true} path={AppPaths.LOGIN}>
+                추가금리 확인하기
+            </Container>
+            <Container color="yellow" shadow={true} path={AppPaths.LOGIN}>
+                인증 기록 모아보기
+            </Container>
+        </St.ContinerLayout>
     );
 };
 
