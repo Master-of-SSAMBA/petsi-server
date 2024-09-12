@@ -46,7 +46,7 @@ public class RecurringTransaction {
 
 	@Setter
 	@Column(nullable = false)
-	private int frequency;
+	private int paymentDate;
 
 	@Setter
 	@Column(nullable = false)

@@ -155,15 +155,15 @@ public class AccountService {
 		}
 
 		if (account.getRecurringTransaction().getAmount() == updateRecurringTransactionRequestDto.getAmount()
-			&& account.getRecurringTransaction().getFrequency() == updateRecurringTransactionRequestDto.getDay()) {
+			&& account.getRecurringTransaction().getPaymentDate() == updateRecurringTransactionRequestDto.getDay()) {
 			throw new BusinessLogicException(ExceptionCode.EMPTY_REQUEST);
 		}
 
 		account.getRecurringTransaction().setAmount(updateRecurringTransactionRequestDto.getAmount());
-		account.getRecurringTransaction().setFrequency(updateRecurringTransactionRequestDto.getDay());
+		account.getRecurringTransaction().setPaymentDate(updateRecurringTransactionRequestDto.getDay());
 
 		LocalDate nextTransactionDate = account.getRecurringTransaction().getNextTransactionDate();
-		int day = account.getRecurringTransaction().getFrequency();
+		int day = account.getRecurringTransaction().getPaymentDate();
 
 		int year = nextTransactionDate.getYear();
 		int month = nextTransactionDate.getMonthValue();

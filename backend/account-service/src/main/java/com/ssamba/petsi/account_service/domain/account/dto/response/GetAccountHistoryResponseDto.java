@@ -11,6 +11,7 @@ public class GetAccountHistoryResponseDto {
 	private Long transactionUniqueNo;
 	private DateResponseDto transactionDate;
 	private String title;
+	private String transactionType;
 	private Long transactionAmount;
 	private Long transactionAfterBalance;
 	private String transactionMemo;
@@ -28,6 +29,7 @@ public class GetAccountHistoryResponseDto {
 			.transactionUniqueNo(transaction.getTransactionUniqueNo())
 			.transactionDate(new DateResponseDto(formattedDate, formattedTime))
 			.title(transaction.getTransactionSummary())
+			.transactionType(transaction.getTransactionType().equals("1") ? "입금":"출금")
 			.transactionAmount(transaction.getTransactionBalance())
 			.transactionAfterBalance(transaction.getTransactionAfterBalance())
 			.transactionMemo(transaction.getTransactionMemo())

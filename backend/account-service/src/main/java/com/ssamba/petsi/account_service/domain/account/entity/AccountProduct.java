@@ -32,7 +32,10 @@ public class AccountProduct {
 	private String accountTypeUniqueNo;
 
 	@Column(nullable = false)
-	private int cycle;
+	private String cycle;
+
+	@Column(nullable = false)
+	private String accountCategory;
 
 	@Column(nullable = false)
 	private String detail;
