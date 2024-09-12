@@ -36,6 +36,6 @@ spring:
           predicates:
             - Path=/account/**
         - id: frontend-s3
-          uri: https://s3.ap-northeast-2.amazonaws.com/petsi-frontend-bucket
+          uri: https://petsi-frontend-bucket.s3.amazonaws.com
           predicates:
             - Path=/**
