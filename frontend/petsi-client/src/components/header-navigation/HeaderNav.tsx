@@ -28,12 +28,12 @@ const HeaderNav = () => {
             case "alertActive":
                 return {
                     icon: AlertActive,
-                    path: "/alert",
+                    path: "#",
                 };
             case "setting":
                 return {
                     icon: Setting,
-                    path: "/setting",
+                    path: "#",
                 };
             default:
                 return null;
@@ -49,20 +49,22 @@ const HeaderNav = () => {
                 <NavLink to={leftItem.path}>
                     <St.NavIcon src={leftItem.icon} alt={left} />
                 </NavLink>
+            ) : leftItem?.action ? (
+                <button onClick={leftItem.action}>
+                    <St.NavIcon src={leftItem.icon} alt={left} />
+                </button>
             ) : (
-                leftItem?.action && (
-                    <button onClick={leftItem.action}>
-                        <St.NavIcon src={leftItem.icon} alt={left} />
-                    </button>
-                )
+                <St.PlaceholderDiv />
             )}
 
             <h4>{text}</h4>
 
-            {rightItem?.path && (
+            {rightItem?.path ? (
                 <NavLink to={rightItem.path}>
                     <St.NavIcon src={rightItem.icon} alt={right} />
                 </NavLink>
+            ) : (
+                <St.PlaceholderDiv />
             )}
         </St.NavContainer>
     );
