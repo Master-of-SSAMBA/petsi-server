@@ -1,7 +1,11 @@
 server:
   port: 80
   shutdown: graceful
-  connection-timeout: 5000ms
+  connection-timeout: 60s
+  tomcat:
+    max-threads: 200
+    accept-count: 100
+    connection-timeout: 60000
 
 spring:
   application:
@@ -19,7 +23,7 @@ spring:
       mvc:
         timeout:
           connect-timeout: 5000ms
-          response-timeout: 20000ms
+          response-timeout: 30000ms
         routes:
           - id: user-service
             uri: http://petsi/user-service:9001
@@ -55,6 +59,7 @@ spring:
               - Path=/**
             filters:
             - RemoveResponseHeader=Content-Length
+            - RemoveResponseHeader=Transfer-Encoding
 
 security:
   basic:
