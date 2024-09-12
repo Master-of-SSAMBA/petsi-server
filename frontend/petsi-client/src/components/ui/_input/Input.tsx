@@ -22,7 +22,7 @@ const Input = (props: InputProps) => {
                 onChange={handleChange}
                 placeholder=""
                 id={`input-${label}`}
-                shadow={shadow}
+                $shadow={shadow}
             />
             <St.InputLabel htmlFor={`input-${label}`}>{label}</St.InputLabel>
         </St.InputContainer>

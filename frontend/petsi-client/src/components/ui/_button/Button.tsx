@@ -19,7 +19,7 @@ const Button = (props: BtnProps) => {
     };
 
     return (
-        <St.BtnContainer color={color} shadow={shadow} onClick={handleClick}>
+        <St.BtnContainer color={color} $shadow={shadow} onClick={handleClick}>
             <St.BtnText>{text}</St.BtnText>
         </St.BtnContainer>
     );

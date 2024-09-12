@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 interface BtnContainerProps {
     color: string;
-    shadow: boolean;
+    $shadow: boolean;
 }
 
 export const BtnContainer = styled.button<BtnContainerProps>`
@@ -14,7 +14,8 @@ export const BtnContainer = styled.button<BtnContainerProps>`
     border: 1px solid var(--color-black);
     border-radius: 5px;
     background-color: ${(props) => `var(--color-${props.color})`};
-    box-shadow: ${(props) => props.shadow ? 'var(--box-shadow-default)' : 'none'};
+    box-shadow: ${(props) =>
+        props.$shadow ? "var(--box-shadow-default)" : "none"};
 `;
 
 export const BtnText = styled.h4``;
