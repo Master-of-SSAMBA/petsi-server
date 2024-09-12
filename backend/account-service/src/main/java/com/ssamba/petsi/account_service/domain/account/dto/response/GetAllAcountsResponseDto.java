@@ -5,6 +5,7 @@ import com.ssamba.petsi.account_service.domain.account.entity.Account;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,6 +15,7 @@ public class GetAllAcountsResponseDto {
 	private String accountNo;
 	private String name;
 	private String petPicture;
+	@Setter
 	private Long balance;
 	private Double interestRate;
 	private String productName;
