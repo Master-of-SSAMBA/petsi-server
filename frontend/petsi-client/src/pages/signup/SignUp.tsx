@@ -11,11 +11,9 @@ const SignUp = () => {
             right: "empty",
             text: "회원가입",
             isVisible: true,
-        })
+        });
     }, [setHeaderState]);
-    return (
-        <h1>SignUp.tsx</h1>
-    )
+    return <h1>SignUp.tsx</h1>;
 };
 
 export default SignUp;

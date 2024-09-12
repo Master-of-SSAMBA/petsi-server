@@ -23,7 +23,10 @@ const Home = () => {
         <>
             <h1>Home</h1>
             <NavLink to="/login">로그인 페이지로 이동하기</NavLink>
+            <br /> <br />
             <NavLink to="/account">계좌 페이지로 이동하기</NavLink>
+            <br /> <br />
+            <NavLink to="/picture">인증 페이지로 이동하기</NavLink>
         </>
     );
 };

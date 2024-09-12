@@ -5,6 +5,7 @@ import Login from "@/pages/login/Login";
 import SignUp from "@/pages/signup/SignUp";
 import Account from "@/pages/Account";
 import FindPassword from "@/pages/login/FindPassword";
+import Picture from "@/pages/calender/picture/Picture";
 import HeaderNav from "@/components/header-navigation/HeaderNav";
 import BottomNav from "@/components/bottom-navigation/BottomNav";
 import styled from "styled-components";
@@ -59,6 +60,10 @@ const App = () => {
                 {
                     path: "/account",
                     element: <Account />,
+                },
+                {
+                    path: "/picture",
+                    element: <Picture />,
                 },
             ],
         },
