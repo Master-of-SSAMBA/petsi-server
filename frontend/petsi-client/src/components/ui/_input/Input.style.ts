@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 interface InputProps {
-    shadow: boolean;
+    $shadow?: boolean;
 }
 
 export const InputContainer = styled.div`
@@ -19,7 +19,8 @@ export const InputField = styled.input<InputProps>`
     font-size: var(--font-body-h4);
     outline: none;
     transition: all 0.3s;
-    box-shadow: ${(props) => props.shadow ? 'var(--box-shadow-default)' : 'none'};
+    box-shadow: ${(props) =>
+        props.$shadow ? "var(--box-shadow-default)" : "none"};
 
     &:focus {
         border-color: var(--color-black);
