@@ -6,6 +6,7 @@ server:
     max-threads: 200
     accept-count: 100
     connection-timeout: 60000
+    protocol: org.apache.coyote.http11.Http11NioProtocol
 
 spring:
   application:
@@ -58,7 +59,6 @@ spring:
             predicates:
               - Path=/**
             filters:
-            - RemoveResponseHeader=Content-Length
             - RemoveResponseHeader=Transfer-Encoding
 
 security:
