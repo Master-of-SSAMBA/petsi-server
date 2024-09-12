@@ -2,11 +2,6 @@ server:
   port: 80
   shutdown: graceful
   connection-timeout: 60s
-  tomcat:
-    max-threads: 200
-    accept-count: 100
-    connection-timeout: 60000
-    protocol: org.apache.coyote.http11.Http11NioProtocol
 
 spring:
   application:
@@ -23,8 +18,8 @@ spring:
             allowedHeaders: "*"
       mvc:
         timeout:
-          connect-timeout: 5000ms
-          response-timeout: 30000ms
+          connect-timeout: 30000ms
+          response-timeout: 120000ms
         routes:
           - id: user-service
             uri: http://petsi/user-service:9001
@@ -57,9 +52,7 @@ spring:
           - id: frontend-s3
             uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
             predicates:
-              - Path=/**
-            filters:
-            - RemoveResponseHeader=Transfer-Encoding
+              - Path=/index.html, /static/**, /*.js, /*.css, /*.png, /*.jpg, /*.gif
 
 security:
   basic:
