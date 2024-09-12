@@ -1,10 +1,11 @@
-import { headerState } from "@/stores/useNavigationStore";
+import { bottomState, headerState } from "@/stores/useNavigationStore";
 import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 
 const Home = () => {
     const setHeaderState = useSetRecoilState(headerState);
+    const setBottomState = useSetRecoilState(bottomState);
 
     useEffect(() => {
         setHeaderState({
@@ -13,7 +14,10 @@ const Home = () => {
             text: "",
             isVisible: false,
         });
-    }, [setHeaderState]);
+        setBottomState({
+            isVisible: true,
+        });
+    }, [setHeaderState, setBottomState]);
 
     return (
         <>
