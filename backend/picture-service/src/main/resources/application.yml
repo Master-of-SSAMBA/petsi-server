@@ -6,8 +6,8 @@ spring:
   profiles:
     include: aws
   datasource:
-    url: jdbc:mysql://localhost:3306/petsi_picture?useSSL=false&serverTimezone=UTC
-#    url: jdbc:mysql://mysql_account_service:3306/petsi_account?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+#    url: jdbc:mysql://localhost:3306/petsi_picture?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://mysql_picture_service:3306/petsi_picture?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: petsi
     password: petsi0909!
     driver-class-name: com.mysql.cj.jdbc.Driver
