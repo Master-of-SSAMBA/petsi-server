@@ -39,3 +39,6 @@ spring:
           uri: https://petsi-frontend-bucket.s3.ap-northeast-2.amazonaws.com
           predicates:
             - Path=/**
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
