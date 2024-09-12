@@ -38,7 +38,7 @@ spring:
         - id: frontend-s3
           uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
           predicates:
-            - Path=/**
+            - Path=/,/*.css,/*.js,/favicon.ico
 
 security:
   basic:
