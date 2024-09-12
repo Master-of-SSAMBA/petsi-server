@@ -1,9 +1,7 @@
 server:
   port: 80
-  netty:
-    connection-timeout: 2s
-    idle-timeout: 15s
   shutdown: graceful
+  connection-timeout: 5000ms
 
 spring:
   application:
@@ -12,14 +10,10 @@ spring:
     timeout-per-shutdown-phase: 15s
   cloud:
     gateway:
-      httpclient:
-        connect-timeout: 2000
-        response-timeout: 5s
-        pool:
-          type: elastic
-          max-idle-time: 15s
-          max-life-time: 60s
       mvc:
+        timeout:
+          connect-timeout: 2000ms
+          response-timeout: 5000ms
         routes:
           - id: user-service
             uri: http://petsi/user-service:9001
