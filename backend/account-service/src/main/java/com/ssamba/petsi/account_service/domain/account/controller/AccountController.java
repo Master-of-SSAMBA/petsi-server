@@ -44,7 +44,7 @@ public class AccountController {
 	@PostMapping("/open-account-auth")
 	@Operation(summary = "1원 송금")
 	public ResponseEntity<?> openAccountAuth(@RequestHeader("X-User-Key") String userKey,
-		@RequestBody OpenAccountAuthRequestDto openAccountAuthRequestDto) {
+		@Valid @RequestBody OpenAccountAuthRequestDto openAccountAuthRequestDto) {
 		accountService.openAccountAuth(openAccountAuthRequestDto, userKey);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
@@ -52,7 +52,7 @@ public class AccountController {
 	@PostMapping("/account")
 	@Operation(summary = "1원 송금 인증 및 계좌 생성")
 	public ResponseEntity<?> checkAccountAuth(@RequestHeader("X-User-Id") Long userId,
-		@RequestHeader("X-User-Key") String userKey, @RequestBody CreateAccountRequestDto createAccountRequestDto) {
+		@RequestHeader("X-User-Key") String userKey, @Valid @RequestBody CreateAccountRequestDto createAccountRequestDto) {
 		accountService.createAccountBySteps(createAccountRequestDto, userKey, userId);
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
@@ -74,7 +74,7 @@ public class AccountController {
 	@PatchMapping("/account/name")
 	@Operation(summary = "사용자 계좌명 변경")
 	public ResponseEntity<?> updateAccountName(@RequestHeader("X-User-Id") Long userId,
-		@RequestBody UpdateAccountNameRequestDto updateAccountNameRequestDto) {
+		@Valid @RequestBody UpdateAccountNameRequestDto updateAccountNameRequestDto) {
 		accountService.updateAccountName(updateAccountNameRequestDto, userId);
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}

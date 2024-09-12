@@ -54,6 +54,11 @@ public class AccountService {
 	}
 
 	public void openAccountAuth(OpenAccountAuthRequestDto openAccountAuthRequestDto, String userKey) {
+		try {
+			Long.parseLong(openAccountAuthRequestDto.getAccountNo());
+		} catch (Exception e) {
+			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_NO);
+		}
 		accountFinApiService.openAccountAuth(userKey, openAccountAuthRequestDto.getAccountNo());
 	}
 
@@ -67,7 +72,7 @@ public class AccountService {
 			createAccountRequestDto.getCode());
 
 		AccountProduct product = accountProductRepository.findById(createAccountRequestDto.getAccountProductId())
-			.orElseThrow();
+			.orElseThrow(() -> new BusinessLogicException(ExceptionCode.ACCOUNT_CATEGORY_NOT_FOUND));
 
 		String accountNo = accountFinApiService.createDemandDepositAccount(product.getAccountTypeUniqueNo(), userKey);
 
@@ -103,6 +108,7 @@ public class AccountService {
 					continue addAccounts;
 				}
 			}
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
 		}
 
 		return returnList;
@@ -111,14 +117,15 @@ public class AccountService {
 	@Transactional
 	public void deleteAccount(Long userId, String userKey, Long accountId) {
 		Account account = accountRepository.findByIdWithRecurringTransaction(accountId);
+		if (account == null) {
+			throw new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND);
+		}
 		if (userId != account.getUserId()) {
-			//todo: 계좌주와 로그인 유저 불일치 에러
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
 		}
 
 		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
-			//todo: 계좌 활성 상태가 아님
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
 		}
 
 		account.setStatus(AccountStatus.INACTIVATED.getValue());
@@ -136,20 +143,20 @@ public class AccountService {
 		Account account = accountRepository.findByIdWithRecurringTransaction(
 			updateRecurringTransactionRequestDto.getAccountId());
 
+		if (account == null) {
+			throw new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND);
+		}
 		if (userId != account.getUserId()) {
-			//계좌주 로그인 유저 불일치 에러
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
 		}
 
 		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
-			//활성 상태가 아닌 계좌 에러
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
 		}
 
 		if (account.getRecurringTransaction().getAmount() == updateRecurringTransactionRequestDto.getAmount()
 			&& account.getRecurringTransaction().getFrequency() == updateRecurringTransactionRequestDto.getDay()) {
-			//변동 사항 없음
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			throw new BusinessLogicException(ExceptionCode.EMPTY_REQUEST);
 		}
 
 		account.getRecurringTransaction().setAmount(updateRecurringTransactionRequestDto.getAmount());
@@ -175,12 +182,10 @@ public class AccountService {
 	public void updateAccountName(UpdateAccountNameRequestDto updateAccountNameRequestDto, Long userId) {
 		Account account = accountRepository.findById(updateAccountNameRequestDto.getAccountId()).orElseThrow();
 		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
-			//활성화 상태가 아닐 때 에러
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
 		}
 		if (account.getUserId() != userId) {
-			//계좌주와 로그인 유저 불일치 에러
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
 		}
 		account.setName(updateAccountNameRequestDto.getName());
 	}
@@ -188,16 +193,16 @@ public class AccountService {
 	@Transactional(readOnly = true)
 	public GetAccountDetailsResponseDto getAccountDetails(Long userId, String userKey, Long accountId) {
 		Account account = accountRepository.findByIdWithRecurringTransaction(accountId);
+		if (account == null) {
+			throw new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND);
+		}
 		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
-			//활성화 상태가 아닐 때 에러
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
 		}
 		if (account.getUserId() != userId) {
-			//계좌주와 로그인 유저 불일치 에러
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
 		}
 
-		//한달 내역 가져오기
 		GetAccountDetailsResponseDto returnDto = new GetAccountDetailsResponseDto(account);
 		LocalDate nowDate = LocalDate.now();
 		LocalDate getCreateDate = account.getCreatedAt().toLocalDate();
@@ -207,7 +212,6 @@ public class AccountService {
 		returnDto.setCreateDdays(createDdays);
 		returnDto.setExpireDdays(expireDdays);
 
-		//잔액 업데이트
 		returnDto.setBalance(accountFinApiService.inquireDemandDepositAccount(userKey, account.getAccountNo()).getAccountBalance());
 
 		returnDto.setTransactionHistory(getAccountHistory(userId, userKey, accountId, 0, 1));
@@ -219,13 +223,14 @@ public class AccountService {
 		Pageable pageable = PageRequest.of(page, 12);
 
 		Account account = accountRepository.findByIdWithRecurringTransaction(accountId);
+		if (account == null) {
+			throw new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND);
+		}
 		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
-			//활성화 상태가 아닐 때 에러
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
 		}
 		if (account.getUserId() != userId) {
-			//계좌주와 로그인 유저 불일치 에러
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
 		}
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
