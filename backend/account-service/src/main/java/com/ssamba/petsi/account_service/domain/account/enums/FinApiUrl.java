@@ -11,7 +11,10 @@ public enum FinApiUrl {
 	createDemandDepositAccount("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/createDemandDepositAccount"),
 	deleteDemandDepositAccount("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/deleteDemandDepositAccount"),
 	inquireTransactionHistoryList(
-		"https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireTransactionHistoryList");
+		"https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireTransactionHistoryList"),
+	inquireDemandDepositAccountList("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireDemandDepositAccountList"),
+	inquireDemandDepositAccount("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireDemandDepositAccount");
+
 
 	private String url;
 

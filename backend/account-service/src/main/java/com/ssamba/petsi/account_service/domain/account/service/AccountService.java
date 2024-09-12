@@ -1,13 +1,15 @@
 package com.ssamba.petsi.account_service.domain.account.service;
 
-import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,12 +86,26 @@ public class AccountService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<?> getAllAccounts(Long userId) {
+	public List<?> getAllAccounts(Long userId, String userKey) {
 		//todo: 월별 사진 인증 횟수 및 이자율 계산해서 같이 return
 		//todo: 계좌 내 매핑된 pet의 사진 같이 return
-		return accountRepository.findAllByUserIdAndStatus(userId, AccountStatus.ACTIVATED.getValue()).stream()
-			.map(GetAllAcountsResponseDto::from)
-			.collect(Collectors.toList());
+
+		List<FinApiResponseDto.AccountListResponseDto> accountList = accountFinApiService.inquireDemandDepositAccountList(userKey);
+		List<Account> localAccountList = accountRepository.findAllByUserIdAndStatus(userId, AccountStatus.ACTIVATED.getValue());
+
+		List<GetAllAcountsResponseDto> returnList = new ArrayList<>();
+		addAccounts: for(Account account : localAccountList) {
+			GetAllAcountsResponseDto dto = GetAllAcountsResponseDto.from(account);
+			for(FinApiResponseDto.AccountListResponseDto dtoAccount : accountList) {
+				if(dtoAccount.getAccountNo().equals(dto.getAccountNo())) {
+					dto.setBalance(dtoAccount.getAccountBalance());
+					returnList.add(dto);
+					continue addAccounts;
+				}
+			}
+		}
+
+		return returnList;
 	}
 
 	@Transactional
@@ -191,13 +207,16 @@ public class AccountService {
 		returnDto.setCreateDdays(createDdays);
 		returnDto.setExpireDdays(expireDdays);
 
+		//잔액 업데이트
+		returnDto.setBalance(accountFinApiService.inquireDemandDepositAccount(userKey, account.getAccountNo()).getAccountBalance());
+
 		returnDto.setTransactionHistory(getAccountHistory(userId, userKey, accountId, 0, 1));
 		return returnDto;
 	}
 
 	public List<GetAccountHistoryResponseDto> getAccountHistory(Long userId, String userKey, Long accountId, int page,
-		int sortOption) {
-		Pageable pageable = (Pageable)PageRequest.of(page, 12);
+		Integer sortOption) {
+		Pageable pageable = PageRequest.of(page, 12);
 
 		Account account = accountRepository.findByIdWithRecurringTransaction(accountId);
 		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
@@ -209,9 +228,22 @@ public class AccountService {
 			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
 		}
 
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		LocalDate nowDate = LocalDate.now();
+		String endDate = nowDate.format(formatter);
+		String startDate = "20200101";
+		if (sortOption != null) {
+			LocalDate monthSetting = nowDate.minusMonths(sortOption);
+			startDate = monthSetting.format(formatter);
+		}
+
 		FinApiResponseDto.TransactionHistoryResponseDto returndto = accountFinApiService.inquireTransactionHistoryList(
-			account, "20200101", "20241231", userKey);
-		//todo: 이후 pagenation 등 이후 로직 작성 . . .
-		return null;
+			account, startDate, endDate, userKey);
+		List<FinApiResponseDto.TransactionHistoryResponseDto.Transaction> list = returndto.getList()
+			.subList(page * 12, Math.min(page * 12 + 12, returndto.getList().size()));
+
+		return list.stream()
+			.map(GetAccountHistoryResponseDto::from)
+			.collect(Collectors.toList());
 	}
 }

@@ -17,6 +17,7 @@ public class GetAccountDetailsResponseDto {
 	private Long accountId;
 	private String accountName;
 	private String accountNo;
+	@Setter
 	private Long balance;
 	@Setter
 	private int createDdays;
@@ -31,7 +32,6 @@ public class GetAccountDetailsResponseDto {
 		this.accountId = account.getAccountId();
 		this.accountName = account.getName();
 		this.accountNo = account.getAccountNo();
-		this.balance = account.getBalance();
 		this.currentMonthlyInterest = account.getInterestRate();
 		this.expireDate = account.getMaturityDate();
 	}

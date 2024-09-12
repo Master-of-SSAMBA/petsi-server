@@ -59,8 +59,8 @@ public class AccountController {
 
 	@GetMapping("/account")
 	@Operation(summary = "계좌 전체 조회")
-	public ResponseEntity<?> getAllAccounts(@RequestHeader("X-User-Id") Long userId) {
-		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAllAccounts(userId));
+	public ResponseEntity<?> getAllAccounts(@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Key") String userKey) {
+		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAllAccounts(userId, userKey));
 	}
 
 	@DeleteMapping("/account")
@@ -96,11 +96,11 @@ public class AccountController {
 	}
 
 	@PostMapping("/account/history")
-	@Operation(summary = "계좌 상세 보기")
+	@Operation(summary = "계좌 내역 조회")
 	public ResponseEntity<?> getAccountHistory(@RequestHeader("X-User-Id") Long userId,
 		@RequestHeader("X-User-Key") String userKey, @RequestBody Map<String, Long> request,
 		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "1") int sortOption) {
+		@RequestParam(defaultValue = "1") Integer sortOption) {
 		List<GetAccountHistoryResponseDto> list = accountService.getAccountHistory(userId, userKey,
 			request.get("accountId"), page, sortOption);
 		return ResponseEntity.status(HttpStatus.OK).body(list);
