@@ -73,7 +73,7 @@ public class CreateAccountRequestDto {
 
 		RecurringTransaction recurringTransaction = RecurringTransaction.builder()
 			.amount(createAccountRequestDto.getAmount())
-			.frequency(day)
+			.paymentDate(day)
 			.account(account)
 			.build();
 

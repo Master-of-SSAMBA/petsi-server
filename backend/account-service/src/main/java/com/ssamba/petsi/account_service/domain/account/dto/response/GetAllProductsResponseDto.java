@@ -8,7 +8,7 @@ import lombok.Getter;
 public class GetAllProductsResponseDto {
 	private Long accountProductId;
 	private String title;
-	private int cycle;
+	private String cycle;
 	private String detail;
 	private int minDepositAmount;
 	private int maxDepositAmount;
