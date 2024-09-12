@@ -1,11 +1,24 @@
 server:
   port: 80
+  netty:
+    connection-timeout: 2s
+    idle-timeout: 15s
+  shutdown: graceful
 
 spring:
   application:
     name: gateway-service
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 5s
+        pool:
+          type: elastic
+          max-idle-time: 15s
+          max-life-time: 60s
       routes:
         - id: user-service
           uri: http://petsi/user-service:9001
@@ -36,6 +49,6 @@ spring:
           predicates:
             - Path=/account/**
         - id: frontend-s3
-          uri: https://s3.ap-northeast-2.amazonaws.com/petsi-frontend-bucket
+          uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
           predicates:
-            - Path=/**
+            - Path=/,/assets/**, /fonts/**, index.html, /*.css,/*.js, /Symbol.ico
