@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { headerState } from "@/stores/useNavigationStore";
+import { bottomState, headerState } from "@/stores/useNavigationStore";
 import { useSetRecoilState } from "recoil";
 import Input from "@/components/ui/_input/Input";
 import Button from "@/components/ui/_button/Button";
@@ -11,6 +11,7 @@ interface LoginProps {}
 
 const Login = ({}: LoginProps) => {
     const setHeaderState = useSetRecoilState(headerState);
+    const setBottomState = useSetRecoilState(bottomState);
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
@@ -23,7 +24,10 @@ const Login = ({}: LoginProps) => {
             text: "로그인",
             isVisible: true,
         });
-    }, [setHeaderState]);
+        setBottomState({
+            isVisible: false,
+        });
+    }, [setHeaderState, setBottomState]);
 
     const handleEmailChange = (val: string) => setEmail(val);
     const handlePwChange = (val: string) => setPassword(val);
@@ -46,7 +50,13 @@ const Login = ({}: LoginProps) => {
                     label="비밀번호"
                     shadow={false}
                 />
-                <St.FindPassword onClick={()=>{navigate(AppPaths.FIND_PASSWORD)}}>비밀번호를 잊으셨나요?</St.FindPassword>
+                <St.FindPassword
+                    onClick={() => {
+                        navigate(AppPaths.FIND_PASSWORD);
+                    }}
+                >
+                    비밀번호를 잊으셨나요?
+                </St.FindPassword>
             </St.InputSection>
             <St.BtnSection>
                 <Button color="yellow" text="로그인" shadow={true} />
