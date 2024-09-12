@@ -5,6 +5,10 @@ import Container from "@/components/ui/_container/Container";
 import { AppPaths } from "@/interfaces/AppPaths";
 import * as St from "./Picture.style";
 
+// import Camera from "@/assets/icons/Icon-camera.svg";
+// import Ticket from "@/assets/icons/Icon-ticket.svg";
+// import Walk from "@/assets/icons/Icon-walk.svg";
+
 const Picture = () => {
     const setHeaderState = useSetRecoilState(headerState);
 
