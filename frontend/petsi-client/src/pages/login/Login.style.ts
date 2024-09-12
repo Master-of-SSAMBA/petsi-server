@@ -5,7 +5,7 @@ export const Layout = styled.div`
     width: 85%;
     margin: 0 auto;
     flex-direction: column;
-    padding-top: 10%;
+    padding-top: 18%;
     gap: 2rem;
 `;
 
