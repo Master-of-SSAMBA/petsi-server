@@ -52,7 +52,7 @@ spring:
           - id: frontend-s3
             uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
             predicates:
-              - Path=/index.html, /static/**, /*.js, /*.css, /*.png, /*.jpg, /*.gif
+              - Path=/, /index.html, /static/**, /*.js, /*.css, /*.png, /*.jpg, /*.gif
 
 security:
   basic:
