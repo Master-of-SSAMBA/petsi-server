@@ -1,0 +1,12 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+cloud:
+  aws:
+    s3:
+      bucket: petsi-images-bucket
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: AKIAZ3MGNG6NT7HPQKVS
+      secretKey: 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
