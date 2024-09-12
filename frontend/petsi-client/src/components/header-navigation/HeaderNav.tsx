@@ -28,12 +28,12 @@ const HeaderNav = () => {
             case "alertActive":
                 return {
                     icon: AlertActive,
-                    path: "/alert",
+                    path: "#",
                 };
             case "setting":
                 return {
                     icon: Setting,
-                    path: "/setting",
+                    path: "#",
                 };
             default:
                 return null;
