@@ -2,6 +2,7 @@ package com.ssamba.petsi.account_service.domain.account.dto.request;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateRecurringTransactionRequestDto {
+	@NotNull
 	private Long accountId;
 	@Min(1000)
 	@Max(3000000)

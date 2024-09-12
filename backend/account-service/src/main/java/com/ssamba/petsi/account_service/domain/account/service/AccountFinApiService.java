@@ -18,6 +18,8 @@ import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiHeaderReque
 import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiResponseDto;
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
 import com.ssamba.petsi.account_service.domain.account.enums.FinApiUrl;
+import com.ssamba.petsi.account_service.global.exception.BusinessLogicException;
+import com.ssamba.petsi.account_service.global.exception.ExceptionCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,8 +48,12 @@ public class AccountFinApiService {
 
 		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
 
-		ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.openAccountAuth.getUrl(), request,
-			String.class);
+		try {
+			ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.openAccountAuth.getUrl(), request,
+				String.class);
+		} catch (Exception e) {
+			throw new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND);
+		}
 	}
 
 	public void checkAuthCode(String userKey, String accountNo, String authCode) {
@@ -67,8 +73,12 @@ public class AccountFinApiService {
 
 		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
 
-		ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.checkAuthCode.getUrl(), request,
-			String.class);
+		try {
+			ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.checkAuthCode.getUrl(), request,
+				String.class);
+		} catch (Exception e) {
+			throw new BusinessLogicException(ExceptionCode.INVALID_CODE);
+		}
 	}
 
 	public String createDemandDepositAccount(String accountTypeUniqueNo, String userKey) {
@@ -90,13 +100,18 @@ public class AccountFinApiService {
 			new ParameterizedTypeReference<>() {
 			};
 
-		ResponseEntity<FinApiResponseDto<FinApiResponseDto.CreateAccountResponseDto>> response = restTemplate.exchange(
-			FinApiUrl.createDemandDepositAccount.getUrl(),
-			HttpMethod.POST,
-			request,
-			responseType
-		);
-		return response.getBody().getRec().getAccountNo();
+		try {
+			ResponseEntity<FinApiResponseDto<FinApiResponseDto.CreateAccountResponseDto>> response = restTemplate.exchange(
+				FinApiUrl.createDemandDepositAccount.getUrl(),
+				HttpMethod.POST,
+				request,
+				responseType
+			);
+
+			return response.getBody().getRec().getAccountNo();
+		} catch (Exception e) {
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	public List<FinApiResponseDto.AccountListResponseDto> inquireDemandDepositAccountList(String userKey) {
