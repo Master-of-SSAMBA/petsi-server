@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/api/v1/account")
 @RequiredArgsConstructor
 @Tag(name = "AccountController", description = "계좌 컨트롤러")
 public class AccountController {
@@ -49,21 +49,23 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
 
-	@PostMapping("/account")
+	@PostMapping("")
 	@Operation(summary = "1원 송금 인증 및 계좌 생성")
 	public ResponseEntity<?> checkAccountAuth(@RequestHeader("X-User-Id") Long userId,
-		@RequestHeader("X-User-Key") String userKey, @Valid @RequestBody CreateAccountRequestDto createAccountRequestDto) {
+		@RequestHeader("X-User-Key") String userKey,
+		@Valid @RequestBody CreateAccountRequestDto createAccountRequestDto) {
 		accountService.createAccountBySteps(createAccountRequestDto, userKey, userId);
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
-	@GetMapping("/account")
+	@GetMapping("")
 	@Operation(summary = "계좌 전체 조회")
-	public ResponseEntity<?> getAllAccounts(@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Key") String userKey) {
+	public ResponseEntity<?> getAllAccounts(@RequestHeader("X-User-Id") Long userId,
+		@RequestHeader("X-User-Key") String userKey) {
 		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAllAccounts(userId, userKey));
 	}
 
-	@DeleteMapping("/account")
+	@DeleteMapping("")
 	@Operation(summary = "계좌 해지")
 	public ResponseEntity<?> deleteAccount(@RequestHeader("X-User-Id") Long userId,
 		@RequestHeader("X-User-Key") String userKey, @RequestBody Map<String, Long> request) {
@@ -71,7 +73,7 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
 
-	@PatchMapping("/account/name")
+	@PatchMapping("/name")
 	@Operation(summary = "사용자 계좌명 변경")
 	public ResponseEntity<?> updateAccountName(@RequestHeader("X-User-Id") Long userId,
 		@Valid @RequestBody UpdateAccountNameRequestDto updateAccountNameRequestDto) {
@@ -79,7 +81,7 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
-	@PatchMapping("/account")
+	@PatchMapping("")
 	@Operation(summary = "자동 이체 금액 혹은 일자 변경")
 	public ResponseEntity<?> updateRecurringTransaction(@RequestHeader("X-User-Id") Long userId,
 		@RequestBody @Valid UpdateRecurringTransactionRequestDto updateRecurringTransactionRequestDto) {
@@ -87,7 +89,7 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
-	@PostMapping("/account/detail")
+	@PostMapping("/detail")
 	@Operation(summary = "계좌 상세 보기")
 	public ResponseEntity<?> getAccountDetails(@RequestHeader("X-User-Id") Long userId,
 		@RequestHeader("X-User-Key") String userKey, @RequestBody Map<String, Long> request) {
@@ -95,7 +97,7 @@ public class AccountController {
 			.body(accountService.getAccountDetails(userId, userKey, request.get("accountId")));
 	}
 
-	@PostMapping("/account/history")
+	@PostMapping("/history")
 	@Operation(summary = "계좌 내역 조회")
 	public ResponseEntity<?> getAccountHistory(@RequestHeader("X-User-Id") Long userId,
 		@RequestHeader("X-User-Key") String userKey, @RequestBody Map<String, Long> request,
