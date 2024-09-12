@@ -6,6 +6,7 @@ spring:
     name: gateway-service
   cloud:
     gateway:
+      mvc:
       routes:
         - id: user-service
           uri: http://petsi/user-service:9001
