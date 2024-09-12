@@ -29,3 +29,8 @@ spring:
 springdoc:
   swagger-ui:
     path: /petsi/swagger-ui.html
+
+logging:
+  level:
+    org.hibernate: DEBUG
+    org.springframework: DEBUG
