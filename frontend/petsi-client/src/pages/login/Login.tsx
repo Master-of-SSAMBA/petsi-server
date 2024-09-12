@@ -52,7 +52,7 @@ const Login = ({}: LoginProps) => {
                 </St.FindPassword>
             </St.InputSection>
             <St.BtnSection>
-                <Button color="yellow" text="로그인" shadow={true}/>
+                <Button color="yellow" text="로그인" shadow={true} />
                 <Button
                     color="lightgray"
                     text="회원가입"
