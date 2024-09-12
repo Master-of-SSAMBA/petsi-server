@@ -39,5 +39,3 @@ spring:
           uri: https://s3.ap-northeast-2.amazonaws.com/petsi-frontend-bucket
           predicates:
             - Path=/**
-          filters:
-            - StripPrefix=1
