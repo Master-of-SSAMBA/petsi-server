@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { bottomState, headerState } from "@/stores/useNavigationStore";
+import { useSetRecoilState } from "recoil";
 import Input from "@/components/ui/_input/Input";
 import Button from "@/components/ui/_button/Button";
 import { AppPaths } from "@/interfaces/AppPaths";
@@ -8,10 +10,24 @@ import * as St from "./Login.style";
 interface LoginProps {}
 
 const Login = ({}: LoginProps) => {
+    const setHeaderState = useSetRecoilState(headerState);
+    const setBottomState = useSetRecoilState(bottomState);
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    useEffect(() => {
+        setHeaderState({
+            left: "backArrow",
+            right: "empty",
+            text: "로그인",
+            isVisible: true,
+        });
+        setBottomState({
+            isVisible: false,
+        });
+    }, [setHeaderState, setBottomState]);
 
     const handleEmailChange = (val: string) => setEmail(val);
     const handlePwChange = (val: string) => setPassword(val);

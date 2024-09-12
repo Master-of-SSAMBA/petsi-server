@@ -6,18 +6,31 @@ import SignUp from "@/pages/signup/SignUp";
 import Account from "@/pages/Account";
 import FindPassword from "@/pages/login/FindPassword";
 import HeaderNav from "@/components/header-navigation/HeaderNav";
-// import BottomNav from "@/components/bottom-navigation/BottomNav";
+import BottomNav from "@/components/bottom-navigation/BottomNav";
+import styled from "styled-components";
+
+// 레이아웃 스타일
+const AppContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 844px;
+`;
+
+const ContentContainer = styled.div`
+    flex: 1;
+    overflow-y: auto; /* 스크롤 가능 */
+`;
 
 // 레이아웃 컴포넌트
 const Layout = () => {
     return (
-        <div className="App-container">
+        <AppContainer>
             <HeaderNav />
-            <div className="Content-container">
+            <ContentContainer>
                 <Outlet />
-            </div>
-            {/* <BottomNav /> */}
-        </div>
+                <BottomNav />
+            </ContentContainer>
+        </AppContainer>
     );
 };
 
