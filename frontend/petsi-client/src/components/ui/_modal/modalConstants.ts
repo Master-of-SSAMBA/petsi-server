@@ -8,7 +8,6 @@ type StateMap = {
     [key: string]: StateMapItem;
 };
 
-// ButtonMap 인터페이스 정의
 interface ButtonMapItem {
     color: string;
     label: string;
