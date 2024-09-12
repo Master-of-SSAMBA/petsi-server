@@ -40,9 +40,11 @@ public class RecurringTransaction {
 	@JoinColumn(name = "account_id", nullable = false)
 	private Account account;
 
+	@Setter
 	@Column(nullable = false)
 	private int amount;
 
+	@Setter
 	@Column(nullable = false)
 	private int frequency;
 
@@ -50,6 +52,7 @@ public class RecurringTransaction {
 	@Column(nullable = false)
 	private LocalDate nextTransactionDate;
 
+	@Setter
 	@Column(nullable = false)
 	private String status;
 	@CreatedDate

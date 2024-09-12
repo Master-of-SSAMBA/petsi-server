@@ -45,6 +45,7 @@ public class Account {
 	@Column(nullable = false, unique = true)
 	private String accountNo;
 
+	@Setter
 	@Column(nullable = false)
 	private String name;
 
@@ -77,6 +78,7 @@ public class Account {
 	@Column(nullable = false)
 	private LocalDate maturityDate;
 
+	@Setter
 	@Column(nullable = false)
 	private String status;
 

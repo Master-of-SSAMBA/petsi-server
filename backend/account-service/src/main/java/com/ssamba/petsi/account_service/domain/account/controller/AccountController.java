@@ -1,8 +1,12 @@
 package com.ssamba.petsi.account_service.domain.account.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -11,10 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccountRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
+import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateAccountNameRequestDto;
+import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateRecurringTransactionRequestDto;
 import com.ssamba.petsi.account_service.domain.account.service.AccountService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -52,5 +59,28 @@ public class AccountController {
 	public ResponseEntity<?> getAllAccounts(@RequestHeader("X-User-Id") Long userId) {
 		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAllAccounts(userId));
 	}
-	
+
+	@DeleteMapping("/account")
+	@Operation(summary = "계좌 해지")
+	public ResponseEntity<?> deleteAccount(@RequestHeader("X-User-Id") Long userId,
+		@RequestHeader("X-User-Key") String userKey, @RequestBody Map<String, Long> request) {
+		accountService.deleteAccount(userId, userKey, request.get("accountId"));
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+	}
+
+	@PatchMapping("/account/name")
+	@Operation(summary = "사용자 계좌명 변경")
+	public ResponseEntity<?> updateAccountName(@RequestHeader("X-User-Id") Long userId, @RequestBody UpdateAccountNameRequestDto updateAccountNameRequestDto) {
+		accountService.updateAccountName(updateAccountNameRequestDto, userId);
+		return ResponseEntity.status(HttpStatus.OK).body(null);
+	}
+
+
+	@PatchMapping("/account")
+	@Operation(summary = "자동 이체 금액 혹은 일자 변경")
+	public ResponseEntity<?> updateRecurringTransaction(@RequestHeader("X-User-Id") Long userId, @RequestBody @Valid UpdateRecurringTransactionRequestDto updateRecurringTransactionRequestDto) {
+		accountService.updateRecurringTransaction(updateRecurringTransactionRequestDto, userId);
+		return ResponseEntity.status(HttpStatus.OK).body(null);
+	}
+
 }
