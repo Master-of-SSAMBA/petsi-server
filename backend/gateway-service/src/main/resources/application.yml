@@ -21,31 +21,31 @@ spring:
           max-life-time: 60s
       routes:
         - id: user-service
-          uri: http://localhost:9001
+          uri: http://j11a403.p.ssafy.io:9001
           predicates:
             - Path=/user/**
         - id: pet-service
-          uri: http://localhost:9002
+          uri: http://j11a403.p.ssafy.io:9002
           predicates:
             - Path=/pet/**
         - id: account-service
-          uri: http://localhost:9003
+          uri: http://j11a403.p.ssafy.io:9003
           predicates:
             - Path=/account/**
         - id: picture-service
-          uri: http://localhost:9004
+          uri: http://j11a403.p.ssafy.io:9004
           predicates:
             - Path=/picture/**
         - id: expense-service
-          uri: http://localhost:9005
+          uri: http://j11a403.p.ssafy.io:9005
           predicates:
             - Path=/expense/**
         - id: schedule-service
-          uri: http://localhost:9006
+          uri: http://j11a403.p.ssafy.io:9006
           predicates:
             - Path=/schedule/**
         - id: notification-service
-          uri: http://localhost:9007
+          uri: http://j11a403.p.ssafy.io:9007
           predicates:
             - Path=/notification/**
         - id: frontend-s3
