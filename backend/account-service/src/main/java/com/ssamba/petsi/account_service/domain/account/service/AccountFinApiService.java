@@ -229,4 +229,31 @@ public class AccountFinApiService {
 
 		return response.getBody().getRec();
 	}
+
+	public void updateDemandDepositAccountTransfer(String userKey, String depositAccountNo, String depositTransactionSummary, Long transactionBalance, String withdrawalAccountNo, String withdrawalTransactionSummary) {
+		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.updateDemandDepositAccountTransfer.name(),
+			FinApiUrl.updateDemandDepositAccountTransfer.name());
+		header.setUserKey(userKey);
+		header.setApiKey(apiKey);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		Map<String, Object> finApiDto = new HashMap<>();
+		finApiDto.put("Header", header);
+		finApiDto.put("depositAccountNo", depositAccountNo);
+		finApiDto.put("depositTransactionSummary", depositTransactionSummary);
+		finApiDto.put("transactionBalance", transactionBalance);
+		finApiDto.put("withdrawalAccountNo", withdrawalAccountNo);
+		finApiDto.put("withdrawalTransactionSummary", withdrawalTransactionSummary);
+
+		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+
+		try {
+			ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.updateDemandDepositAccountTransfer.getUrl(), request,
+				String.class);
+		} catch (Exception e) {
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

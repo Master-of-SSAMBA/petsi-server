@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiResponseDto;
+import com.ssamba.petsi.account_service.domain.account.dto.request.AccountTransferRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.CheckAccountAuthDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccountRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
@@ -250,5 +251,22 @@ public class AccountService {
 		return list.stream()
 			.map(GetAccountHistoryResponseDto::from)
 			.collect(Collectors.toList());
+	}
+
+	public void accountTransfer(Long userId, String userKey, AccountTransferRequestDto accountTransferRequestDto) {
+		Account account = accountRepository.findById(accountTransferRequestDto.getAccountId()).orElseThrow(
+			() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND));
+
+		if (account.getUserId() != userId) {
+			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
+		}
+
+		String depositAccountNo = accountTransferRequestDto.getDestinationAccountNo();
+		String depositTransactionSummary = accountTransferRequestDto.getDestinationDescription();
+		Long transactionBalance = accountTransferRequestDto.getAmount();
+		String withdrawalAccountNo = account.getAccountNo();
+		String withdrawalTransactionSummary = accountTransferRequestDto.getDescription();
+		accountFinApiService.updateDemandDepositAccountTransfer(userKey,
+			depositAccountNo, depositTransactionSummary, transactionBalance, withdrawalAccountNo, withdrawalTransactionSummary);
 	}
 }

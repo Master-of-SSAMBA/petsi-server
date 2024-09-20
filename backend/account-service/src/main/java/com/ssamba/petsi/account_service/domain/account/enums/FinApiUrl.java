@@ -13,8 +13,8 @@ public enum FinApiUrl {
 	inquireTransactionHistoryList(
 		"https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireTransactionHistoryList"),
 	inquireDemandDepositAccountList("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireDemandDepositAccountList"),
-	inquireDemandDepositAccount("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireDemandDepositAccount");
-
+	inquireDemandDepositAccount("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireDemandDepositAccount"),
+	updateDemandDepositAccountTransfer("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/updateDemandDepositAccountTransfer");
 
 	private String url;
 
