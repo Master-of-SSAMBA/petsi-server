@@ -1,8 +1,6 @@
 spring:
   application:
     name: picture-service
-  profiles:
-    include: aws
   datasource:
     url: jdbc:mysql://mysql_picture_service:3306/petsi_picture?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: petsi
