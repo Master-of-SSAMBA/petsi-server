@@ -3,21 +3,21 @@ spring:
     name: picture-service
   datasource:
     url: jdbc:mysql://mysql_picture_service:3306/petsi_picture?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
     username: petsi
     password: petsi0909!
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  flyway:
+    enabled: false
   jpa:
-    database: mysql
-    properties:
+      database: mysql
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQLDialect
+      show-sql: false
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-    show-sql: false
-    hibernate:
-      ddl-auto: none
-      format_sql: true
+        ddl-auto: none
+        format_sql: true
   data:
     redis:
       host: localhost
       port: 6379
-  flyway:
-    enabled: false
