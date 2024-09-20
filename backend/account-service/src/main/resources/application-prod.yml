@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: account-service
+  datasource:
+    url: jdbc:mysql://mysql_account_service:3306/petsi_account?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: petsi
+    password: petsi0909!
+  flyway:
+    enabled: false
+  jpa:
+    database: mysql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      format_sql: true
+  output:
+    ansi:
+      enabled: always
+  fin:
+    api_key: 2443ab151bab467083ba59ec8b9f6ef5
+springdoc:
+  swagger-ui:
+    path: /api/v1/account/swagger-ui.html
+
+logging:
+  level:
+    org.hibernate: DEBUG
+    org.springframework: DEBUG

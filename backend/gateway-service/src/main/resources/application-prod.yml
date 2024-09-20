@@ -1,0 +1,56 @@
+server:
+  port: 80
+  netty:
+    connection-timeout: 2s
+    idle-timeout: 15s
+  shutdown: graceful
+
+spring:
+  application:
+    name: gateway-service
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+  cloud:
+    gateway:
+      default-uri: http://j11a403.p.ssafy.io
+      default-path: /api/v1
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 5s
+        pool:
+          type: elastic
+          max-idle-time: 15s
+          max-life-time: 60s
+      routes:
+        - id: user-service
+          uri: ${spring.cloud.gateway.default-uri}:9001
+          predicates:
+            - Path=${spring.cloud.gateway.default-path}/user/**
+        - id: pet-service
+          uri: ${spring.cloud.gateway.default-uri}:9002
+          predicates:
+            - Path=${spring.cloud.gateway.default-path}/pet/**
+        - id: account-service
+          uri: ${spring.cloud.gateway.default-uri}:9003
+          predicates:
+            - Path=${spring.cloud.gateway.default-path}/account/**
+        - id: picture-service
+          uri: ${spring.cloud.gateway.default-uri}:9004
+          predicates:
+            - Path=${spring.cloud.gateway.default-path}/picture/**
+        - id: expense-service
+          uri: ${spring.cloud.gateway.default-uri}:9005
+          predicates:
+            - Path=${spring.cloud.gateway.default-path}/expense/**
+        - id: schedule-service
+          uri: ${spring.cloud.gateway.default-uri}:9006
+          predicates:
+            - Path=${spring.cloud.gateway.default-path}/schedule/**
+        - id: notification-service
+          uri: ${spring.cloud.gateway.default-uri}:9007
+          predicates:
+            - Path=${spring.cloud.gateway.default-path}/notification/**
+        - id: frontend-s3
+          uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
+          predicates:
+            - Path=/, /*, /assets/**, /fonts/**, /images/**, index.html, /*.css, /*.js, /*.ts, /*.tsx, /Symbol.ico
