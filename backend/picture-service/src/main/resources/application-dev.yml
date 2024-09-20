@@ -3,16 +3,23 @@ spring:
     import: optional:file:.env[.properties]
   application:
     name: picture-service
-  profiles:
-    include: aws
   datasource:
     url: jdbc:mysql://localhost:3306/petsi_picture?useSSL=false&serverTimezone=UTC
     username: petsi
     password: petsi0909!
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database: mysql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+      format_sql: true
   data:
     redis:
       host: localhost
       port: 6379
   flyway:
-    baseline-on-migrate: true
+    enabled: false
