@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssamba.petsi.account_service.domain.account.dto.request.AccountTransferRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccountRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateAccountNameRequestDto;
@@ -108,4 +109,11 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 
+	@PostMapping("/transfer")
+	@Operation(summary = "계좌 이체")
+	public ResponseEntity<?> accountTransfer(@RequestHeader("X-User-Id") Long userId,
+		@RequestHeader("X-User-Key") String userKey, @RequestBody AccountTransferRequestDto accountTransferRequestDto) {
+		accountService.accountTransfer(userId, userKey, accountTransferRequestDto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(null);
+	}
 }
