@@ -12,6 +12,8 @@ spring:
     timeout-per-shutdown-phase: 15s
   cloud:
     gateway:
+      default-uri: http://j11a403.p.ssafy.io
+      default-path: /api/v1
       httpclient:
         connect-timeout: 2000
         response-timeout: 5s
@@ -21,33 +23,33 @@ spring:
           max-life-time: 60s
       routes:
         - id: user-service
-          uri: http://j11a403.p.ssafy.io:9001
+          uri: ${spring.cloud.gateway.default-uri}:9001
           predicates:
-            - Path=/user/**
+            - Path=${spring.cloud.gateway.default-path}/user/**
         - id: pet-service
-          uri: http://j11a403.p.ssafy.io:9002
+          uri: ${spring.cloud.gateway.default-uri}:9002
           predicates:
-            - Path=/pet/**
+            - Path=${spring.cloud.gateway.default-path}/pet/**
         - id: account-service
-          uri: http://j11a403.p.ssafy.io:9003
+          uri: ${spring.cloud.gateway.default-uri}:9003
           predicates:
-            - Path=/account/**
+            - Path=${spring.cloud.gateway.default-path}/account/**
         - id: picture-service
-          uri: http://j11a403.p.ssafy.io:9004
+          uri: ${spring.cloud.gateway.default-uri}:9004
           predicates:
-            - Path=/picture/**
+            - Path=${spring.cloud.gateway.default-path}/picture/**
         - id: expense-service
-          uri: http://j11a403.p.ssafy.io:9005
+          uri: ${spring.cloud.gateway.default-uri}:9005
           predicates:
-            - Path=/expense/**
+            - Path=${spring.cloud.gateway.default-path}/expense/**
         - id: schedule-service
-          uri: http://j11a403.p.ssafy.io:9006
+          uri: ${spring.cloud.gateway.default-uri}:9006
           predicates:
-            - Path=/schedule/**
+            - Path=${spring.cloud.gateway.default-path}/schedule/**
         - id: notification-service
-          uri: http://j11a403.p.ssafy.io:9007
+          uri: ${spring.cloud.gateway.default-uri}:9007
           predicates:
-            - Path=/notification/**
+            - Path=${spring.cloud.gateway.default-path}/notification/**
         - id: frontend-s3
           uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
           predicates:
