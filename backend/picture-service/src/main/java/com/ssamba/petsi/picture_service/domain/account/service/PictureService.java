@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class PictureService {
 
-    public static final int PICTURES_PER_PAGE = 12;
+    public static final int PICTURES_PER_PAGE = 20;
     public static final String REDIS_KEY_PREFIX = "photo_auth:";
     private final RedisTemplate<String, String> redisTemplate;
     private final PictureRepository pictureRepository;
