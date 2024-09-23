@@ -86,7 +86,7 @@ public class ExpenseController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/purchase")
     public ResponseEntity<?> deletePurchase(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, Long> reqDto) {
         long purchaseId = reqDto.get("purchaseId");
 
@@ -94,7 +94,7 @@ public class ExpenseController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/medical-expense")
     public ResponseEntity<?> deleteMedicalExpense(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, Long> reqDto) {
         long medicalExpenseId = reqDto.get("medicalExpenseId");
 
