@@ -1,4 +1,4 @@
-package com.ssamba.petsi.picture_service.domain.account.service;
+package com.ssamba.petsi.picture_service.domain.picture.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,13 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 @Service

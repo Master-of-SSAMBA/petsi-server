@@ -1,4 +1,4 @@
-package com.ssamba.petsi.picture_service.domain.account.entity;
+package com.ssamba.petsi.picture_service.domain.picture.entity;
 
 import java.time.LocalDateTime;
 

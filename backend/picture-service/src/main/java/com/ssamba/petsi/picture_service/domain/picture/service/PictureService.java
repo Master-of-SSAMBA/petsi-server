@@ -1,9 +1,9 @@
-package com.ssamba.petsi.picture_service.domain.account.service;
+package com.ssamba.petsi.picture_service.domain.picture.service;
 
-import com.ssamba.petsi.picture_service.domain.account.dto.response.DateResponseDto;
-import com.ssamba.petsi.picture_service.domain.account.dto.response.PictureResponseDto;
-import com.ssamba.petsi.picture_service.domain.account.entity.Picture;
-import com.ssamba.petsi.picture_service.domain.account.repository.PictureRepository;
+import com.ssamba.petsi.picture_service.domain.picture.dto.response.DateResponseDto;
+import com.ssamba.petsi.picture_service.domain.picture.dto.response.PictureResponseDto;
+import com.ssamba.petsi.picture_service.domain.picture.entity.Picture;
+import com.ssamba.petsi.picture_service.domain.picture.repository.PictureRepository;
 import com.ssamba.petsi.picture_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.picture_service.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
