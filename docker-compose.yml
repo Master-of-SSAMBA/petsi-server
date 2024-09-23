@@ -3,8 +3,6 @@ services:
   gateway-service:
     image: petsi/gateway-service:latest
     container_name: gateway-service
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
     ports:
       - "80:80"
     networks:
@@ -13,6 +11,8 @@ services:
   user-service:
     image: petsi/user-service:latest
     container_name: user-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
     ports:
       - "9001:9001"
     networks:

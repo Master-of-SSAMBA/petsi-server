@@ -1,4 +1,4 @@
-package com.ssamba.petsi.picture_service.domain.account.dto.response;
+package com.ssamba.petsi.picture_service.domain.picture.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

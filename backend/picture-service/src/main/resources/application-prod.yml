@@ -17,7 +17,17 @@ spring:
       hibernate:
         ddl-auto: none
         format_sql: true
-  data:
-    redis:
-      host: localhost
-      port: 6379
+#  data:
+#    redis:
+#      host: localhost
+#      port: 6379
+
+cloud:
+  aws:
+    s3:
+      bucket: petsi-images-bucket
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: AKIAZ3MGNG6NT7HPQKVS
+      secretKey: 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

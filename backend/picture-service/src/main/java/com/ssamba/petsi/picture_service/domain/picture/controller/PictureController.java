@@ -1,7 +1,7 @@
-package com.ssamba.petsi.picture_service.domain.account.controller;
+package com.ssamba.petsi.picture_service.domain.picture.controller;
 
-import com.ssamba.petsi.picture_service.domain.account.dto.response.PictureResponseDto;
-import com.ssamba.petsi.picture_service.domain.account.service.PictureService;
+import com.ssamba.petsi.picture_service.domain.picture.dto.response.PictureResponseDto;
+import com.ssamba.petsi.picture_service.domain.picture.service.PictureService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

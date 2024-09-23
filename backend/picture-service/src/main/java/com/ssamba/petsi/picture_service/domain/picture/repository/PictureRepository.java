@@ -1,6 +1,6 @@
-package com.ssamba.petsi.picture_service.domain.account.repository;
+package com.ssamba.petsi.picture_service.domain.picture.repository;
 
-import com.ssamba.petsi.picture_service.domain.account.entity.Picture;
+import com.ssamba.petsi.picture_service.domain.picture.entity.Picture;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 
