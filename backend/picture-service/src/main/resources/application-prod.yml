@@ -4,8 +4,8 @@ spring:
   datasource:
     url: jdbc:mysql://mysql_picture_service:3306/petsi_picture?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: petsi
-    password: petsi0909!
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   flyway:
     enabled: false
   jpa:
@@ -29,5 +29,5 @@ cloud:
     stack.auto: false
     region.static: ap-northeast-2
     credentials:
-      accessKey: AKIAZ3MGNG6NT7HPQKVS
-      secretKey: 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
+      accessKey: ${S3_ACCESS_KEY}
+      secretKey: ${S3_SECRET_KEY}
