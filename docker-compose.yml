@@ -51,25 +51,25 @@ services:
     networks:
       - petsi_backend_network 
 
-  # expense-service:
-  #   image: "petsi/expense-service"
-  #   container_name: expense-service
-  #   environment:
-  #     - SPRING_PROFILES_ACTIVE=prod
-  #   ports:
-  #     - 9005:9005
-  #   networks:
-  #     - petsi_backend_network 
+  expense-service:
+    image: "petsi/expense-service"
+    container_name: expense-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - 9005:9005
+    networks:
+      - petsi_backend_network
 
-  # schedule-service:
-  #   image: "petsi/schedule-service"
-  #   container_name: "schedule-service"
-  #   environment:
-  #     - SPRING_PROFILES_ACTIVE=prod
-  #   ports:
-  #     - 9006:9006
-  #   networks:
-  #     - petsi_backend_network 
+  schedule-service:
+    image: "petsi/schedule-service"
+    container_name: "schedule-service"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+     - 9006:9006
+    networks:
+      - petsi_backend_network
 
   # notification-service:
   #   image: "petsi/notification-service"
