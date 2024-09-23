@@ -20,8 +20,6 @@ spring:
   output:
     ansi:
       enabled: always
-  fin:
-    api_key: 2443ab151bab467083ba59ec8b9f6ef5
 springdoc:
   swagger-ui:
     path: /api/v1/schedule/swagger-ui.html
