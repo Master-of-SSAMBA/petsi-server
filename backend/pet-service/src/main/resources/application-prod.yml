@@ -7,8 +7,14 @@ spring:
     password: petsi0909!
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
+    database: mysql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: false
     hibernate:
       ddl-auto: none
+      format_sql: true
   flyway:
     enabled: false
 
