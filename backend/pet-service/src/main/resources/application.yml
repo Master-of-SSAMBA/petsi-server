@@ -1,0 +1,18 @@
+spring:
+  config:
+    import: optional:file:.env
+  application:
+    name: picture-service
+  profiles:
+    include: aws
+  datasource:
+    url: jdbc:mysql://localhost:3306/petsi_pet?useSSL=false&serverTimezone=UTC
+#    url: jdbc:mysql://mysql_account_service:3306/petsi_account?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+  flyway:
+    baseline-on-migrate: true
