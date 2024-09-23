@@ -1,80 +1,81 @@
 version: '3.8'
 services:
+
   gateway-service:
-    image: petsi/gateway-service:latest
-    container_name: gateway-service
+    image: "petsi/gateway-service"
+    container_name: "gateway-service"
     ports:
-      - "80:80"
+      - 80:80
     networks:
       - petsi_backend_network 
 
   # user-service:
-  #   image: petsi/user-service:latest
-  #   container_name: user-service
+  #   image: "petsi/user-service:latest"
+  #   container_name: "user-service"
   #   environment:
   #     - SPRING_PROFILES_ACTIVE=prod
   #   ports:
-  #     - "9001:9001"
+  #     - 9001:9001
   #   networks:
   #     - petsi_backend_network 
 
   pet-service:
-    image: petsi/pet-service:latest
-    container_name: pet-service
+    image: "petsi/pet-service"
+    container_name: "pet-service"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     ports:
-      - "9002:9002"
+      - 9002:9002
     networks:
       - petsi_backend_network 
 
   account-service:
-    image: petsi/account-service:latest
-    container_name: account-service
+    image: "petsi/account-service"
+    container_name: "account-service"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     ports:
-      - "9003:9003"
+      - 9003:9003
     networks:
       - petsi_backend_network 
 
   picture-service:
-    image: petsi/picture-service:latest
-    container_name: picture-service
+    image: "petsi/picture-service"
+    container_name: "picture-service"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     ports:
-      - "9004:9004"
+      - 9004:9004
     networks:
       - petsi_backend_network 
 
   # expense-service:
-  #   image: petsi/expense-service:latest
+  #   image: "petsi/expense-service"
   #   container_name: expense-service
   #   environment:
   #     - SPRING_PROFILES_ACTIVE=prod
   #   ports:
-  #     - "9005:9005"
+  #     - 9005:9005
   #   networks:
   #     - petsi_backend_network 
 
   # schedule-service:
-  #   image: petsi/schedule-service:latest
-  #   container_name: schedule-service
+  #   image: "petsi/schedule-service"
+  #   container_name: "schedule-service"
   #   environment:
   #     - SPRING_PROFILES_ACTIVE=prod
   #   ports:
-  #     - "9006:9006"
+  #     - 9006:9006
   #   networks:
   #     - petsi_backend_network 
 
   # notification-service:
-  #   image: petsi/notification-service:latest
-  #   container_name: notification-service
+  #   image: "petsi/notification-service"
+  #   container_name: "notification-service"
   #   environment:
   #     - SPRING_PROFILES_ACTIVE=prod
   #   ports:
-  #     - "9007:9007"
+  #     - 9007:9007
   #   networks:
   #     - petsi_backend_network 
 
