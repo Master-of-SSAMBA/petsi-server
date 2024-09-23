@@ -58,7 +58,7 @@ public class ScheduleController {
 	public ResponseEntity<?> updateScheduleCategory(@RequestHeader("X-User-Id") Long userId,
 		@RequestBody UpdateScheduleCategoryRequestDto requestDto) {
 		scheduleService.updateScheduleCategory(userId, requestDto);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
 }
