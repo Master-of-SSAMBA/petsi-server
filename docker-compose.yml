@@ -6,7 +6,7 @@ services:
     ports:
       - "80:80"
     networks:
-      - petsi_network
+      - petsi_backend_network 
 
   # user-service:
   #   image: petsi/user-service:latest
@@ -16,7 +16,7 @@ services:
   #   ports:
   #     - "9001:9001"
   #   networks:
-  #     - petsi_network
+  #     - petsi_backend_network 
 
   pet-service:
     image: petsi/pet-service:latest
@@ -26,7 +26,7 @@ services:
     ports:
       - "9002:9002"
     networks:
-      - petsi_network
+      - petsi_backend_network 
 
   account-service:
     image: petsi/account-service:latest
@@ -36,7 +36,7 @@ services:
     ports:
       - "9003:9003"
     networks:
-      - petsi_network
+      - petsi_backend_network 
 
   picture-service:
     image: petsi/picture-service:latest
@@ -46,7 +46,7 @@ services:
     ports:
       - "9004:9004"
     networks:
-      - petsi_network
+      - petsi_backend_network 
 
   # expense-service:
   #   image: petsi/expense-service:latest
@@ -56,7 +56,7 @@ services:
   #   ports:
   #     - "9005:9005"
   #   networks:
-  #     - petsi_network
+  #     - petsi_backend_network 
 
   # schedule-service:
   #   image: petsi/schedule-service:latest
@@ -66,7 +66,7 @@ services:
   #   ports:
   #     - "9006:9006"
   #   networks:
-  #     - petsi_network
+  #     - petsi_backend_network 
 
   # notification-service:
   #   image: petsi/notification-service:latest
@@ -76,7 +76,7 @@ services:
   #   ports:
   #     - "9007:9007"
   #   networks:
-  #     - petsi_network
+  #     - petsi_backend_network 
 
 # networks:
 #   petsi_network:
