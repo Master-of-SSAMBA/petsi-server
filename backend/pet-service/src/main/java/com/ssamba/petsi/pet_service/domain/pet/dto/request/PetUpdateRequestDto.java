@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.ssamba.petsi.pet_service.domain.pet.entity.Pet;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,6 +43,8 @@ public class PetUpdateRequestDto {
     private String gender;
 
     @NotNull
+    @Positive(message = "몸무게는 음수가 될 수 없습니다.")
+    @Digits(integer = 2, fraction = 2, message = "몸무게는 소숫점 둘째 자리 까지만 가능합니다.")
     private Double weight;
 
 }

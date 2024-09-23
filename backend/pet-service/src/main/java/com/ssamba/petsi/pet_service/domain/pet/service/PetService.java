@@ -69,12 +69,10 @@ public class PetService {
                 url = s3Service.upload(image, fileName);
             } catch (Exception e) {
                 // 사진 업로드 오류 처리
-                e.printStackTrace();
                 throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
             }
         }
 
-        System.out.println(url);
         Pet pet = petDto.convertToPet(userId, url);
         petRepository.save(pet);
     }
@@ -105,7 +103,6 @@ public class PetService {
                 url = s3Service.upload(image, fileName);
             } catch (Exception e) {
                 // 사진 업로드 오류 처리
-                e.printStackTrace();
                 throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
             }
         }
@@ -137,12 +134,4 @@ public class PetService {
         // MIME 타입이 허용된 목록에 있는지 확인
         return mimeType != null && Arrays.asList(validMimeTypes).contains(mimeType);
     }
-
-    // 날짜 파싱 메서드
-    public static DateResponseDto formatDateTime(LocalDateTime dateTime) {
-        String date = dateTime.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String time = dateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-        return new DateResponseDto(date, time);
-    }
-
 }

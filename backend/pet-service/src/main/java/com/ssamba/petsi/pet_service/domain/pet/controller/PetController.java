@@ -6,6 +6,8 @@ import com.ssamba.petsi.pet_service.domain.pet.dto.request.PetCreateRequestDto;
 import com.ssamba.petsi.pet_service.domain.pet.dto.request.PetUpdateRequestDto;
 import com.ssamba.petsi.pet_service.domain.pet.dto.response.PetResponseDto;
 import com.ssamba.petsi.pet_service.domain.pet.service.PetService;
+import com.ssamba.petsi.pet_service.global.exception.BusinessLogicException;
+import com.ssamba.petsi.pet_service.global.exception.ExceptionCode;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,14 +40,13 @@ public class PetController {
 
     @PostMapping
     public ResponseEntity<?> createPet(@RequestHeader("X-User-Id") Long userId, @RequestPart("reqDto") String reqDto, @RequestPart(value = "image", required = false) MultipartFile image) {
-        System.out.println(reqDto);
         // JSON 데이터를 객체로 변환
         ObjectMapper objectMapper = new ObjectMapper();
         PetCreateRequestDto petDto;
         try {
             petDto = objectMapper.readValue(reqDto, PetCreateRequestDto.class);
         } catch (JsonProcessingException e) {
-            return ResponseEntity.badRequest().body("Invalid petData JSON format");
+            throw new BusinessLogicException(ExceptionCode.INVALID_DATA_FORMAT);
         }
 
         petService.savePet(userId, petDto, image);
@@ -60,7 +61,7 @@ public class PetController {
         try {
             petDto = objectMapper.readValue(reqDto, PetUpdateRequestDto.class);
         } catch (JsonProcessingException e) {
-            return ResponseEntity.badRequest().body("Invalid petData JSON format");
+            throw new BusinessLogicException(ExceptionCode.INVALID_DATA_FORMAT);
         }
 
         petService.updatePet(userId, petDto, image);
