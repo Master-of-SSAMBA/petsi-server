@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Table(name = "Schedule_Category")
@@ -48,4 +49,9 @@ public class ScheduleCategory {
 	protected void onCreate() {
 		this.status = ScheduleStatus.ACTIVATED.getValue();
 	}
+	public ScheduleCategory(Long userId, String title) {
+		this.userId = userId;
+		this.title = title;
+	}
+
 }

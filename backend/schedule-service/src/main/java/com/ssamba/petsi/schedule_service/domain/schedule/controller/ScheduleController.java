@@ -1,10 +1,12 @@
 package com.ssamba.petsi.schedule_service.domain.schedule.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +16,6 @@ import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleService
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,7 +30,15 @@ public class ScheduleController {
 	@Operation(summary = "일정 카테고리 불러오기")
 	public ResponseEntity<?> getScheduleCategory(@RequestHeader("X-User-Id") Long userId) {
 		List<?> list = scheduleService.getScheduleCategory(userId);
-		return ResponseEntity.status(HttpStatus.OK).body(null);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
+	}
+
+
+	@PostMapping("/category")
+	@Operation(summary = "일정 카테고리 불러오기")
+	public ResponseEntity<?> addScheduleCategory(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, String> title) {
+		scheduleService.addScheduleCategory(userId, title.get("title"));
+		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
 
