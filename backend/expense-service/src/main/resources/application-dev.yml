@@ -2,7 +2,7 @@ spring:
   application:
     name: expense-service
   datasource:
-    url: jdbc:mysql://mysql_account_service:3306/petsi_expense?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://mysql_expense_service:3306/petsi_expense?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: petsi
     password: petsi0909!

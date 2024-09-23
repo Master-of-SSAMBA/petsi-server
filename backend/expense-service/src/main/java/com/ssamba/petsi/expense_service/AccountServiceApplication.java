@@ -1,4 +1,4 @@
-package com.ssamba.petsi.account_service;
+package com.ssamba.petsi.expense_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
