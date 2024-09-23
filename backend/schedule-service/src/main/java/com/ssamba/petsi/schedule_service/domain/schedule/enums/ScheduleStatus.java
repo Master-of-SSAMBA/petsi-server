@@ -13,3 +13,4 @@ public enum ScheduleStatus {
 		this.value = value;
 	}
 }
+
