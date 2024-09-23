@@ -75,7 +75,4 @@ public class PetController {
         petService.deletePet(userId, petId);
         return ResponseEntity.noContent().build();
     }
-
-
-
 }
