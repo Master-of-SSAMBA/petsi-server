@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.CreateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleCategoryRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleService;
 
@@ -68,5 +69,21 @@ public class ScheduleController {
 		return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getScheduleDetail(userId, id));
 	}
 
+	@DeleteMapping("/category")
+	@Operation(summary = "상세 일정 삭제하기")
+	public ResponseEntity<?> deleteSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, Long> scheduleId) {
+		scheduleService.deleteSchedule(userId, scheduleId.get("id"));
+		return ResponseEntity.status(HttpStatus.OK).body(null);
+	}
+
+
+
+	@PostMapping("/category")
+	@Operation(summary = "상세 일정 등록하기")
+	public ResponseEntity<?> createSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody
+		CreateScheduleRequestDto createScheduleRequestDto) {
+		scheduleService.createSchedule(userId, createScheduleRequestDto);
+		return ResponseEntity.status(HttpStatus.OK).body(null);
+	}
 
 }

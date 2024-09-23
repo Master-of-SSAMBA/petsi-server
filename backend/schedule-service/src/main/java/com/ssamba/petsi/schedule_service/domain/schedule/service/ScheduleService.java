@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.CreateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleCategoryRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetScheduleCategoryResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetScheduleDetailResponseDto;
@@ -81,5 +82,19 @@ public class ScheduleService {
 		//todo : petList 갖고와서 dto에 set
 
 		return dto;
+	}
+
+	@Transactional
+	public void deleteSchedule(Long userId, Long id) {
+		Schedule schedule = scheduleRespository.findByScheduleIdAndScheduleCategoryUserId(id, userId).orElseThrow(
+			() -> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND)
+		);
+
+		schedule.setStatus(ScheduleStatus.INACTIVATED.getValue());
+	}
+
+	@Transactional
+	public void createSchedule(Long userId, CreateScheduleRequestDto createScheduleRequestDto) {
+
 	}
 }

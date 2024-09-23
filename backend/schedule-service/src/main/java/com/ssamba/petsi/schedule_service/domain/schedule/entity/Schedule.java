@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Schedule")
@@ -49,6 +50,7 @@ public class Schedule {
 	@Column(nullable = false)
 	private LocalDate nextScheduleDate;
 
+	@Setter
 	@Column(nullable = false)
 	private String status;
 
