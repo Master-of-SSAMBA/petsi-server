@@ -78,6 +78,6 @@ services:
   #   networks:
   #     - petsi_backend_network 
 
-# networks:
-#   petsi_network:
-#     driver: bridge
+networks:
+  petsi_backend_network:
+    driver: bridge
