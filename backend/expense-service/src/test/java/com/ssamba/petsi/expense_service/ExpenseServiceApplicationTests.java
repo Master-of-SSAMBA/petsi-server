@@ -1,10 +1,10 @@
-package com.ssamba.petsi.account_service;
+package com.ssamba.petsi.expense_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AccountServiceApplicationTests {
+class ExpenseServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
