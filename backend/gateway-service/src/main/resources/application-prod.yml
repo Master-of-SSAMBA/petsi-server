@@ -12,7 +12,6 @@ spring:
     timeout-per-shutdown-phase: 15s
   cloud:
     gateway:
-      default-uri: http://j11a403.p.ssafy.io
       default-path: /api/v1
       httpclient:
         connect-timeout: 2000
@@ -23,31 +22,31 @@ spring:
           max-life-time: 60s
       routes:
         - id: user-service
-          uri: ${spring.cloud.gateway.default-uri}:9001
+          uri: user-service:9001
           predicates:
             - Path=${spring.cloud.gateway.default-path}/user/**
         - id: pet-service
-          uri: ${spring.cloud.gateway.default-uri}:9002
+          uri: pet-service:9002
           predicates:
             - Path=${spring.cloud.gateway.default-path}/pet/**
         - id: account-service
-          uri: ${spring.cloud.gateway.default-uri}:9003
+          uri: account-service:9003
           predicates:
             - Path=${spring.cloud.gateway.default-path}/account/**
         - id: picture-service
-          uri: ${spring.cloud.gateway.default-uri}:9004
+          uri: picture-service:9004
           predicates:
             - Path=${spring.cloud.gateway.default-path}/picture/**
         - id: expense-service
-          uri: ${spring.cloud.gateway.default-uri}:9005
+          uri: expense-service:9005
           predicates:
             - Path=${spring.cloud.gateway.default-path}/expense/**
         - id: schedule-service
-          uri: ${spring.cloud.gateway.default-uri}:9006
+          uri: schedule-service:9006
           predicates:
             - Path=${spring.cloud.gateway.default-path}/schedule/**
         - id: notification-service
-          uri: ${spring.cloud.gateway.default-uri}:9007
+          uri: notification-service:9007
           predicates:
             - Path=${spring.cloud.gateway.default-path}/notification/**
         - id: frontend-s3
