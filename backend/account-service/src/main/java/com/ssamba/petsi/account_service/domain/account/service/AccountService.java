@@ -220,7 +220,7 @@ public class AccountService {
 	}
 
 	public List<GetAccountHistoryResponseDto> getAccountHistory(Long userId, String userKey, Long accountId, int page,
-		Integer sortOption) {
+		int sortOption) {
 		Pageable pageable = PageRequest.of(page, 12);
 
 		Account account = accountRepository.findByIdWithRecurringTransaction(accountId);
@@ -238,7 +238,7 @@ public class AccountService {
 		LocalDate nowDate = LocalDate.now();
 		String endDate = nowDate.format(formatter);
 		String startDate = "20200101";
-		if (sortOption != null) {
+		if (sortOption != 0) {
 			LocalDate monthSetting = nowDate.minusMonths(sortOption);
 			startDate = monthSetting.format(formatter);
 		}
