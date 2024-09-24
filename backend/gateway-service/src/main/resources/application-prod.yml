@@ -53,3 +53,8 @@ spring:
           uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
           predicates:
             - Path=/**
+  redis:
+    host: redis-gateway-service
+    port: 6379
+    password: ${DB_PASSWORD}
+    timeout: 5000

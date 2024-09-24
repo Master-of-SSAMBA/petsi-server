@@ -21,10 +21,11 @@ spring:
     hibernate:
       ddl-auto: none
       format_sql: true
-#  data:
-#    redis:
-#      host: localhost
-#      port: 6379
+  redis:
+    host: redis-picture-service
+    port: 6381
+    password: ${DB_PASSWORD}
+    timeout: 5000
 
 #swagger : account 부분 서비스로 변경
 springdoc:

@@ -23,6 +23,11 @@ spring:
       format_sql: true
   fin:
     api-key: ${FIN_API_KEY}
+  redis:
+    host: redis-account-service
+    port: 6380
+    password: ${DB_PASSWORD}
+    timeout: 5000
 
 #swagger : account 부분 서비스로 변경
 springdoc:
