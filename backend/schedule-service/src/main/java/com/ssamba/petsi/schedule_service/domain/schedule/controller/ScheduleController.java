@@ -64,20 +64,20 @@ public class ScheduleController {
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
-	@GetMapping()
+	@GetMapping("")
 	@Operation(summary = "월별 전체 일정 불러오기")
 	public ResponseEntity<?> getSchedules(@RequestHeader("X-User-Id") Long userId, @RequestParam("month") int month, @RequestBody Map<String, Long> pet) {
 		return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getSchedulesPerMonth(userId, month, pet.get("pet_id")));
 	}
 
 
-	@GetMapping("/category/{id}")
+	@GetMapping("/{id}")
 	@Operation(summary = "상세 일정 불러오기")
 	public ResponseEntity<?> getScheduleDetail(@RequestHeader("X-User-Id") Long userId, @PathVariable Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getScheduleDetail(userId, id));
 	}
 
-	@DeleteMapping("/category")
+	@DeleteMapping("")
 	@Operation(summary = "상세 일정 삭제하기")
 	public ResponseEntity<?> deleteSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, Long> scheduleId) {
 		scheduleService.deleteSchedule(userId, scheduleId.get("id"));
@@ -85,7 +85,7 @@ public class ScheduleController {
 	}
 
 
-	@PostMapping("/category")
+	@PostMapping("")
 	@Operation(summary = "상세 일정 등록하기")
 	public ResponseEntity<?> createSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody
 		CreateScheduleRequestDto createScheduleRequestDto) {
