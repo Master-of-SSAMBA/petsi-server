@@ -90,7 +90,7 @@ public class ScheduleController {
 	public ResponseEntity<?> createSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody
 		CreateScheduleRequestDto createScheduleRequestDto) {
 		scheduleService.createSchedule(userId, createScheduleRequestDto);
-		return ResponseEntity.status(HttpStatus.OK).body(null);
+		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
 }
