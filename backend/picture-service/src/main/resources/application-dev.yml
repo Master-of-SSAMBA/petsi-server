@@ -1,13 +1,18 @@
+server:
+  port: 9004 #실행할 포트로 설정
 spring:
   config:
-    import: optional:file:.env[.properties]
+    import: optional:file:.env
   application:
-    name: picture-service
+    name: picture-service #현재 서비스 이름으로 변경
   datasource:
-    url: jdbc:mysql://localhost:3306/petsi_picture?useSSL=false&serverTimezone=UTC
+    #로컬에서 사용할 db로 설정, account 부분을 서비스 이름으로 변경
+    url: jdbc:mysql://localhost:3306/petsi_picture?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  flyway:
+    enabled: false #dev에서는 편안한 옵션 선택
   jpa:
     database: mysql
     properties:
@@ -15,14 +20,23 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     show-sql: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: none #dev에서는 편안한 옵션 선택
       format_sql: true
   data:
     redis:
       host: localhost
       port: 6379
-  flyway:
-    enabled: false
+
+#swagger : account 부분 서비스로 변경
+springdoc:
+  swagger-ui:
+    path: /api/v1/picture/swagger-ui.html
+
+#로그 관련
+logging:
+  level:
+    org.hibernate: DEBUG
+    org.springframework: DEBUG
 
 cloud:
   aws:

@@ -1,11 +1,15 @@
+server:
+  port: 9006 #실행할 포트로 설정
 spring:
   application:
-    name: schedule-service
+    name: schedule-service #현재 서비스 이름으로 변경
   datasource:
+    #account 부분을 현재 서비스 이름으로 변경
     url: jdbc:mysql://mysql_schedule_service:3306/petsi_schedule?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+  #차후 설정 예정
   flyway:
     enabled: false
   jpa:
@@ -17,13 +21,13 @@ spring:
     hibernate:
       ddl-auto: none
       format_sql: true
-  output:
-    ansi:
-      enabled: always
+
+#swagger : account 부분 서비스로 변경
 springdoc:
   swagger-ui:
     path: /api/v1/schedule/swagger-ui.html
 
+#로그 관련
 logging:
   level:
     org.hibernate: DEBUG
