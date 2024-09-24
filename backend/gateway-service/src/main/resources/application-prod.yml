@@ -52,4 +52,5 @@ spring:
         - id: frontend-s3
           uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
           predicates:
-            - Path=/{segment:^(?!api/v1).*$}/**
+            - Path=/**
+            - Not(Path=${spring.cloud.gateway.default-path}/**)
