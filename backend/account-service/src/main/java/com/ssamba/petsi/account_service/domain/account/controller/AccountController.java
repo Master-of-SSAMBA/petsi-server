@@ -103,7 +103,7 @@ public class AccountController {
 	public ResponseEntity<?> getAccountHistory(@RequestHeader("X-User-Id") Long userId,
 		@RequestHeader("X-User-Key") String userKey, @RequestBody Map<String, Long> request,
 		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "1") Integer sortOption) {
+		@RequestParam Integer sortOption) {
 		List<GetAccountHistoryResponseDto> list = accountService.getAccountHistory(userId, userKey,
 			request.get("accountId"), page, sortOption);
 		return ResponseEntity.status(HttpStatus.OK).body(list);
