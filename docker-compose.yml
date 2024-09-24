@@ -6,6 +6,7 @@ services:
     container_name: "gateway-service"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - TZ=Asia/Seoul
     ports:
       - 80:80
     networks:
@@ -16,6 +17,7 @@ services:
   #   container_name: "user-service"
   #   environment:
   #     - SPRING_PROFILES_ACTIVE=prod
+  #     - TZ=Asia/Seoul
   #   ports:
   #     - 9001:9001
   #   networks:
@@ -26,6 +28,7 @@ services:
     container_name: "pet-service"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - TZ=Asia/Seoul
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - CLOUD_AWS_CREDENTIALS_ACCESS-KEY=${S3_ACCESS_KEY}
@@ -40,6 +43,7 @@ services:
     container_name: "account-service"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - TZ=Asia/Seoul
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - SPRING_FIN_API-KEY=${FIN_API_KEY}
@@ -53,6 +57,7 @@ services:
     container_name: "picture-service"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - TZ=Asia/Seoul
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - CLOUD_AWS_CREDENTIALS_ACCESS-KEY=${S3_ACCESS_KEY}
@@ -67,6 +72,7 @@ services:
     container_name: expense-service
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - TZ=Asia/Seoul
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
     ports:
@@ -79,6 +85,7 @@ services:
     container_name: "schedule-service"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - TZ=Asia/Seoul
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
     ports:
@@ -90,6 +97,7 @@ services:
   #   image: "petsi/notification-service"
   #   container_name: "notification-service"
   #   environment:
+  #     - TZ=Asia/Seoul
   #     - SPRING_PROFILES_ACTIVE=prod
   #   ports:
   #     - 9007:9007
