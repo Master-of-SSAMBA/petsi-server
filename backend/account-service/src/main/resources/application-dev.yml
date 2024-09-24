@@ -21,7 +21,7 @@ spring:
     ansi:
       enabled: always
   fin:
-    api_key: ${FIN_API_KEY}
+    api-key: ${FIN_API_KEY}
 springdoc:
   swagger-ui:
     path: /petsi/swagger-ui.html
