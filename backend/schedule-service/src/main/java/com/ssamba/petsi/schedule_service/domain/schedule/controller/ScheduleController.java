@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.CreateScheduleRequestDto;
@@ -63,6 +64,13 @@ public class ScheduleController {
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
+	@GetMapping()
+	@Operation(summary = "월별 전체 일정 불러오기")
+	public ResponseEntity<?> getSchedules(@RequestHeader("X-User-Id") Long userId, @RequestParam("month") int month, @RequestBody Map<String, Long> pet) {
+		return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getSchedulesPerMonth(userId, month, pet.get("pet_id")));
+	}
+
+
 	@GetMapping("/category/{id}")
 	@Operation(summary = "상세 일정 불러오기")
 	public ResponseEntity<?> getScheduleDetail(@RequestHeader("X-User-Id") Long userId, @PathVariable Long id) {
@@ -73,9 +81,8 @@ public class ScheduleController {
 	@Operation(summary = "상세 일정 삭제하기")
 	public ResponseEntity<?> deleteSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, Long> scheduleId) {
 		scheduleService.deleteSchedule(userId, scheduleId.get("id"));
-		return ResponseEntity.status(HttpStatus.OK).body(null);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
-
 
 
 	@PostMapping("/category")
