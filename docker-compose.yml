@@ -98,4 +98,5 @@ services:
 
 networks:
   petsi_backend_network:
+    name: petsi_backend_network
     driver: bridge
