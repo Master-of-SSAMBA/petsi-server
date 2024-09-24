@@ -22,31 +22,31 @@ spring:
           max-life-time: 60s
       routes:
         - id: user-service
-          uri: user-service:9001
+          uri: http://user-service:9001
           predicates:
             - Path=${spring.cloud.gateway.default-path}/user/**
         - id: pet-service
-          uri: pet-service:9002
+          uri: http://pet-service:9002
           predicates:
             - Path=${spring.cloud.gateway.default-path}/pet/**
         - id: account-service
-          uri: account-service:9003
+          uri: http://account-service:9003
           predicates:
             - Path=${spring.cloud.gateway.default-path}/account/**
         - id: picture-service
-          uri: picture-service:9004
+          uri: http://picture-service:9004
           predicates:
             - Path=${spring.cloud.gateway.default-path}/picture/**
         - id: expense-service
-          uri: expense-service:9005
+          uri: http://expense-service:9005
           predicates:
             - Path=${spring.cloud.gateway.default-path}/expense/**
         - id: schedule-service
-          uri: schedule-service:9006
+          uri: http://schedule-service:9006
           predicates:
             - Path=${spring.cloud.gateway.default-path}/schedule/**
         - id: notification-service
-          uri: notification-service:9007
+          uri: http://notification-service:9007
           predicates:
             - Path=${spring.cloud.gateway.default-path}/notification/**
         - id: frontend-s3
