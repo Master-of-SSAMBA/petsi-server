@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Schedule")
@@ -33,7 +34,7 @@ public class Schedule {
 	@Column(name = "schedule_id", nullable = false)
 	private Long scheduleId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "schedule_category_id", nullable = false)
 	private ScheduleCategory scheduleCategory;
 
@@ -49,6 +50,7 @@ public class Schedule {
 	@Column(nullable = false)
 	private LocalDate nextScheduleDate;
 
+	@Setter
 	@Column(nullable = false)
 	private String status;
 
@@ -58,7 +60,7 @@ public class Schedule {
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
 
-	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<PetToSchedule> petToSchedule;
 
 	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -5,7 +5,9 @@ import lombok.Getter;
 @Getter
 public enum ScheduleStatus {
 	ACTIVATED("활성"),
-	INACTIVATED("비활성");
+	INACTIVATED("비활성"),
+	UPCOMING("예정"),
+	ENDED("완료");
 
 	private final String value;
 

@@ -9,14 +9,10 @@ import org.springframework.stereotype.Repository;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory;
 
 @Repository
-public interface ScheduleCategoryRespository extends JpaRepository<ScheduleCategory, Long> {
+public interface ScheduleCategoryRepository extends JpaRepository<ScheduleCategory, Long> {
 	List<ScheduleCategory> findAllByUserIdAndStatus(Long userId, String status);
 
-	boolean existsByUserIdAndTitle(Long userId, String title);
-
-	boolean existsByUserIdAndScheduleCategoryId(Long userId, Long id);
-
-	ScheduleCategory findByUserIdAndTitle(Long userId, String title);
+	Optional<ScheduleCategory> findByUserIdAndTitle(Long userId, String title);
 
 	Optional<ScheduleCategory> findByUserIdAndScheduleCategoryIdAndStatus(
 		Long userId, Long scheduleCategoryId, String status);

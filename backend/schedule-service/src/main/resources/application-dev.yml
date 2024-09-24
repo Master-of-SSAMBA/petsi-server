@@ -1,5 +1,5 @@
 server:
-  port: 9006 #실행할 포트로 설정
+  port: 8080 #실행할 포트로 설정
 spring:
   config:
     import: optional:file:.env
