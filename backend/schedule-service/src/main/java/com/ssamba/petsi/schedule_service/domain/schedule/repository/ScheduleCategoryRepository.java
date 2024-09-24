@@ -12,7 +12,7 @@ import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory
 public interface ScheduleCategoryRepository extends JpaRepository<ScheduleCategory, Long> {
 	List<ScheduleCategory> findAllByUserIdAndStatus(Long userId, String status);
 
-	ScheduleCategory findByUserIdAndTitle(Long userId, String title);
+	Optional<ScheduleCategory> findByUserIdAndTitle(Long userId, String title);
 
 	Optional<ScheduleCategory> findByUserIdAndScheduleCategoryIdAndStatus(
 		Long userId, Long scheduleCategoryId, String status);

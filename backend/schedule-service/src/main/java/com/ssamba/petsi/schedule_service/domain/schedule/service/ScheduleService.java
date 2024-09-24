@@ -46,15 +46,14 @@ public class ScheduleService {
 	@Transactional
 	public void addScheduleCategory(Long userId, String title) {
 
-		ScheduleCategory category = scheduleCategoryRepository.findByUserIdAndTitle(userId, title);
-		if (category != null) {
-			if(category.getStatus().equals(ScheduleStatus.ACTIVATED.getValue())) {
-				throw new BusinessLogicException(ExceptionCode.DUPLICATED_SCHEDULE_CATEGORY);
-			}
-			category.setStatus(ScheduleStatus.ACTIVATED.getValue()); return;
+		ScheduleCategory category = scheduleCategoryRepository.findByUserIdAndTitle(userId, title).orElse(
+			scheduleCategoryRepository.save(new ScheduleCategory(userId, title))
+		);
+
+		if(category.getStatus().equals(ScheduleStatus.ACTIVATED.getValue())) {
+			throw new BusinessLogicException(ExceptionCode.DUPLICATED_SCHEDULE_CATEGORY);
 		}
-		ScheduleCategory scheduleCategory = new ScheduleCategory(userId, title);
-		scheduleCategoryRepository.save(scheduleCategory);
+		category.setStatus(ScheduleStatus.ACTIVATED.getValue());
 
 	}
 
