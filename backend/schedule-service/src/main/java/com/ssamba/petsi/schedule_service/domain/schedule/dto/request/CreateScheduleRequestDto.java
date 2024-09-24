@@ -19,7 +19,4 @@ public class CreateScheduleRequestDto {
 	private LocalDateTime startDate;
 	private int intervalDays;
 
-	public Schedule toSchedule() {
-		Schedule schedule = new Schedule();
-	}
 }
