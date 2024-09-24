@@ -215,7 +215,7 @@ public class AccountService {
 
 		returnDto.setBalance(accountFinApiService.inquireDemandDepositAccount(userKey, account.getAccountNo()).getAccountBalance());
 
-		returnDto.setTransactionHistory(getAccountHistory(userId, userKey, accountId, 0, 1));
+		returnDto.setTransactionHistory(getAccountHistory(userId, userKey, accountId, 0, 7));
 		return returnDto;
 	}
 
@@ -239,7 +239,7 @@ public class AccountService {
 		String endDate = nowDate.format(formatter);
 		String startDate = "20200101";
 		if (sortOption != 0) {
-			LocalDate monthSetting = nowDate.minusMonths(sortOption);
+			LocalDate monthSetting = nowDate.minusDays(sortOption);
 			startDate = monthSetting.format(formatter);
 		}
 
