@@ -25,6 +25,7 @@ spring:
     redis:
       host: j11a403.p.ssafy.io
       port: 6381
+      password: ${DB_PASSWORD}
       timeout: 5000
 
 #swagger : account 부분 서비스로 변경
