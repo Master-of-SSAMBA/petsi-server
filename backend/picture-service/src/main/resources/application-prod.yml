@@ -22,7 +22,7 @@ spring:
       ddl-auto: none
       format_sql: true
   redis:
-    host: redis-picture-service
+    host: 172.18.0.19
     port: 6381
     password: ${DB_PASSWORD}
     timeout: 5000
