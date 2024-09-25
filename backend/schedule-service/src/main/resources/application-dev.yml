@@ -1,17 +1,18 @@
+server:
+  port: 8080 #실행할 포트로 설정
 spring:
-  application:
-    name: schedule-service
   config:
-    import: optional:file:.env[.properties]
-  server:
-    port: 8080
+    import: optional:file:.env
+  application:
+    name: schedule-service #현재 서비스 이름으로 변경
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
+    #로컬에서 사용할 db로 설정, account 부분을 서비스 이름으로 변경
+    url: jdbc:mysql://localhost:3306/petsi_schedule?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   flyway:
-    enabled: false
+    enabled: false #dev에서는 편안한 옵션 선택
   jpa:
     database: mysql
     properties:
@@ -19,11 +20,16 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     show-sql: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: none #dev에서는 편안한 옵션 선택
       format_sql: true
-  output:
-    ansi:
-      enabled: always
+
+#swagger : account 부분 서비스로 변경
 springdoc:
   swagger-ui:
-    path: /petsi/swagger-ui.html
+    path: /api/v1/schedule/swagger-ui.html
+
+#로그 관련
+logging:
+  level:
+    org.hibernate: DEBUG
+    org.springframework: DEBUG
