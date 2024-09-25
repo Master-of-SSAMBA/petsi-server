@@ -33,5 +33,5 @@ public class MedicalExpenseUpdateDto {
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate visitedDate;
+    private LocalDate visitedAt;
 }

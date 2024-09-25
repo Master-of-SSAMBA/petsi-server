@@ -1,5 +1,6 @@
 package com.ssamba.petsi.expense_service.domain.expense.entity;
 
+import com.ssamba.petsi.expense_service.domain.expense.dto.request.PurchaseUpdateDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,10 +9,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Getter
 @Builder
+@Table(name = "purchase")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Purchase {
@@ -27,7 +30,7 @@ public class Purchase {
     private String title;
 
     @Column(nullable = true)
-    private String option;
+    private String detail;
 
     @Column(nullable = true)
     private String img;
@@ -54,5 +57,14 @@ public class Purchase {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateEntity(PurchaseUpdateDto purchaseUpdateDto) {
+        this.title = purchaseUpdateDto.getTitle();
+        this.detail = Optional.ofNullable(purchaseUpdateDto.getOption()).orElse("");
+        this.purchasedAt = purchaseUpdateDto.getPurchasedAt();
+        this.quantity = purchaseUpdateDto.getQuantity();
+        this.cost = purchaseUpdateDto.getCost();
+        this.category = purchaseUpdateDto.getCategory();
     }
 }
