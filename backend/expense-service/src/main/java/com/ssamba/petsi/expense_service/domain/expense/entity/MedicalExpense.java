@@ -1,5 +1,6 @@
 package com.ssamba.petsi.expense_service.domain.expense.entity;
 
+import com.ssamba.petsi.expense_service.domain.expense.dto.request.MedicalExpenseUpdateDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Builder
+@Table(name = "medical_expense")
 @NoArgsConstructor
 @AllArgsConstructor
 public class MedicalExpense {
@@ -22,6 +24,9 @@ public class MedicalExpense {
 
     @Column(nullable = false)
     private Long petId;
+
+    @Column(nullable = false)
+    private Long userId;
 
     @Column(nullable = false)
     private String diseaseName;
@@ -50,4 +55,10 @@ public class MedicalExpense {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void updateEntity(MedicalExpenseUpdateDto medicalExpenseUpdateDto) {
+        this.diseaseName = medicalExpenseUpdateDto.getDiseaseName();
+        this.cost = medicalExpenseUpdateDto.getCost();
+        this.hospital = medicalExpenseUpdateDto.getHospital();
+        this.visitedAt = medicalExpenseUpdateDto.getVisitedAt();
+    }
 }

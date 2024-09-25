@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.ssamba.petsi.expense_service.domain.expense.entity.Purchase;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ public class PurchaseMenualPostRequestDto {
     @NotBlank
     private String title;
 
-    private String option;
+    private String detail;
 
     @NotNull
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -38,4 +39,28 @@ public class PurchaseMenualPostRequestDto {
     @NotBlank
     private String category;
 
+    public Purchase convertToPurchase(Long userId, String url) {
+        return Purchase.builder()
+                .userId(userId)
+                .title(this.title)
+                .detail(this.detail)
+                .img(url)
+                .purchasedAt(this.purchasedAt)
+                .quantity(this.quantity)
+                .cost(this.cost)
+                .category(this.category)
+                .build();
+    }
+
+    public Purchase convertToPurchase(Long userId) {
+        return Purchase.builder()
+                .userId(userId)
+                .title(this.title)
+                .detail(this.detail)
+                .purchasedAt(this.purchasedAt)
+                .quantity(this.quantity)
+                .cost(this.cost)
+                .category(this.category)
+                .build();
+    }
 }
