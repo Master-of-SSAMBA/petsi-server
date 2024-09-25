@@ -54,3 +54,9 @@ spring:
           uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
           predicates:
             - Path=/, /*, /assets/**, /fonts/**, /images/**, index.html, /*.css, /*.js, /*.ts, /*.tsx, /Symbol.ico
+  data:
+    redis:
+      host: j11a403.p.ssafy.io
+      port: 6379
+      password: ${DB_PASSWORD}
+      timeout: 5000

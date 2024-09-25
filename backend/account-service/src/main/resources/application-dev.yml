@@ -21,6 +21,12 @@ spring:
     hibernate:
       ddl-auto: update
       format_sql: true
+  data:
+    redis:
+      host: j11a403.p.ssafy.io
+      port: 6380
+      password: ${DB_PASSWORD}
+      timeout: 5000
   output:
     ansi:
       enabled: always

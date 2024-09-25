@@ -6,6 +6,7 @@ services:
     container_name: "gateway-service"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATA_REDIS_PASSWORD=${DB_PASSWORD}
       - TZ=Asia/Seoul
     ports:
       - 80:80
@@ -46,6 +47,7 @@ services:
       - TZ=Asia/Seoul
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_DATA_REDIS_PASSWORD=${DB_PASSWORD}
       - SPRING_FIN_API-KEY=${FIN_API_KEY}
     ports:
       - 9003:9003
@@ -76,6 +78,7 @@ services:
       - TZ=Asia/Seoul
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_DATA_REDIS_PASSWORD=${DB_PASSWORD}
     ports:
       - 9005:9005
     networks:

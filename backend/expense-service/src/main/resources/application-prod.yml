@@ -21,11 +21,12 @@ spring:
     hibernate:
       ddl-auto: none
       format_sql: true
-  redis:
-    host: redis-expense-service
-    port: 6382
-    password: ${DB_PASSWORD}
-    timeout: 5000
+  data:
+    redis:
+      host: j11a403.p.ssafy.io
+      port: 6379
+      password: ${DB_PASSWORD}
+      timeout: 5000
 
 #swagger : account 부분 서비스로 변경
 springdoc:
