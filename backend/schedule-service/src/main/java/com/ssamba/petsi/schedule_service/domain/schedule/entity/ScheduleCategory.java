@@ -39,17 +39,8 @@ public class ScheduleCategory {
 	@Column(nullable = false)
 	private String title;
 
-	@Setter
-	@Column(nullable = false)
-	private String status;
-
 	@OneToMany(mappedBy = "scheduleCategory", cascade = CascadeType.ALL)
 	private List<Schedule> schedules;
-
-	@PrePersist
-	protected void onCreate() {
-		this.status = ScheduleStatus.ACTIVATED.getValue();
-	}
 
 	public ScheduleCategory(Long userId, String title) {
 		this.userId = userId;

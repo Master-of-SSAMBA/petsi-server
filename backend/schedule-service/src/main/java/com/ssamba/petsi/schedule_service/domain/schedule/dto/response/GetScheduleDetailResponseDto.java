@@ -25,7 +25,7 @@ public class GetScheduleDetailResponseDto {
 	private List<Pet> pet;
 	private String title;
 	private DateResponseDto dueDate;
-	private int interval;
+	private String interval;
 
 	public GetScheduleDetailResponseDto(Schedule schedule) {
 		//todo : petList 갖고와서 변환

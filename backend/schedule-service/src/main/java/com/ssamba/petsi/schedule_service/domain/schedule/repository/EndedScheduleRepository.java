@@ -12,7 +12,8 @@ public interface EndedScheduleRepository extends JpaRepository<EndedSchedule, Lo
 	@Query("SELECT es FROM EndedSchedule es " +
 		"JOIN es.schedule s " +
 		"WHERE s.scheduleCategory.userId = :userId " +
-		"AND FUNCTION('MONTH', es.createdAt) = :month ")
+		"AND FUNCTION('MONTH', es.createdAt) = :month " +
+		"ORDER BY es.createdAt DESC")
 	List<EndedSchedule> getAllEndedScheduledList(Long userId, int month);
 
 	@Query("SELECT es FROM EndedSchedule es " +
@@ -20,6 +21,7 @@ public interface EndedScheduleRepository extends JpaRepository<EndedSchedule, Lo
 		"JOIN PetToSchedule pts ON pts.schedule = s " +
 		"WHERE s.scheduleCategory.userId = :userId " +
 		"AND pts.petId = :petId " +
-		"AND FUNCTION('MONTH', es.createdAt) = :month ")
+		"AND FUNCTION('MONTH', es.createdAt) = :month " +
+		"ORDER BY es.createdAt DESC")
 	List<EndedSchedule> getAllEndedScheduledListWithPetId(Long userId, int month, Long petId);
 }

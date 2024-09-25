@@ -3,6 +3,7 @@ package com.ssamba.petsi.schedule_service.domain.schedule.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -64,10 +65,11 @@ public class ScheduleController {
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
-	@GetMapping("")
-	@Operation(summary = "월별 전체 일정 불러오기")
-	public ResponseEntity<?> getSchedules(@RequestHeader("X-User-Id") Long userId, @RequestParam("month") int month, @RequestBody Map<String, Long> pet) {
-		return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getSchedulesPerMonth(userId, month, pet.get("pet_id")));
+	@GetMapping("/detail")
+	@Operation(summary = "월별 상세 일정 불러오기")
+	public ResponseEntity<?> getSchedules(@RequestHeader("X-User-Id") Long userId, @RequestParam("month") int month,
+		@RequestParam(value = "petId", required = false) Long petId) {
+		return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getSchedulesPerMonth(userId, month, petId));
 	}
 
 

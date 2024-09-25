@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +37,7 @@ public class Schedule {
 	@Column(name = "schedule_id", nullable = false)
 	private Long scheduleId;
 
+	@Setter
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "schedule_category_id", nullable = false)
 	private ScheduleCategory scheduleCategory;
@@ -45,7 +49,7 @@ public class Schedule {
 	private LocalDate startDate;
 
 	@Column(nullable = false)
-	private int intervalDays;
+	private String intervalDays;
 
 	@Column(nullable = false)
 	private LocalDate nextScheduleDate;
@@ -65,4 +69,19 @@ public class Schedule {
 
 	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<EndedSchedule> endedSchedule;
+
+	@PrePersist
+	protected void onCreate() {
+		this.createdAt = LocalDateTime.now();
+		this.updatedAt = LocalDateTime.now();
+		this.status = ScheduleStatus.ACTIVATED.getValue();
+
+	}
+
+	public Schedule(String description, LocalDate startDate, String intervalDays) {
+		this.description = description;
+		this.startDate = startDate;
+		this.nextScheduleDate = startDate;
+		this.intervalDays = intervalDays;
+	}
 }
