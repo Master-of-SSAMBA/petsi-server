@@ -239,7 +239,10 @@ public class AccountService {
 		String endDate = nowDate.format(formatter);
 		String startDate = "20200101";
 		if (sortOption != 0) {
-			LocalDate monthSetting = nowDate.minusDays(sortOption);
+			LocalDate monthSetting = nowDate;
+			if(sortOption != 1) {
+				monthSetting = nowDate.minusDays(sortOption);
+			}
 			startDate = monthSetting.format(formatter);
 		}
 
