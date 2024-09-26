@@ -1,8 +1,8 @@
 package com.ssamba.petsi.user_service.domain.user.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.ssamba.petsi.user_service.domain.user.enums.UserStatus;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "user")
@@ -48,7 +47,7 @@ public class User {
     private String profileImage;
 
     @Column(nullable = false)
-    private Boolean isActive;
+    private String status;
 
     @Column(nullable = false, unique = true)
     private String userKey;
@@ -59,18 +58,11 @@ public class User {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(nullable = false)
-    private LocalDate maturityDate;
-
-    @Setter
-    @Column(nullable = false)
-    private String status;
-
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        this.isActive = true;
+        this.status = UserStatus.ACTIVATED.getValue();
     }
 
 }
