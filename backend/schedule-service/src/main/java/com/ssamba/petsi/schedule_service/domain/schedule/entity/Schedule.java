@@ -49,7 +49,10 @@ public class Schedule {
 	private LocalDate startDate;
 
 	@Column(nullable = false)
-	private String intervalDays;
+	private String intervalType;
+
+	@Column(nullable = false)
+	private int intervalDay;
 
 	@Column(nullable = false)
 	private LocalDate nextScheduleDate;
@@ -78,10 +81,11 @@ public class Schedule {
 
 	}
 
-	public Schedule(String description, LocalDate startDate, String intervalDays) {
+	public Schedule(String description, LocalDate startDate, String intervalType, int intervalDay) {
 		this.description = description;
 		this.startDate = startDate;
 		this.nextScheduleDate = startDate;
-		this.intervalDays = intervalDays;
+		this.intervalType = intervalType;
+		this.intervalDay = intervalDay;
 	}
 }

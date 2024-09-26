@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.CreateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleCategoryRequestDto;
+import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,7 +60,8 @@ public class ScheduleController {
 
 
 	@PutMapping("/category")
-	@Operation(summary = "일정 카테고리 수정하기")
+	@Operation(summary = "삭제예정 - 일정 카테고리 수정하기")
+	@Deprecated
 	public ResponseEntity<?> updateScheduleCategory(@RequestHeader("X-User-Id") Long userId,
 		@RequestBody UpdateScheduleCategoryRequestDto requestDto) {
 		scheduleService.updateScheduleCategory(userId, requestDto);
@@ -73,15 +76,19 @@ public class ScheduleController {
 	}
 
 
-	@GetMapping("/{id}")
+	@GetMapping("/{scheduleId}")
 	@Operation(summary = "상세 일정 불러오기")
-	public ResponseEntity<?> getScheduleDetail(@RequestHeader("X-User-Id") Long userId, @PathVariable Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getScheduleDetail(userId, id));
+	public ResponseEntity<?> getScheduleDetail(@RequestHeader("X-User-Id") Long userId,
+		@PathVariable Long scheduleId,
+		@RequestParam("status") String status) {
+		return ResponseEntity.status(HttpStatus.OK).body(
+			scheduleService.getScheduleDetail(userId, scheduleId, status));
 	}
 
 	@DeleteMapping("")
 	@Operation(summary = "상세 일정 삭제하기")
-	public ResponseEntity<?> deleteSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, Long> scheduleId) {
+	public ResponseEntity<?> deleteSchedule(@RequestHeader("X-User-Id") Long userId,
+		@RequestBody Map<String, Long> scheduleId) {
 		scheduleService.deleteSchedule(userId, scheduleId.get("id"));
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
@@ -93,6 +100,23 @@ public class ScheduleController {
 		CreateScheduleRequestDto createScheduleRequestDto) {
 		scheduleService.createSchedule(userId, createScheduleRequestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
+	}
+
+
+	@PutMapping("")
+	@Operation(summary = "상세 일정 수정하기")
+	public ResponseEntity<?> updateSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody
+	UpdateScheduleRequestDto updateScheduleRequestDto) {
+		scheduleService.updateSchedule(updateScheduleRequestDto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(null);
+	}
+
+	@PatchMapping("")
+	@Operation(summary = "상세 일정 완료하기")
+	public ResponseEntity<?> finishSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody
+	Map<String, Long> scheduleId) {
+		scheduleService.finishSchedule(userId, scheduleId.get("scheduleId"));
+		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
 }

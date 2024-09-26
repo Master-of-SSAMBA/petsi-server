@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.validator.constraints.Length;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.Schedule;
+import com.ssamba.petsi.schedule_service.domain.schedule.enums.IntervalType;
 
 import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
@@ -22,13 +23,15 @@ public class CreateScheduleRequestDto {
 	@Length(max=255)
 	private String description;
 	private LocalDate startDate;
-	private String intervalDays;
+	private String intervalType;
+	private int intervalDay;
 
 	public Schedule toSchedule() {
 		return new Schedule(
 			this.description,
 			this.startDate,
-			this.intervalDays
+			this.intervalType,
+			this.intervalDay
 		);
 	}
 }

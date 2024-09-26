@@ -35,4 +35,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 		@Param("petId") Long petId);
 
 	int countByScheduleCategoryAndDescriptionStartingWith(ScheduleCategory scheduleCategory, String description);
+
+	boolean existsByDescriptionAndScheduleCategory(String description, ScheduleCategory scheduleCategory);
 }

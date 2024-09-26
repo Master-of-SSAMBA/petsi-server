@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.CreateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleCategoryRequestDto;
+import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetScheduleCategoryResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetScheduleDetailResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetSchedulesDetailPerMonthResponseDto;
@@ -63,6 +64,7 @@ public class ScheduleService {
 	}
 
 	@Transactional
+	@Deprecated
 	public void updateScheduleCategory(Long userId, UpdateScheduleCategoryRequestDto requestDto) {
 		ScheduleCategory scheduleCategory = scheduleCategoryRepository.findByUserIdAndScheduleCategoryId(
 			userId, requestDto.getId()).orElseThrow(
@@ -100,9 +102,14 @@ public class ScheduleService {
 	}
 
 	@Transactional(readOnly = true)
-	public GetScheduleDetailResponseDto getScheduleDetail(Long userId, Long id) {
+	public GetScheduleDetailResponseDto getScheduleDetail(Long userId, Long id, String status) {
 		Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleCategoryUserId(id, userId).orElseThrow(
 			() -> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND));
+
+		//todo: 쿼리문 상에서 에러 던지는 걸로 수정
+		if(schedule.getStatus().equals(ScheduleStatus.INACTIVATED.getValue())) {
+			throw new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND);
+		}
 
 		GetScheduleDetailResponseDto dto = new GetScheduleDetailResponseDto(schedule);
 		//todo : petList 갖고와서 dto에 set
@@ -127,16 +134,31 @@ public class ScheduleService {
 			-> new BusinessLogicException(ExceptionCode.SCHEDULE_CATEGORY_NOT_FOUND)
 		);
 
-		//같은 일정이 존재한다면, 이름 변경 후 저장
-		int cnt = scheduleRepository.countByScheduleCategoryAndDescriptionStartingWith(scheduleCategory, createScheduleRequestDto.getDescription());
-		if (cnt != 0) {
-			createScheduleRequestDto.setDescription(createScheduleRequestDto.getDescription()+" ("+(cnt + 1)+")");
+		//같은 일정이 존재한다면, 중복 오류
+		if(scheduleRepository.existsByDescriptionAndScheduleCategory(createScheduleRequestDto.getDescription(), scheduleCategory)) {
+			throw new BusinessLogicException(ExceptionCode.DUPLICATED_SCHEDULE);
 		}
 
 		Schedule schedule = createScheduleRequestDto.toSchedule();
 		schedule.setScheduleCategory(scheduleCategory);
 		scheduleRepository.save(schedule);
 
+	}
+
+	@Transactional
+	public void updateSchedule(UpdateScheduleRequestDto updateScheduleRequestDto) {
+
+	}
+
+	@Transactional
+	public void finishSchedule(Long userId, Long scheduleId) {
+		Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleCategoryUserId(scheduleId, userId)
+			.orElseThrow(() -> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND));
+
+		EndedSchedule endedSchedule = new EndedSchedule(schedule);
+		endedScheduleRepository.save(endedSchedule);
+
+		//todo: 다음 일정 변경하는 로직
 
 
 	}
