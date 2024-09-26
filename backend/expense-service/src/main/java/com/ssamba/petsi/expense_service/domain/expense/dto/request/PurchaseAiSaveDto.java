@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.ssamba.petsi.expense_service.domain.expense.entity.Purchase;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,8 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PurchaseAiPostRequestDto {
+public class PurchaseAiSaveDto {
+
 
     @NotBlank
     private String title;
@@ -35,6 +37,7 @@ public class PurchaseAiPostRequestDto {
     @NotNull
     private Integer cost;
 
-    private String img;
+    private String category;
 
+    private String img;
 }
