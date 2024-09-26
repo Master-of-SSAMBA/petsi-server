@@ -58,3 +58,20 @@ spring:
     port: 6379
     password: ${DB_PASSWORD}
     timeout: 5000
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: your-client-id
+            client-secret: your-client-secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+            scope: openid, profile, email
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/auth/realms/{realm}
+            authorization-uri: http://localhost:8080/auth/realms/{realm}/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/auth/realms/{realm}/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/auth/realms/{realm}/protocol/openid-connect/userinfo

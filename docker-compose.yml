@@ -13,16 +13,18 @@ services:
     networks:
       - petsi_backend_network 
 
-  # user-service:
-  #   image: "petsi/user-service:latest"
-  #   container_name: "user-service"
-  #   environment:
-  #     - SPRING_PROFILES_ACTIVE=prod
-  #     - TZ=Asia/Seoul
-  #   ports:
-  #     - 9001:9001
-  #   networks:
-  #     - petsi_backend_network 
+  user-service:
+     image: "petsi/user-service:latest"
+     container_name: "user-service"
+     environment:
+       - SPRING_PROFILES_ACTIVE=prod
+       - TZ=Asia/Seoul
+       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+     ports:
+       - 9001:9001
+     networks:
+       - petsi_backend_network
 
   pet-service:
     image: "petsi/pet-service"
