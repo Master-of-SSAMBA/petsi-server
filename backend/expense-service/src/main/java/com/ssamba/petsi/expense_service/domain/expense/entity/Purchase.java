@@ -1,5 +1,6 @@
 package com.ssamba.petsi.expense_service.domain.expense.entity;
 
+import com.ssamba.petsi.expense_service.domain.expense.dto.request.PurchaseAiSaveDto;
 import com.ssamba.petsi.expense_service.domain.expense.dto.request.PurchaseUpdateDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -55,6 +56,19 @@ public class Purchase {
 
     @PrePersist
     protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public Purchase (Long userId, PurchaseAiSaveDto dto) {
+        this.userId = userId;
+        this.title = dto.getTitle();
+        this.detail = dto.getDetail();
+        this.img = dto.getImg();
+        this.purchasedAt = dto.getPurchasedAt();
+        this.quantity = dto.getQuantity();
+        this.cost = dto.getCost();
+        this.category = dto.getCategory();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }

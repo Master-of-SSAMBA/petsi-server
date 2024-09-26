@@ -13,10 +13,15 @@ import com.ssamba.petsi.expense_service.domain.expense.repository.PurchaseReposi
 import com.ssamba.petsi.expense_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.expense_service.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -29,6 +34,8 @@ public class ExpenseService {
 
     private static final long EXPENSE_PER_PAGE = 20;
     private static final String CACHE_KEY_PREFIX = "expense:";
+    private static final String AI_PREDICT_URL = "http://127.0.0.1:8000/predict_categories";
+    private final RestTemplate restTemplate = new RestTemplate();
     private final S3Service s3Service;
     private final PurchaseRepository purchaseRepository;
     private final MedicalExpenseRepository medicalExpenseRepository;
@@ -68,6 +75,25 @@ public class ExpenseService {
 
     @Transactional
     public void saveExpenseAi(Long userId, List<PurchaseAiPostRequestDto> purchaseDtos) {
+        try {
+            ResponseEntity<List<PurchaseAiSaveDto>> response = restTemplate.exchange(
+                    AI_PREDICT_URL,
+                    HttpMethod.POST,
+                    new HttpEntity<>(new PredictRequestDto(purchaseDtos)),
+                    new ParameterizedTypeReference<List<PurchaseAiSaveDto>>() {}
+            );
+
+            List<PurchaseAiSaveDto> data = response.getBody();
+
+            assert data != null;
+            List<Purchase> saveDto = data.stream()
+                    .map(p -> new Purchase(userId, p))
+                    .toList();
+
+            purchaseRepository.saveAll(saveDto);
+        } catch(Exception e) {
+            throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+        }
 
     }
 
@@ -168,7 +194,7 @@ public class ExpenseService {
                 String jsonExpense = objectMapper.writeValueAsString(p);
                 zSetOps.add(cacheKey, jsonExpense, p.getPurchasedAt().toEpochDay());
             } catch (Exception ex) {
-                ex.printStackTrace();
+                throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -177,7 +203,7 @@ public class ExpenseService {
                 String jsonExpense = objectMapper.writeValueAsString(e);
                 zSetOps.add(cacheKey, jsonExpense, e.getVisitedAt().toEpochDay());
             } catch (Exception ex) {
-                ex.printStackTrace();
+                throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -211,7 +237,7 @@ public class ExpenseService {
                     pageExpenses.computeIfAbsent(date, k -> new ArrayList<>()).add(expense);
                 } catch (Exception e) {
                     // 로깅 처리
-                    e.printStackTrace();
+                    throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
                 }
             }
         }
