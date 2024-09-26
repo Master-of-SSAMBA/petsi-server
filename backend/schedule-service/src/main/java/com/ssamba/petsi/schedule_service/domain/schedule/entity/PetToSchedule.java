@@ -1,5 +1,7 @@
 package com.ssamba.petsi.schedule_service.domain.schedule.entity;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -33,4 +35,5 @@ public class PetToSchedule {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "schedule_id", nullable = false)
 	private Schedule schedule;
+
 }

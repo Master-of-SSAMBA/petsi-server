@@ -3,6 +3,7 @@ package com.ssamba.petsi.schedule_service.domain.schedule.dto.response;
 import java.util.List;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.Schedule;
+import com.ssamba.petsi.schedule_service.domain.schedule.enums.IntervalType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,12 +26,13 @@ public class GetScheduleDetailResponseDto {
 	private List<Pet> pet;
 	private String title;
 	private DateResponseDto dueDate;
-	private int interval;
+	private String intervalType;
+	private int intervalDay;
 
 	public GetScheduleDetailResponseDto(Schedule schedule) {
 		//todo : petList 갖고와서 변환
 		this.title = schedule.getScheduleCategory().getTitle();
 		this.dueDate = new DateResponseDto(schedule.getNextScheduleDate());
-		this.interval = schedule.getIntervalDays();
+		this.intervalType = schedule.getIntervalType();
 	}
 }
