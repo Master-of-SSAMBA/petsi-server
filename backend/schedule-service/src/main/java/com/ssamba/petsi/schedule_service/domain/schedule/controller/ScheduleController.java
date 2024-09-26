@@ -106,7 +106,7 @@ public class ScheduleController {
 	@PutMapping("")
 	@Operation(summary = "상세 일정 수정하기")
 	public ResponseEntity<?> updateSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody
-	UpdateScheduleRequestDto updateScheduleRequestDto) {
+	UpdateScheduleRequestDto updateScheduleRequestDto) throws IllegalAccessException {
 		scheduleService.updateSchedule(updateScheduleRequestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}

@@ -54,6 +54,7 @@ public class Schedule {
 	@Column(nullable = false)
 	private int intervalDay;
 
+	@Setter
 	@Column(nullable = false)
 	private LocalDate nextScheduleDate;
 

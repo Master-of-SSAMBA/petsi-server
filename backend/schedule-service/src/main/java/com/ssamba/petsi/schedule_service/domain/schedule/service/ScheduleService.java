@@ -1,5 +1,6 @@
 package com.ssamba.petsi.schedule_service.domain.schedule.service;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +17,7 @@ import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetSchedul
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.EndedSchedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.Schedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory;
+import com.ssamba.petsi.schedule_service.domain.schedule.enums.IntervalType;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.EndedScheduleRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.ScheduleCategoryRepository;
@@ -146,7 +148,33 @@ public class ScheduleService {
 	}
 
 	@Transactional
-	public void updateSchedule(UpdateScheduleRequestDto updateScheduleRequestDto) {
+	public void updateSchedule(UpdateScheduleRequestDto updateScheduleRequestDto) throws IllegalAccessException {
+		//todo: 일정 수정 코드 작성
+
+		Schedule existingSchedule = scheduleRepository.findById(updateScheduleRequestDto.getScheduleId())
+			.orElseThrow(() -> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND));
+
+		for (Field dtoField : UpdateScheduleRequestDto.class.getDeclaredFields()) {
+			dtoField.setAccessible(true);
+			Object newValue = dtoField.get(updateScheduleRequestDto);
+
+			if (newValue != null) {
+				try {
+					if (dtoField.getName().equals("scheduleCategoryId")) {
+						Long categoryId = (Long) newValue;
+						ScheduleCategory newCategory = scheduleCategoryRepository.findById(categoryId)
+							.orElseThrow(() -> new BusinessLogicException(ExceptionCode.SCHEDULE_CATEGORY_NOT_FOUND));
+						existingSchedule.setScheduleCategory(newCategory);
+						continue;
+					}
+					Field entityField = Schedule.class.getDeclaredField(dtoField.getName());
+					entityField.setAccessible(true);
+					entityField.set(existingSchedule, newValue);
+				} catch (NoSuchFieldException e) {
+					throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+				}
+			}
+		}
 
 	}
 
@@ -158,7 +186,21 @@ public class ScheduleService {
 		EndedSchedule endedSchedule = new EndedSchedule(schedule);
 		endedScheduleRepository.save(endedSchedule);
 
-		//todo: 다음 일정 변경하는 로직
+		if(schedule.getIntervalType().equals(IntervalType.PER_YEAR.name())) {
+			//년도 변경
+			schedule.setNextScheduleDate(schedule.getNextScheduleDate().plusYears(schedule.getIntervalDay()));
+		} else if(schedule.getIntervalType().equals(IntervalType.PER_WEEK.name())) {
+			//주 변경
+			schedule.setNextScheduleDate(schedule.getNextScheduleDate().plusWeeks(schedule.getIntervalDay()));
+		} else if(schedule.getIntervalType().equals(IntervalType.PER_MONTH.name())) {
+			//달 변경
+			schedule.setNextScheduleDate(schedule.getNextScheduleDate().plusMonths(schedule.getIntervalDay()));
+		} else if(schedule.getIntervalType().equals(IntervalType.PER_DAY.name())) {
+			//일 변경
+			schedule.setNextScheduleDate(schedule.getNextScheduleDate().plusDays(schedule.getIntervalDay()));
+		} else if(schedule.getIntervalType().equals(IntervalType.SPEC_DAY.name())) {
+			//날짜 변경
+		}
 
 
 	}

@@ -12,7 +12,7 @@ public enum IntervalType {
 	PER_DAY("일", 3),
 	SPEC_DAY("매달 ", 4);
 
-	private final String value;
-	private final int index;
+	public final String value;
+	public final int index;
 
 }
