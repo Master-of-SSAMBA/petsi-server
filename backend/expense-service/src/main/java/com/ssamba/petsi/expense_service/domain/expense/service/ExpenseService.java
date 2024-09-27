@@ -46,7 +46,7 @@ public class ExpenseService {
     @Transactional
     public void saveExpenseMenual(Long userId, PurchaseMenualPostRequestDto purchaseDto, MultipartFile file) {
         redisTemplate.delete(CACHE_KEY_PREFIX + userId);
-        if(file != null) {
+        if (file != null) {
             // 사진 확장자인지 확인
             if (!isValidImageMimeType(file)) {
                 throw new BusinessLogicException(ExceptionCode.INVALID_FILE_FORM);
@@ -76,25 +76,22 @@ public class ExpenseService {
 
     @Transactional
     public void saveExpenseAi(Long userId, List<PurchaseAiPostRequestDto> purchaseDtos) {
-        try {
-            ResponseEntity<List<PurchaseAiSaveDto>> response = restTemplate.exchange(
-                    AI_PREDICT_URL,
-                    HttpMethod.POST,
-                    new HttpEntity<>(new PredictRequestDto(purchaseDtos)),
-                    new ParameterizedTypeReference<List<PurchaseAiSaveDto>>() {}
-            );
+        ResponseEntity<List<PurchaseAiSaveDto>> response = restTemplate.exchange(
+                AI_PREDICT_URL,
+                HttpMethod.POST,
+                new HttpEntity<>(new PredictRequestDto(purchaseDtos)),
+                new ParameterizedTypeReference<List<PurchaseAiSaveDto>>() {
+                }
+        );
 
-            List<PurchaseAiSaveDto> data = response.getBody();
+        List<PurchaseAiSaveDto> data = response.getBody();
 
-            assert data != null;
-            List<Purchase> saveDto = data.stream()
-                    .map(p -> new Purchase(userId, p))
-                    .toList();
+        assert data != null;
+        List<Purchase> saveDto = data.stream()
+                .map(p -> new Purchase(userId, p))
+                .toList();
 
-            purchaseRepository.saveAll(saveDto);
-        } catch(Exception e) {
-            throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
-        }
+        purchaseRepository.saveAll(saveDto);
 
     }
 
@@ -143,7 +140,7 @@ public class ExpenseService {
     @Transactional
     public void deletePurchase(Long userId, long purchaseId) {
         Purchase purchase = findPurchase(userId, purchaseId);
-        if(purchase.getImg() != null) {
+        if (purchase.getImg() != null) {
             s3Service.delete(purchase.getImg());
         }
         purchaseRepository.delete(purchase);
@@ -160,7 +157,7 @@ public class ExpenseService {
         Purchase purchase = purchaseRepository.findById(purchaseId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.PURCHASE_NOT_FOUND));
 
-        if(purchase.getUserId() != userId)
+        if (purchase.getUserId() != userId)
             throw new BusinessLogicException(ExceptionCode.PURCHASE_USER_NOT_MATCH);
 
         return purchase;
@@ -171,7 +168,7 @@ public class ExpenseService {
         MedicalExpense medicalExpense = medicalExpenseRepository.findById(medicalExpenseId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEDICAL_EXPENSE_NOT_FOUND));
 
-        if(medicalExpense.getUserId() != userId)
+        if (medicalExpense.getUserId() != userId)
             throw new BusinessLogicException(ExceptionCode.MEDICAL_EXPENSE_USER_NOT_MATCH);
 
         return medicalExpense;
