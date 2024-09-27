@@ -45,8 +45,10 @@ public class ScheduleService {
 
 	@Transactional(readOnly = true)
 	public List<GetSchedulesDetailPerMonthResponseDto> getUpcomingSchedulesPerMonth(Long userId, int month, Long petId) {
-		List<Schedule> scheduledList = petId == null ? scheduleRepository.getAllScheduledList(userId, month)
-			: scheduleRepository.getAllScheduledListWithPetId(userId, month, petId);
+		List<Schedule> scheduledList = petId == null ? scheduleRepository.getAllScheduledList(userId, month,
+			ScheduleStatus.ACTIVATED.getValue())
+			: scheduleRepository.getAllScheduledListWithPetId(userId, month, petId,
+			ScheduleStatus.ACTIVATED.getValue());
 
 		return scheduledList.stream()
 			.map(GetSchedulesDetailPerMonthResponseDto::fromScheduleEntity)
@@ -65,14 +67,10 @@ public class ScheduleService {
 	}
 
 	@Transactional(readOnly = true)
-	public GetScheduleDetailResponseDto getScheduleDetail(Long userId, Long id, String status) {
-		Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleCategoryUserId(id, userId).orElseThrow(
+	public GetScheduleDetailResponseDto getScheduleDetail(Long userId, Long id) {
+		Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleCategoryUserIdAndStatus(id, userId,
+			ScheduleStatus.ACTIVATED.getValue()).orElseThrow(
 			() -> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND));
-
-		//todo: 쿼리문 상에서 에러 던지는 걸로 수정
-		if(schedule.getStatus().equals(ScheduleStatus.INACTIVATED.getValue())) {
-			throw new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND);
-		}
 
 		GetScheduleDetailResponseDto dto = new GetScheduleDetailResponseDto(schedule);
 		//todo : petList 갖고와서 dto에 set
@@ -82,7 +80,8 @@ public class ScheduleService {
 
 	@Transactional
 	public void deleteSchedule(Long userId, Long id) {
-		Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleCategoryUserId(id, userId).orElseThrow(
+		Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleCategoryUserIdAndStatus(id, userId,
+			ScheduleStatus.ACTIVATED.getValue()).orElseThrow(
 			() -> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND)
 		);
 
@@ -141,7 +140,8 @@ public class ScheduleService {
 
 	@Transactional
 	public void finishSchedule(Long userId, Long scheduleId) {
-		Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleCategoryUserId(scheduleId, userId)
+		Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleCategoryUserIdAndStatus(scheduleId, userId,
+				ScheduleStatus.ACTIVATED.getValue())
 			.orElseThrow(() -> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND));
 
 		if(schedule.getNextScheduleDate().isAfter(LocalDate.now())) {

@@ -10,7 +10,7 @@ public enum ExceptionCode {
 	DUPLICATED_SCHEDULE(400, "이미 존재하는 일정명입니다."),
 	SCHEDULE_USER_NOT_MATCH(401, "일정 값과 로그인한 유저 정보가 일치히지 않습니다."),
 	SCHEDULE_CATEGORY_NOT_FOUND(404, "존재하지 않는 일정 카테고리입니다."),
-	SCHEDULE_NOT_FOUND(404, "존재하지 않는 일정입니다"),
+	SCHEDULE_NOT_FOUND(404, "존재하지 않는 일정입니다."),
 	INVALID_DATE(400, "유효하지 않은 날짜입니다.");
 
 	private final int status;

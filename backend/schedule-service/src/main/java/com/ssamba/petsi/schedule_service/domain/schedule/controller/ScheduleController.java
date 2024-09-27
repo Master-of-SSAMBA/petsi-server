@@ -45,8 +45,7 @@ public class ScheduleController {
 	@GetMapping("/category")
 	@Operation(summary = "일정 카테고리 불러오기")
 	public ResponseEntity<?> getScheduleCategory(@RequestHeader("X-User-Id") Long userId) {
-		List<?> list = scheduleCategoryService.getScheduleCategory(userId);
-		return ResponseEntity.status(HttpStatus.OK).body(list);
+		return ResponseEntity.status(HttpStatus.OK).body(scheduleCategoryService.getScheduleCategory(userId));
 	}
 
 
@@ -63,16 +62,6 @@ public class ScheduleController {
 	public ResponseEntity<?> deleteScheduleCategory(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, Long> scheduleCategory) {
 		scheduleCategoryService.deleteScheduleCategory(userId, scheduleCategory.get("id"));
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-	}
-
-
-	@PutMapping("/category")
-	@Operation(summary = "삭제예정 - 일정 카테고리 수정하기")
-	@Deprecated
-	public ResponseEntity<?> updateScheduleCategory(@RequestHeader("X-User-Id") Long userId,
-		@RequestBody UpdateScheduleCategoryRequestDto requestDto) {
-		scheduleCategoryService.updateScheduleCategory(userId, requestDto);
-		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
 	@GetMapping("/detail")
@@ -97,10 +86,9 @@ public class ScheduleController {
 	@GetMapping("/{scheduleId}")
 	@Operation(summary = "상세 일정 불러오기")
 	public ResponseEntity<?> getScheduleDetail(@RequestHeader("X-User-Id") Long userId,
-		@PathVariable Long scheduleId,
-		@RequestParam("status") String status) {
+		@PathVariable Long scheduleId) {
 		return ResponseEntity.status(HttpStatus.OK).body(
-			scheduleService.getScheduleDetail(userId, scheduleId, status));
+			scheduleService.getScheduleDetail(userId, scheduleId));
 	}
 
 	@DeleteMapping("")

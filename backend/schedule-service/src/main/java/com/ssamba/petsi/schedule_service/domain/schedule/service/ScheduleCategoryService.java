@@ -55,19 +55,4 @@ public class ScheduleCategoryService {
 		scheduleCategoryRepository.delete(scheduleCategory);
 	}
 
-	@Transactional
-	@Deprecated
-	public void updateScheduleCategory(Long userId, UpdateScheduleCategoryRequestDto requestDto) {
-		ScheduleCategory scheduleCategory = scheduleCategoryRepository.findByUserIdAndScheduleCategoryId(
-			userId, requestDto.getId()).orElseThrow(
-			() -> new BusinessLogicException(ExceptionCode.SCHEDULE_CATEGORY_NOT_FOUND));
-
-		if (scheduleCategoryRepository.existsByUserIdAndTitle(userId, requestDto.getTitle())) {
-			throw new BusinessLogicException(ExceptionCode.DUPLICATED_SCHEDULE_CATEGORY);
-		}
-
-		scheduleCategory.setTitle(requestDto.getTitle());
-
-	}
-
 }
