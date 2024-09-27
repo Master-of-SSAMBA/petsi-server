@@ -21,9 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.CreateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleCategoryRequestDto;
+import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetSchedulesDetailPerMonthResponseDto;
+import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
+import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleCategoryService;
 import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,11 +40,12 @@ import lombok.RequiredArgsConstructor;
 public class ScheduleController {
 
 	private final ScheduleService scheduleService;
+	private final ScheduleCategoryService scheduleCategoryService;
 
 	@GetMapping("/category")
 	@Operation(summary = "일정 카테고리 불러오기")
 	public ResponseEntity<?> getScheduleCategory(@RequestHeader("X-User-Id") Long userId) {
-		List<?> list = scheduleService.getScheduleCategory(userId);
+		List<?> list = scheduleCategoryService.getScheduleCategory(userId);
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 
@@ -49,7 +53,7 @@ public class ScheduleController {
 	@PostMapping("/category")
 	@Operation(summary = "일정 카테고리 추가하기")
 	public ResponseEntity<?> addScheduleCategory(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, String> title) {
-		scheduleService.addScheduleCategory(userId, title.get("title"));
+		scheduleCategoryService.addScheduleCategory(userId, title.get("title"));
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
@@ -57,7 +61,7 @@ public class ScheduleController {
 	@DeleteMapping("/category")
 	@Operation(summary = "일정 카테고리 삭제하기")
 	public ResponseEntity<?> deleteScheduleCategory(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, Long> scheduleCategory) {
-		scheduleService.deleteScheduleCategory(userId, scheduleCategory.get("id"));
+		scheduleCategoryService.deleteScheduleCategory(userId, scheduleCategory.get("id"));
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
 
@@ -67,7 +71,7 @@ public class ScheduleController {
 	@Deprecated
 	public ResponseEntity<?> updateScheduleCategory(@RequestHeader("X-User-Id") Long userId,
 		@RequestBody UpdateScheduleCategoryRequestDto requestDto) {
-		scheduleService.updateScheduleCategory(userId, requestDto);
+		scheduleCategoryService.updateScheduleCategory(userId, requestDto);
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
@@ -112,7 +116,8 @@ public class ScheduleController {
 	@Operation(summary = "상세 일정 등록하기")
 	public ResponseEntity<?> createSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody
 		CreateScheduleRequestDto createScheduleRequestDto) {
-		scheduleService.createSchedule(userId, createScheduleRequestDto);
+		ScheduleCategory category = scheduleCategoryService.findById(createScheduleRequestDto.getScheduleCategoryId());
+		scheduleService.createSchedule(userId, createScheduleRequestDto, category);
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
@@ -121,7 +126,8 @@ public class ScheduleController {
 	@Operation(summary = "상세 일정 수정하기")
 	public ResponseEntity<?> updateSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody
 	UpdateScheduleRequestDto updateScheduleRequestDto) throws IllegalAccessException {
-		scheduleService.updateSchedule(updateScheduleRequestDto);
+		scheduleService.updateSchedule(new UpdateScheduleDto(updateScheduleRequestDto,
+			scheduleCategoryService.findById(updateScheduleRequestDto.getScheduleCategoryId())));
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 

@@ -71,9 +71,6 @@ public class Schedule {
 	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<PetToSchedule> petToSchedule;
 
-	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<EndedSchedule> endedSchedule;
-
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();

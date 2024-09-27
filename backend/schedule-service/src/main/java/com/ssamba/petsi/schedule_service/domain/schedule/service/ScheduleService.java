@@ -11,17 +11,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.CreateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleCategoryRequestDto;
+import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetScheduleCategoryResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetScheduleDetailResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetSchedulesDetailPerMonthResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.EndedSchedule;
+import com.ssamba.petsi.schedule_service.domain.schedule.entity.PetToEndedSchedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.PetToSchedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.Schedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.IntervalType;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.EndedScheduleRepository;
+import com.ssamba.petsi.schedule_service.domain.schedule.repository.PetToEndedScheduleRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.PetToScheduleRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.ScheduleCategoryRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.ScheduleRepository;
@@ -34,52 +37,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ScheduleService {
 
-	private final ScheduleCategoryRepository scheduleCategoryRepository;
 	private final ScheduleRepository scheduleRepository;
 	private final EndedScheduleRepository endedScheduleRepository;
 	private final PetToScheduleRepository petToScheduleRepository;
-
-	@Transactional(readOnly = true)
-	public List<GetScheduleCategoryResponseDto> getScheduleCategory(Long userId) {
-
-		return scheduleCategoryRepository.findAllByUserId(userId).stream()
-			.map(GetScheduleCategoryResponseDto::fromEntity)
-			.collect(Collectors.toList());
-	}
-
-	@Transactional
-	public void addScheduleCategory(Long userId, String title) {
-		ScheduleCategory category = scheduleCategoryRepository.findByUserIdAndTitle(userId, title);
-		if (category != null) {
-			throw new BusinessLogicException(ExceptionCode.DUPLICATED_SCHEDULE_CATEGORY);
-		}
-		ScheduleCategory scheduleCategory = new ScheduleCategory(userId, title);
-		scheduleCategoryRepository.save(scheduleCategory);
-	}
-
-	@Transactional
-	public void deleteScheduleCategory(Long userId, Long id) {
-		ScheduleCategory scheduleCategory = scheduleCategoryRepository.findByUserIdAndScheduleCategoryId(
-			userId, id).orElseThrow(()
-			-> new BusinessLogicException(ExceptionCode.SCHEDULE_CATEGORY_NOT_FOUND));
-
-		scheduleCategoryRepository.delete(scheduleCategory);
-	}
-
-	@Transactional
-	@Deprecated
-	public void updateScheduleCategory(Long userId, UpdateScheduleCategoryRequestDto requestDto) {
-		ScheduleCategory scheduleCategory = scheduleCategoryRepository.findByUserIdAndScheduleCategoryId(
-			userId, requestDto.getId()).orElseThrow(
-				() -> new BusinessLogicException(ExceptionCode.SCHEDULE_CATEGORY_NOT_FOUND));
-
-		if (scheduleCategoryRepository.existsByUserIdAndTitle(userId, requestDto.getTitle())) {
-			throw new BusinessLogicException(ExceptionCode.DUPLICATED_SCHEDULE_CATEGORY);
-		}
-
-		scheduleCategory.setTitle(requestDto.getTitle());
-
-	}
+	private final PetToEndedScheduleRepository petToEndedScheduleRepository;
 
 
 	@Transactional(readOnly = true)
@@ -129,19 +90,14 @@ public class ScheduleService {
 	}
 
 	@Transactional
-	public void createSchedule(Long userId, CreateScheduleRequestDto createScheduleRequestDto) {
+	public void createSchedule(Long userId, CreateScheduleRequestDto createScheduleRequestDto, ScheduleCategory category) {
 
-		ScheduleCategory scheduleCategory = scheduleCategoryRepository.findByUserIdAndScheduleCategoryId(
-			userId, createScheduleRequestDto.getScheduleCategoryId()).orElseThrow(()
-			-> new BusinessLogicException(ExceptionCode.SCHEDULE_CATEGORY_NOT_FOUND)
-		);
-
-		if(scheduleRepository.existsByDescriptionAndScheduleCategory(createScheduleRequestDto.getDescription(), scheduleCategory)) {
+		if(scheduleRepository.existsByDescriptionAndScheduleCategory(createScheduleRequestDto.getDescription(), category)) {
 			throw new BusinessLogicException(ExceptionCode.DUPLICATED_SCHEDULE);
 		}
 
 		Schedule schedule = createScheduleRequestDto.toSchedule();
-		schedule.setScheduleCategory(scheduleCategory);
+		schedule.setScheduleCategory(category);
 		scheduleRepository.save(schedule);
 
 		addPetToSchedule(createScheduleRequestDto.getPetId(), schedule);
@@ -155,27 +111,21 @@ public class ScheduleService {
 	}
 
 	@Transactional
-	public void updateSchedule(UpdateScheduleRequestDto updateScheduleRequestDto) throws IllegalAccessException {
+	public void updateSchedule(UpdateScheduleDto updateScheduleDto) throws IllegalAccessException {
 
-		Schedule existingSchedule = scheduleRepository.findById(updateScheduleRequestDto.getScheduleId())
+		Schedule existingSchedule = scheduleRepository.findById(updateScheduleDto.getScheduleId())
 			.orElseThrow(() -> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND));
 
-		for (Field dtoField : UpdateScheduleRequestDto.class.getDeclaredFields()) {
+		for (Field dtoField : UpdateScheduleDto.class.getDeclaredFields()) {
 			dtoField.setAccessible(true);
-			Object newValue = dtoField.get(updateScheduleRequestDto);
+			Object newValue = dtoField.get(updateScheduleDto);
 
 			if (newValue != null) {
 				try {
-					if (dtoField.getName().equals("scheduleCategoryId")) {
-						Long categoryId = (Long) newValue;
-						ScheduleCategory newCategory = scheduleCategoryRepository.findById(categoryId)
-							.orElseThrow(() -> new BusinessLogicException(ExceptionCode.SCHEDULE_CATEGORY_NOT_FOUND));
-						existingSchedule.setScheduleCategory(newCategory);
-						continue;
-					}
+					//todo: petService에서 받아온 값으로 대체
 					if (dtoField.getName().equals("pets")) {
 						petToScheduleRepository.deleteByScheduleScheduleId(existingSchedule.getScheduleId());
-						addPetToSchedule(updateScheduleRequestDto.getPets(), existingSchedule);
+						addPetToSchedule(updateScheduleDto.getPets(), existingSchedule);
 						continue;
 					}
 					Field entityField = Schedule.class.getDeclaredField(dtoField.getName());
@@ -194,8 +144,16 @@ public class ScheduleService {
 		Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleCategoryUserId(scheduleId, userId)
 			.orElseThrow(() -> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND));
 
+		if(schedule.getNextScheduleDate().isAfter(LocalDate.now())) {
+			throw new BusinessLogicException(ExceptionCode.INVALID_DATE);
+		}
+
 		EndedSchedule endedSchedule = new EndedSchedule(schedule);
 		endedScheduleRepository.save(endedSchedule);
+
+		schedule.getPetToSchedule().stream()
+			.map(id -> new PetToEndedSchedule(id.getPetId(), endedSchedule))
+			.forEach(petToEndedScheduleRepository::save);
 
 		if(schedule.getIntervalType().equals(IntervalType.PER_YEAR.name())) {
 			//년도 변경
@@ -222,7 +180,7 @@ public class ScheduleService {
 
 	@Transactional
 	public void deleteFinishedSchedule(Long userId, Long endedScheduleId) {
-		EndedSchedule endedSchedule = endedScheduleRepository.findByEndedScheduleIdAndScheduleScheduleCategoryUserId(
+		EndedSchedule endedSchedule = endedScheduleRepository.findByEndedScheduleIdAndUserId(
 			endedScheduleId, userId).orElseThrow(()
 			-> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND)
 		);
