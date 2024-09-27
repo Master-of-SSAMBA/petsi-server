@@ -155,27 +155,9 @@ public class ScheduleService {
 			.map(id -> new PetToEndedSchedule(id.getPetId(), endedSchedule))
 			.forEach(petToEndedScheduleRepository::save);
 
-		if(schedule.getIntervalType().equals(IntervalType.PER_YEAR.name())) {
-			//년도 변경
-			schedule.setNextScheduleDate(schedule.getNextScheduleDate().plusYears(schedule.getIntervalDay()));
-		} else if(schedule.getIntervalType().equals(IntervalType.PER_WEEK.name())) {
-			//주 변경
-			schedule.setNextScheduleDate(schedule.getNextScheduleDate().plusWeeks(schedule.getIntervalDay()));
-		} else if(schedule.getIntervalType().equals(IntervalType.PER_MONTH.name())) {
-			//달 변경
-			schedule.setNextScheduleDate(schedule.getNextScheduleDate().plusMonths(schedule.getIntervalDay()));
-		} else if(schedule.getIntervalType().equals(IntervalType.PER_DAY.name())) {
-			//일 변경
-			schedule.setNextScheduleDate(schedule.getNextScheduleDate().plusDays(schedule.getIntervalDay()));
-		} else if(schedule.getIntervalType().equals(IntervalType.SPEC_DAY.name())) {
-			int intervalDay = schedule.getIntervalDay();
-			LocalDate nextMonthDate = schedule.getNextScheduleDate().plusMonths(1);
-			int lastDayOfMonth = nextMonthDate.lengthOfMonth();
-			int targetDay = Math.min(intervalDay, lastDayOfMonth);
-
-			schedule.setNextScheduleDate(nextMonthDate.withDayOfMonth(targetDay));
-		}
-
+		schedule.setNextScheduleDate(
+			IntervalType.valueOf(schedule.getIntervalType()).adjustDate(
+				schedule.getNextScheduleDate(), schedule.getIntervalDay()));
 	}
 
 	@Transactional
