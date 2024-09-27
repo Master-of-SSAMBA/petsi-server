@@ -31,8 +31,9 @@ public class GetScheduleDetailResponseDto {
 
 	public GetScheduleDetailResponseDto(Schedule schedule) {
 		//todo : petList 갖고와서 변환
-		this.title = schedule.getScheduleCategory().getTitle();
+		this.title = schedule.getDescription();
 		this.dueDate = new DateResponseDto(schedule.getNextScheduleDate());
 		this.intervalType = schedule.getIntervalType();
+		this.intervalDay = schedule.getIntervalDay();
 	}
 }

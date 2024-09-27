@@ -54,6 +54,7 @@ public class Schedule {
 	@Column(nullable = false)
 	private int intervalDay;
 
+	@Setter
 	@Column(nullable = false)
 	private LocalDate nextScheduleDate;
 
@@ -69,9 +70,6 @@ public class Schedule {
 
 	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<PetToSchedule> petToSchedule;
-
-	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<EndedSchedule> endedSchedule;
 
 	@PrePersist
 	protected void onCreate() {

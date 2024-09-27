@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.EndedSchedule;
+import com.ssamba.petsi.schedule_service.domain.schedule.entity.PetToEndedSchedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.PetToSchedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.Schedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
@@ -30,11 +31,15 @@ public class GetSchedulesDetailPerMonthResponseDto {
 		static Pet toPet(PetToSchedule petToSchedule) {
 			return new Pet(petToSchedule.getPetId(), null);
 		}
+
+		static Pet fromEndedScheduletoPet(PetToEndedSchedule petToEndedSchedule) {
+			return new Pet(petToEndedSchedule.getPetId(), null);
+		}
 	}
 
 	static public GetSchedulesDetailPerMonthResponseDto fromScheduleEntity(Schedule schedule) {
 		Long id = schedule.getScheduleId();
-		String status = ScheduleStatus.UPCOMING.getValue();
+		String status = ScheduleStatus.ACTIVATED.getValue();
 		DateResponseDto date = new DateResponseDto(schedule.getNextScheduleDate());
 		List<Pet> pets = schedule.getPetToSchedule().stream()
 			.map(Pet::toPet)
@@ -46,14 +51,14 @@ public class GetSchedulesDetailPerMonthResponseDto {
 	}
 
 	static public GetSchedulesDetailPerMonthResponseDto fromEndedScheduleEntity(EndedSchedule endedSchedule) {
-		Long id = endedSchedule.getSchedule().getScheduleId();
+		Long id = endedSchedule.getEndedScheduleId();
 		String status = ScheduleStatus.ENDED.getValue();
 		DateResponseDto date = new DateResponseDto(endedSchedule.getCreatedAt());
-		List<Pet> pets = endedSchedule.getSchedule().getPetToSchedule().stream()
-			.map(Pet::toPet)
+		List<Pet> pets = endedSchedule.getPetToEndedSchedule().stream()
+			.map(Pet::fromEndedScheduletoPet)
 			.toList();
-		String title = endedSchedule.getSchedule().getDescription();
-		GetScheduleCategoryResponseDto scheduleCategory = GetScheduleCategoryResponseDto.fromEntity(endedSchedule.getSchedule().getScheduleCategory());
+		String title = endedSchedule.getSchedule_description();
+		GetScheduleCategoryResponseDto scheduleCategory = new GetScheduleCategoryResponseDto(null, endedSchedule.getSchedule_category_title());
 		return new GetSchedulesDetailPerMonthResponseDto(id, status, date, pets, scheduleCategory, title);
 	}
 

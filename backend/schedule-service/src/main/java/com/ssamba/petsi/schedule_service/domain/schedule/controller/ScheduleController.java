@@ -1,5 +1,6 @@
 package com.ssamba.petsi.schedule_service.domain.schedule.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.CreateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleCategoryRequestDto;
+import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleRequestDto;
+import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetSchedulesDetailPerMonthResponseDto;
+import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory;
+import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
+import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleCategoryService;
 import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,19 +40,19 @@ import lombok.RequiredArgsConstructor;
 public class ScheduleController {
 
 	private final ScheduleService scheduleService;
+	private final ScheduleCategoryService scheduleCategoryService;
 
 	@GetMapping("/category")
 	@Operation(summary = "일정 카테고리 불러오기")
 	public ResponseEntity<?> getScheduleCategory(@RequestHeader("X-User-Id") Long userId) {
-		List<?> list = scheduleService.getScheduleCategory(userId);
-		return ResponseEntity.status(HttpStatus.OK).body(list);
+		return ResponseEntity.status(HttpStatus.OK).body(scheduleCategoryService.getScheduleCategory(userId));
 	}
 
 
 	@PostMapping("/category")
 	@Operation(summary = "일정 카테고리 추가하기")
 	public ResponseEntity<?> addScheduleCategory(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, String> title) {
-		scheduleService.addScheduleCategory(userId, title.get("title"));
+		scheduleCategoryService.addScheduleCategory(userId, title.get("title"));
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
@@ -54,35 +60,35 @@ public class ScheduleController {
 	@DeleteMapping("/category")
 	@Operation(summary = "일정 카테고리 삭제하기")
 	public ResponseEntity<?> deleteScheduleCategory(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, Long> scheduleCategory) {
-		scheduleService.deleteScheduleCategory(userId, scheduleCategory.get("id"));
+		scheduleCategoryService.deleteScheduleCategory(userId, scheduleCategory.get("id"));
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-	}
-
-
-	@PutMapping("/category")
-	@Operation(summary = "삭제예정 - 일정 카테고리 수정하기")
-	@Deprecated
-	public ResponseEntity<?> updateScheduleCategory(@RequestHeader("X-User-Id") Long userId,
-		@RequestBody UpdateScheduleCategoryRequestDto requestDto) {
-		scheduleService.updateScheduleCategory(userId, requestDto);
-		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
 	@GetMapping("/detail")
 	@Operation(summary = "월별 상세 일정 불러오기")
 	public ResponseEntity<?> getSchedules(@RequestHeader("X-User-Id") Long userId, @RequestParam("month") int month,
-		@RequestParam(value = "petId", required = false) Long petId) {
-		return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getSchedulesPerMonth(userId, month, petId));
+		@RequestParam(value = "petId", required = false) Long petId, @RequestParam(value = "status", required = false) String status) {
+
+		List<GetSchedulesDetailPerMonthResponseDto> returnList = new ArrayList<>();
+		if (ScheduleStatus.ACTIVATED.getValue().equals(status)) {
+			returnList = scheduleService.getUpcomingSchedulesPerMonth(userId, month, petId);
+		} else if (ScheduleStatus.ENDED.getValue().equals(status)) {
+			returnList = scheduleService.getEndedSchedulesPerMonth(userId, month, petId);
+		} else {
+			returnList.addAll(scheduleService.getUpcomingSchedulesPerMonth(userId, month, petId));
+			returnList.addAll(scheduleService.getEndedSchedulesPerMonth(userId, month, petId));
+		}
+
+		return ResponseEntity.status(HttpStatus.OK).body(returnList);
 	}
 
 
 	@GetMapping("/{scheduleId}")
 	@Operation(summary = "상세 일정 불러오기")
 	public ResponseEntity<?> getScheduleDetail(@RequestHeader("X-User-Id") Long userId,
-		@PathVariable Long scheduleId,
-		@RequestParam("status") String status) {
+		@PathVariable Long scheduleId) {
 		return ResponseEntity.status(HttpStatus.OK).body(
-			scheduleService.getScheduleDetail(userId, scheduleId, status));
+			scheduleService.getScheduleDetail(userId, scheduleId));
 	}
 
 	@DeleteMapping("")
@@ -98,7 +104,8 @@ public class ScheduleController {
 	@Operation(summary = "상세 일정 등록하기")
 	public ResponseEntity<?> createSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody
 		CreateScheduleRequestDto createScheduleRequestDto) {
-		scheduleService.createSchedule(userId, createScheduleRequestDto);
+		ScheduleCategory category = scheduleCategoryService.findById(createScheduleRequestDto.getScheduleCategoryId());
+		scheduleService.createSchedule(userId, createScheduleRequestDto, category);
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
@@ -106,8 +113,9 @@ public class ScheduleController {
 	@PutMapping("")
 	@Operation(summary = "상세 일정 수정하기")
 	public ResponseEntity<?> updateSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody
-	UpdateScheduleRequestDto updateScheduleRequestDto) {
-		scheduleService.updateSchedule(updateScheduleRequestDto);
+	UpdateScheduleRequestDto updateScheduleRequestDto) throws IllegalAccessException {
+		scheduleService.updateSchedule(new UpdateScheduleDto(updateScheduleRequestDto,
+			scheduleCategoryService.findById(updateScheduleRequestDto.getScheduleCategoryId())));
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
@@ -116,6 +124,14 @@ public class ScheduleController {
 	public ResponseEntity<?> finishSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody
 	Map<String, Long> scheduleId) {
 		scheduleService.finishSchedule(userId, scheduleId.get("scheduleId"));
+		return ResponseEntity.status(HttpStatus.OK).body(null);
+	}
+
+	@DeleteMapping("/ended")
+	@Operation(summary = "완료한 상세 일정 삭제하기")
+	public ResponseEntity<?> deleteFinishedSchedule(@RequestHeader("X-User-Id") Long userId, @RequestBody
+	Map<String, Long> endedScheduleId) {
+		scheduleService.deleteFinishedSchedule(userId, endedScheduleId.get("endedScheduleId"));
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 

@@ -3,6 +3,7 @@ package com.ssamba.petsi.schedule_service.domain.schedule.dto.request;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,3 +20,4 @@ public class UpdateScheduleRequestDto {
 	private List<Long> pets;
 
 }
+
