@@ -1,8 +1,8 @@
 server:
-  port: 9001 #실행할 포트로 설정
+  port: 8080 #실행할 포트로 설정
 spring:
   config:
-    import: optional:file:.env
+    import: optional:file:backend/user-service/.env[.properties]
   application:
     name: user-service #현재 서비스 이름으로 변경
   datasource:
@@ -20,13 +20,13 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     show-sql: false
     hibernate:
-      ddl-auto: none #dev에서는 편안한 옵션 선택
+      ddl-auto: create #dev에서는 편안한 옵션 선택
       format_sql: true
 
-#swagger : account 부분 서비스로 변경
-springdoc:
-  swagger-ui:
-    path: /api/v1/user/swagger-ui.html
+##swagger : account 부분 서비스로 변경
+#springdoc:
+#  swagger-ui:
+#    path: /api/v1/user/swagger-ui.html
 
 #로그 관련
 logging:

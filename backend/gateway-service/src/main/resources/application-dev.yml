@@ -66,14 +66,14 @@ spring:
       client:
         registration:
           keycloak:
-            client-id: your-client-id
-            client-secret: your-client-secret
+            client-id: petsi-client
+            client-secret: W52YS8NlJi4k2dpngtU7gSJm3icNNry8
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
             scope: openid, profile, email
-        provider:
-          keycloak:
-            issuer-uri: http://localhost:8080/auth/realms/{realm}
-            authorization-uri: http://localhost:8080/auth/realms/{realm}/protocol/openid-connect/auth
-            token-uri: http://localhost:8080/auth/realms/{realm}/protocol/openid-connect/token
-            user-info-uri: http://localhost:8080/auth/realms/{realm}/protocol/openid-connect/userinfo
+      provider:
+        keycloak:
+          issuer-uri: http://j11a403.p.ssafy.io:8082/auth/realms/petsi
+          authorization-uri: http://j11a403.p.ssafy.io:8082/auth/realms/petsi/protocol/openid-connect/auth
+          token-uri: http://j11a403.p.ssafy.io:8082/auth/realms/petsi/protocol/openid-connect/token
+          user-info-uri: http://j11a403.p.ssafy.io:8082/auth/realms/petsi/protocol/openid-connect/userinfo

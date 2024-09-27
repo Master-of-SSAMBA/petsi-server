@@ -1,5 +1,5 @@
 server:
-  port: 9000
+  port: 80
   netty:
     connection-timeout: 2s
     idle-timeout: 15s
@@ -12,12 +12,6 @@ spring:
     timeout-per-shutdown-phase: 15s
   cloud:
     gateway:
-      x-forwarded:
-        enabled: true
-        for-enabled: true
-        host-enabled: true
-        port-enabled: true
-        proto-enabled: true
       default-path: /api/v1
       httpclient:
         connect-timeout: 2000
@@ -31,61 +25,53 @@ spring:
           uri: http://user-service:9001
           predicates:
             - Path=${spring.cloud.gateway.default-path}/user/**
-          filters:
-            - RemoveRequestHeader=X-Forwarded-Proto
-            - AddRequestHeader=X-Forwarded-Proto, https
         - id: pet-service
           uri: http://pet-service:9002
           predicates:
             - Path=${spring.cloud.gateway.default-path}/pet/**
-          filters:
-            - RemoveRequestHeader=X-Forwarded-Proto
-            - AddRequestHeader=X-Forwarded-Proto, https
         - id: account-service
           uri: http://account-service:9003
           predicates:
             - Path=${spring.cloud.gateway.default-path}/account/**
-          filters:
-            - RemoveRequestHeader=X-Forwarded-Proto
-            - AddRequestHeader=X-Forwarded-Proto, https
         - id: picture-service
           uri: http://picture-service:9004
           predicates:
             - Path=${spring.cloud.gateway.default-path}/picture/**
-          filters:
-            - RemoveRequestHeader=X-Forwarded-Proto
-            - AddRequestHeader=X-Forwarded-Proto, https
         - id: expense-service
           uri: http://expense-service:9005
           predicates:
             - Path=${spring.cloud.gateway.default-path}/expense/**
-          filters:
-            - RemoveRequestHeader=X-Forwarded-Proto
-            - AddRequestHeader=X-Forwarded-Proto, https
         - id: schedule-service
           uri: http://schedule-service:9006
           predicates:
             - Path=${spring.cloud.gateway.default-path}/schedule/**
-          filters:
-            - RemoveRequestHeader=X-Forwarded-Proto
-            - AddRequestHeader=X-Forwarded-Proto, https
         - id: notification-service
           uri: http://notification-service:9007
           predicates:
             - Path=${spring.cloud.gateway.default-path}/notification/**
-          filters:
-            - RemoveRequestHeader=X-Forwarded-Proto
-            - AddRequestHeader=X-Forwarded-Proto, https
         - id: frontend-s3
           uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
           predicates:
             - Path=/**
-          filters:
-            - RemoveRequestHeader=X-Forwarded-Proto
-            - AddRequestHeader=X-Forwarded-Proto, https
-            - RewritePath=(?<path>.*), $\{path}
   redis:
     host: redis-gateway-service
     port: 6379
     password: ${DB_PASSWORD}
     timeout: 5000
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: petsi-client
+            client-secret: W52YS8NlJi4k2dpngtU7gSJm3icNNry8
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+            scope: openid, profile, email
+      provider:
+        keycloak:
+          issuer-uri: http://j11a403.p.ssafy.io:8082/auth/realms/petsi
+          authorization-uri: http://j11a403.p.ssafy.io:8082/auth/realms/petsi/protocol/openid-connect/auth
+          token-uri: http://j11a403.p.ssafy.io:8082/auth/realms/petsi/protocol/openid-connect/token
+          user-info-uri: http://j11a403.p.ssafy.io:8082/auth/realms/petsi/protocol/openid-connect/userinfo
