@@ -1,5 +1,6 @@
 package com.ssamba.petsi.schedule_service.domain.schedule.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -36,15 +37,11 @@ public class EndedSchedule {
 	private Schedule schedule;
 
 	@Column(nullable = false)
-	private LocalDateTime createdAt;
+	private LocalDate createdAt;
 
 	public EndedSchedule(Schedule schedule) {
 		this.schedule = schedule;
-	}
-
-	@PrePersist
-	protected void onCreate() {
-		this.createdAt = LocalDateTime.now();
+		this.createdAt = schedule.getNextScheduleDate();
 	}
 
 }

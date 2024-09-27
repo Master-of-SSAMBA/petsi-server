@@ -34,7 +34,7 @@ public class GetSchedulesDetailPerMonthResponseDto {
 
 	static public GetSchedulesDetailPerMonthResponseDto fromScheduleEntity(Schedule schedule) {
 		Long id = schedule.getScheduleId();
-		String status = ScheduleStatus.UPCOMING.getValue();
+		String status = ScheduleStatus.ACTIVATED.getValue();
 		DateResponseDto date = new DateResponseDto(schedule.getNextScheduleDate());
 		List<Pet> pets = schedule.getPetToSchedule().stream()
 			.map(Pet::toPet)

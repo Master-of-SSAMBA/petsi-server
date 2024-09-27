@@ -1,6 +1,7 @@
 package com.ssamba.petsi.schedule_service.domain.schedule.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +25,6 @@ public interface EndedScheduleRepository extends JpaRepository<EndedSchedule, Lo
 		"AND FUNCTION('MONTH', es.createdAt) = :month " +
 		"ORDER BY es.createdAt DESC")
 	List<EndedSchedule> getAllEndedScheduledListWithPetId(Long userId, int month, Long petId);
+
+	Optional<EndedSchedule> findByEndedScheduleIdAndScheduleScheduleCategoryUserId(Long endedScheduleId, Long userId);
 }

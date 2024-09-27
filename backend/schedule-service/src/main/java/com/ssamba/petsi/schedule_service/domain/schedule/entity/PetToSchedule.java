@@ -36,4 +36,8 @@ public class PetToSchedule {
 	@JoinColumn(name = "schedule_id", nullable = false)
 	private Schedule schedule;
 
+	public PetToSchedule(Long petId, Schedule schedule) {
+		this.petId = petId;
+		this.schedule = schedule;
+	}
 }

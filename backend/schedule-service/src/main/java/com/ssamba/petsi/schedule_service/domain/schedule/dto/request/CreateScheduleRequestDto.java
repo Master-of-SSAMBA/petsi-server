@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.ssamba.petsi.schedule_service.domain.schedule.entity.PetToSchedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.Schedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.IntervalType;
 
@@ -34,4 +35,5 @@ public class CreateScheduleRequestDto {
 			this.intervalDay
 		);
 	}
+
 }

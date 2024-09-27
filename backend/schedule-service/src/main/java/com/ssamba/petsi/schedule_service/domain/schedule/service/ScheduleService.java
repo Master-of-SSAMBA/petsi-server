@@ -1,6 +1,7 @@
 package com.ssamba.petsi.schedule_service.domain.schedule.service;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,11 +16,13 @@ import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetSchedul
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetScheduleDetailResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetSchedulesDetailPerMonthResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.EndedSchedule;
+import com.ssamba.petsi.schedule_service.domain.schedule.entity.PetToSchedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.Schedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.IntervalType;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.EndedScheduleRepository;
+import com.ssamba.petsi.schedule_service.domain.schedule.repository.PetToScheduleRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.ScheduleCategoryRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.ScheduleRepository;
 import com.ssamba.petsi.schedule_service.global.exception.BusinessLogicException;
@@ -34,16 +37,14 @@ public class ScheduleService {
 	private final ScheduleCategoryRepository scheduleCategoryRepository;
 	private final ScheduleRepository scheduleRepository;
 	private final EndedScheduleRepository endedScheduleRepository;
+	private final PetToScheduleRepository petToScheduleRepository;
 
 	@Transactional(readOnly = true)
 	public List<GetScheduleCategoryResponseDto> getScheduleCategory(Long userId) {
-		try {
-			return scheduleCategoryRepository.findAllByUserId(userId).stream()
-				.map(GetScheduleCategoryResponseDto::fromEntity)
-				.collect(Collectors.toList());
-		} catch (Exception e) {
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
-		}
+
+		return scheduleCategoryRepository.findAllByUserId(userId).stream()
+			.map(GetScheduleCategoryResponseDto::fromEntity)
+			.collect(Collectors.toList());
 	}
 
 	@Transactional
@@ -80,27 +81,26 @@ public class ScheduleService {
 
 	}
 
+
 	@Transactional(readOnly = true)
-	public List<GetSchedulesDetailPerMonthResponseDto> getSchedulesPerMonth(Long userId, int month, Long petId) {
+	public List<GetSchedulesDetailPerMonthResponseDto> getUpcomingSchedulesPerMonth(Long userId, int month, Long petId) {
 		List<Schedule> scheduledList = petId == null ? scheduleRepository.getAllScheduledList(userId, month)
 			: scheduleRepository.getAllScheduledListWithPetId(userId, month, petId);
 
+		return scheduledList.stream()
+			.map(GetSchedulesDetailPerMonthResponseDto::fromScheduleEntity)
+			.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<GetSchedulesDetailPerMonthResponseDto> getEndedSchedulesPerMonth(Long userId, int month, Long petId) {
 		List<EndedSchedule> endedScheduleList = petId == null ?
 			endedScheduleRepository.getAllEndedScheduledList(userId, month)
 			: endedScheduleRepository.getAllEndedScheduledListWithPetId(userId, month, petId);
 
-		List<GetSchedulesDetailPerMonthResponseDto> mapScheduleList = scheduledList.stream()
-			.map(GetSchedulesDetailPerMonthResponseDto::fromScheduleEntity)
-			.toList();
-
-		List<GetSchedulesDetailPerMonthResponseDto> mapEndedScheduleList = endedScheduleList.stream()
+		return endedScheduleList.stream()
 			.map(GetSchedulesDetailPerMonthResponseDto::fromEndedScheduleEntity)
 			.toList();
-
-		List<GetSchedulesDetailPerMonthResponseDto> returnList = new ArrayList<>(mapScheduleList);
-		returnList.addAll(mapEndedScheduleList);
-
-		return returnList;
 	}
 
 	@Transactional(readOnly = true)
@@ -136,7 +136,6 @@ public class ScheduleService {
 			-> new BusinessLogicException(ExceptionCode.SCHEDULE_CATEGORY_NOT_FOUND)
 		);
 
-		//같은 일정이 존재한다면, 중복 오류
 		if(scheduleRepository.existsByDescriptionAndScheduleCategory(createScheduleRequestDto.getDescription(), scheduleCategory)) {
 			throw new BusinessLogicException(ExceptionCode.DUPLICATED_SCHEDULE);
 		}
@@ -145,11 +144,18 @@ public class ScheduleService {
 		schedule.setScheduleCategory(scheduleCategory);
 		scheduleRepository.save(schedule);
 
+		addPetToSchedule(createScheduleRequestDto.getPetId(), schedule);
+	}
+
+	@Transactional
+	public void addPetToSchedule(List<Long> pets, Schedule schedule) {
+		pets.stream()
+			.map(id -> new PetToSchedule(id, schedule))
+			.forEach(petToScheduleRepository::save);
 	}
 
 	@Transactional
 	public void updateSchedule(UpdateScheduleRequestDto updateScheduleRequestDto) throws IllegalAccessException {
-		//todo: 일정 수정 코드 작성
 
 		Schedule existingSchedule = scheduleRepository.findById(updateScheduleRequestDto.getScheduleId())
 			.orElseThrow(() -> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND));
@@ -165,6 +171,11 @@ public class ScheduleService {
 						ScheduleCategory newCategory = scheduleCategoryRepository.findById(categoryId)
 							.orElseThrow(() -> new BusinessLogicException(ExceptionCode.SCHEDULE_CATEGORY_NOT_FOUND));
 						existingSchedule.setScheduleCategory(newCategory);
+						continue;
+					}
+					if (dtoField.getName().equals("pets")) {
+						petToScheduleRepository.deleteByScheduleScheduleId(existingSchedule.getScheduleId());
+						addPetToSchedule(updateScheduleRequestDto.getPets(), existingSchedule);
 						continue;
 					}
 					Field entityField = Schedule.class.getDeclaredField(dtoField.getName());
@@ -199,10 +210,22 @@ public class ScheduleService {
 			//일 변경
 			schedule.setNextScheduleDate(schedule.getNextScheduleDate().plusDays(schedule.getIntervalDay()));
 		} else if(schedule.getIntervalType().equals(IntervalType.SPEC_DAY.name())) {
-			//날짜 변경
-		}
+			int intervalDay = schedule.getIntervalDay();
+			LocalDate nextMonthDate = schedule.getNextScheduleDate().plusMonths(1);
+			int lastDayOfMonth = nextMonthDate.lengthOfMonth();
+			int targetDay = Math.min(intervalDay, lastDayOfMonth);
 
+			schedule.setNextScheduleDate(nextMonthDate.withDayOfMonth(targetDay));
+		}
 
 	}
 
+	@Transactional
+	public void deleteFinishedSchedule(Long userId, Long endedScheduleId) {
+		EndedSchedule endedSchedule = endedScheduleRepository.findByEndedScheduleIdAndScheduleScheduleCategoryUserId(
+			endedScheduleId, userId).orElseThrow(()
+			-> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND)
+		);
+		endedScheduleRepository.delete(endedSchedule);
+	}
 }
