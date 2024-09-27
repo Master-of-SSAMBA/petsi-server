@@ -9,7 +9,7 @@ services:
       - SPRING_DATA_REDIS_PASSWORD=${DB_PASSWORD}
       - TZ=Asia/Seoul
     ports:
-      - 80:80
+      - 9000:9000
     networks:
       - petsi_backend_network 
 
