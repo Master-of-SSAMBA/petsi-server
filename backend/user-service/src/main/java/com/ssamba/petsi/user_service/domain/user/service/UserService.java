@@ -1,6 +1,6 @@
 package com.ssamba.petsi.user_service.domain.user.service;
 
-import com.ssamba.petsi.user_service.domain.user.dto.request.CreateKeycloakUserRequestDto;
+import com.ssamba.petsi.user_service.domain.user.dto.request.RegisterKeycloakUserRequestDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
 import com.ssamba.petsi.user_service.domain.user.entity.User;
 import com.ssamba.petsi.user_service.domain.user.repository.UserRepository;
@@ -25,13 +25,8 @@ public class UserService {
         String userKey = finApiService.addMember(signupRequestDto.getEmail());
         User newUser = SignupRequestDto.toEntity(signupRequestDto, userKey);
         userRepository.save(newUser);
-
-        String keycloakUserId = keycloakService.createUserInKeycloak(
-                CreateKeycloakUserRequestDto.create(signupRequestDto, newUser.getUserId(), userKey));
-        if (keycloakUserId == null) {
-            userRepository.delete(newUser);
-            throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
-        }
+        keycloakService.registerUserInKeycloak(
+                RegisterKeycloakUserRequestDto.create(signupRequestDto, newUser.getUserId(), userKey));
     }
 
     private void isValidSignup(SignupRequestDto signupRequestDto) {

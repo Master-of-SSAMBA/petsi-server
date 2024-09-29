@@ -33,7 +33,7 @@ public class FinApiService {
                     = restTemplate.exchange(FIN_API_URL, HttpMethod.POST, request, responseType);
             return response.getBody().getUserKey();
         } catch (Exception e) {
-            throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+            throw new BusinessLogicException(ExceptionCode.FINAPI_REGISTER_ERROR);
         }
     }
 
