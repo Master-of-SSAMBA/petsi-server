@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssamba.petsi.pet_service.domain.pet.dto.request.PetCreateRequestDto;
 import com.ssamba.petsi.pet_service.domain.pet.dto.request.PetUpdateRequestDto;
+import com.ssamba.petsi.pet_service.domain.pet.dto.response.PetCustomDto;
 import com.ssamba.petsi.pet_service.domain.pet.dto.response.PetResponseDto;
 import com.ssamba.petsi.pet_service.domain.pet.service.PetService;
 import com.ssamba.petsi.pet_service.global.exception.BusinessLogicException;
@@ -74,5 +75,10 @@ public class PetController {
 
         petService.deletePet(userId, petId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{userId}")
+    List<PetCustomDto> findAllWithPetCustomDto(@PathVariable Long userId) {
+        return petService.getPets(userId).stream().map(PetCustomDto::fromResponseDto).toList();
     }
 }
