@@ -8,67 +8,45 @@ import com.ssamba.petsi.schedule_service.domain.schedule.entity.PetToEndedSchedu
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.PetToSchedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.Schedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
+import com.ssamba.petsi.schedule_service.global.dto.PetCustomDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
-public class GetSchedulesDetailPerMonthResponseDto {
+public class GetSchedulesDetailPerMonthResponseDto<T> {
+
 	private Long scheduleId;
 	private String status;
 	private DateResponseDto date;
-	private List<Pet> pets;
+	@Setter
+	private List<T> pets;
 	private GetScheduleCategoryResponseDto scheduleCategory;
 	private String description;
 
-	@AllArgsConstructor
-	@Getter
-	private static class Pet {
-		Long petId;
-		String petName;
-
-		static Pet toPet(PetToSchedule petToSchedule) {
-			return new Pet(petToSchedule.getPetId(), null);
-		}
-
-		static Pet fromEndedScheduletoPet(PetToEndedSchedule petToEndedSchedule) {
-			return new Pet(petToEndedSchedule.getPetId(), null);
-		}
-	}
-
-	static public GetSchedulesDetailPerMonthResponseDto fromScheduleEntity(Schedule schedule) {
+	static public GetSchedulesDetailPerMonthResponseDto<Long> fromScheduleEntity(Schedule schedule) {
 		Long id = schedule.getScheduleId();
 		String status = ScheduleStatus.ACTIVATED.getValue();
 		DateResponseDto date = new DateResponseDto(schedule.getNextScheduleDate());
-		List<Pet> pets = schedule.getPetToSchedule().stream()
-			.map(Pet::toPet)
-			.collect(Collectors.toList());
-
 		String title = schedule.getDescription();
+		List<Long> pets = schedule.getPetToSchedule().stream().map(PetToSchedule::getPetId).toList();
 		GetScheduleCategoryResponseDto scheduleCategory = GetScheduleCategoryResponseDto.fromEntity(schedule.getScheduleCategory());
 		return new GetSchedulesDetailPerMonthResponseDto(id, status, date, pets, scheduleCategory, title);
 	}
 
-	static public GetSchedulesDetailPerMonthResponseDto fromEndedScheduleEntity(EndedSchedule endedSchedule) {
+	static public GetSchedulesDetailPerMonthResponseDto<Long> fromEndedScheduleEntity(EndedSchedule endedSchedule) {
 		Long id = endedSchedule.getEndedScheduleId();
 		String status = ScheduleStatus.ENDED.getValue();
 		DateResponseDto date = new DateResponseDto(endedSchedule.getCreatedAt());
-		List<Pet> pets = endedSchedule.getPetToEndedSchedule().stream()
-			.map(Pet::fromEndedScheduletoPet)
-			.toList();
 		String title = endedSchedule.getSchedule_description();
+		List<Long> pets = endedSchedule.getPetToEndedSchedule().stream().map(PetToEndedSchedule::getPetId).toList();
 		GetScheduleCategoryResponseDto scheduleCategory = new GetScheduleCategoryResponseDto(null, endedSchedule.getSchedule_category_title());
 		return new GetSchedulesDetailPerMonthResponseDto(id, status, date, pets, scheduleCategory, title);
 	}
 
-	public List<PetToSchedule> toPetToSchedule(List<Long> pets, Schedule schedule) {
-		return pets.stream()
-			.map(petId -> PetToSchedule.builder()
-				.petId(petId)
-				.schedule(schedule)
-				.build())
-			.collect(Collectors.toList());
-	}
-
 }
+
+
+

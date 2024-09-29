@@ -2,21 +2,14 @@ package com.ssamba.petsi.schedule_service.domain.schedule.service;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.CreateScheduleRequestDto;
-import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleCategoryRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleDto;
-import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleRequestDto;
-import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetScheduleCategoryResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetScheduleDetailResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetSchedulesDetailPerMonthResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.EndedSchedule;
@@ -29,7 +22,6 @@ import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.EndedScheduleRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.PetToEndedScheduleRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.PetToScheduleRepository;
-import com.ssamba.petsi.schedule_service.domain.schedule.repository.ScheduleCategoryRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.ScheduleRepository;
 import com.ssamba.petsi.schedule_service.global.client.PetClient;
 import com.ssamba.petsi.schedule_service.global.dto.PetCustomDto;
@@ -49,25 +41,53 @@ public class ScheduleService {
 	private final PetClient petClient;
 
 	@Transactional(readOnly = true)
-	public List<GetSchedulesDetailPerMonthResponseDto> getUpcomingSchedulesPerMonth(Long userId, int month, Long petId) {
+	public List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> getUpcomingSchedulesPerMonth(Long userId, int month, Long petId) {
 		List<Schedule> scheduledList = petId == null ? scheduleRepository.getAllScheduledList(userId, month,
 			ScheduleStatus.ACTIVATED.getValue())
 			: scheduleRepository.getAllScheduledListWithPetId(userId, month, petId,
 			ScheduleStatus.ACTIVATED.getValue());
 
-		return scheduledList.stream()
+		List<GetSchedulesDetailPerMonthResponseDto<Long>> temp = scheduledList.stream()
 			.map(GetSchedulesDetailPerMonthResponseDto::fromScheduleEntity)
+			.toList();
+
+		return temp.stream()
+			.map(dto -> {
+				List<PetCustomDto> pcd = petClient.findPetCustomDtoById(dto.getPets());
+				return new GetSchedulesDetailPerMonthResponseDto<PetCustomDto>(
+					dto.getScheduleId(),
+					dto.getStatus(),
+					dto.getDate(),
+					pcd,
+					dto.getScheduleCategory(),
+					dto.getDescription()
+				);
+			})
 			.toList();
 	}
 
 	@Transactional(readOnly = true)
-	public List<GetSchedulesDetailPerMonthResponseDto> getEndedSchedulesPerMonth(Long userId, int month, Long petId) {
+	public List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> getEndedSchedulesPerMonth(Long userId, int month, Long petId) {
 		List<EndedSchedule> endedScheduleList = petId == null ?
 			endedScheduleRepository.getAllEndedScheduledList(userId, month)
 			: endedScheduleRepository.getAllEndedScheduledListWithPetId(userId, month, petId);
 
-		return endedScheduleList.stream()
+		List<GetSchedulesDetailPerMonthResponseDto<Long>> temp = endedScheduleList.stream()
 			.map(GetSchedulesDetailPerMonthResponseDto::fromEndedScheduleEntity)
+			.toList();
+
+		return temp.stream()
+			.map(dto -> {
+				List<PetCustomDto> pcd = petClient.findPetCustomDtoById(dto.getPets());
+				return new GetSchedulesDetailPerMonthResponseDto<PetCustomDto>(
+					dto.getScheduleId(),
+					dto.getStatus(),
+					dto.getDate(),
+					pcd,
+					dto.getScheduleCategory(),
+					dto.getDescription()
+				);
+			})
 			.toList();
 	}
 

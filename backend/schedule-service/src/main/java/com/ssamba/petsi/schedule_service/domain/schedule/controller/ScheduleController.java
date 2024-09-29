@@ -28,6 +28,7 @@ import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
 import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleCategoryService;
 import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleService;
+import com.ssamba.petsi.schedule_service.global.dto.PetCustomDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -69,7 +70,7 @@ public class ScheduleController {
 	public ResponseEntity<?> getSchedules(@RequestHeader("X-User-Id") Long userId, @RequestParam("month") int month,
 		@RequestParam(value = "petId", required = false) Long petId, @RequestParam(value = "status", required = false) String status) {
 
-		List<GetSchedulesDetailPerMonthResponseDto> returnList = new ArrayList<>();
+		List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> returnList = new ArrayList<>();
 		if (ScheduleStatus.ACTIVATED.getValue().equals(status)) {
 			returnList = scheduleService.getUpcomingSchedulesPerMonth(userId, month, petId);
 		} else if (ScheduleStatus.ENDED.getValue().equals(status)) {
