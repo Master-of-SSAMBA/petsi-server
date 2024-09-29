@@ -4,8 +4,10 @@ import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ import com.ssamba.petsi.schedule_service.domain.schedule.repository.PetToEndedSc
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.PetToScheduleRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.ScheduleCategoryRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.ScheduleRepository;
+import com.ssamba.petsi.schedule_service.global.dto.PetCustomDto;
 import com.ssamba.petsi.schedule_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.schedule_service.global.exception.ExceptionCode;
 
@@ -75,8 +78,31 @@ public class ScheduleService {
 		GetScheduleDetailResponseDto dto = new GetScheduleDetailResponseDto(schedule);
 		//todo : petList 갖고와서 dto에 set
 
+		// // Create a CompletableFuture for the pet list
+		// CompletableFuture<List<PetCustomDto>> petListFuture = new CompletableFuture<>();
+		// petListFutures.put(userId, petListFuture);
+		//
+		// // Send Kafka message to request pet list
+		// PetListRequestDto requestDto = new PetListRequestDto(userId);
+		// kafkaTemplate.send("pet-list-request-topic", requestDto);
+		//
+		// // Return a CompletableFuture that will be completed when the pet list is received
+		// return petListFuture.thenApply(petList -> {
+		// 	dto.setPetList(petList);
+		// 	return dto;
+		// });
+
 		return dto;
 	}
+
+	@KafkaListener(topics = "pet-list-response-topic", groupId = "schedule-service-group")
+	public void handlePetListResponse(List<PetCustomDto> responseDto) {
+	// 	CompletableFuture<List<PetCustomDto>> future = petListFutures.remove(responseDto.getUserId());
+	// 	if (future != null) {
+	// 		future.complete(responseDto);
+	// 	}
+	}
+
 
 	@Transactional
 	public void deleteSchedule(Long userId, Long id) {
