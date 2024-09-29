@@ -60,7 +60,6 @@ spring:
       port: 6379
       password: ${DB_PASSWORD}
       timeout: 5000
-
   security:
     oauth2:
       client:
@@ -68,9 +67,13 @@ spring:
           keycloak:
             client-id: gateway-service
             client-secret: NIX65o85Hr7gBq6WD1UtS6mVJAmvqPGt
-            authorization-grant-type: password
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: openid
-      provider:
-        keycloak:
-          issuer-uri: http://localhost:8082/auth/realms/petsi
+            redirect-uri: "{baseUrl}/login/oauth2/code/petsi"
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8082/realms/petsi
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
