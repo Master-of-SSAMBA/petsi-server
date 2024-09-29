@@ -1,9 +1,11 @@
 package com.ssamba.petsi.schedule_service.domain.schedule.dto.response;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.Schedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.IntervalType;
+import com.ssamba.petsi.schedule_service.global.dto.PetCustomDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,13 +19,23 @@ public class GetScheduleDetailResponseDto {
 
 	@Getter
 	@AllArgsConstructor
-	public static class Pet {
-		String name;
+	public static class PetWithStatus {
+		PetCustomDto pet;
 		boolean isAssigned;
+
+		public static List<PetWithStatus> createPetWithStatusList(List<PetCustomDto> aList, List<Long> bList) {
+			return aList.stream()
+				.map(pet -> new PetWithStatus(
+					pet,
+					bList.contains(pet.getPetId()) // petId가 bList에 있으면 true, 아니면 false
+				))
+				.collect(Collectors.toList());
+		}
+
 	}
 
 	@Setter
-	private List<Pet> pet;
+	private List<PetWithStatus> pet;
 	private String title;
 	private DateResponseDto dueDate;
 	private String intervalType;
