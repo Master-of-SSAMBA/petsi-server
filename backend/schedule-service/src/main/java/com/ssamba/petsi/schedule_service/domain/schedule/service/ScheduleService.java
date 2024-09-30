@@ -53,7 +53,7 @@ public class ScheduleService {
 
 		return temp.stream()
 			.map(dto -> {
-				List<PetCustomDto> pcd = petClient.findPetCustomDtoById(dto.getPets());
+				List<PetCustomDto> pcd = petClient.findPetCustomDtoById(userId, dto.getPets());
 				return new GetSchedulesDetailPerMonthResponseDto<PetCustomDto>(
 					dto.getScheduleId(),
 					dto.getStatus(),
@@ -78,7 +78,7 @@ public class ScheduleService {
 
 		return temp.stream()
 			.map(dto -> {
-				List<PetCustomDto> pcd = petClient.findPetCustomDtoById(dto.getPets());
+				List<PetCustomDto> pcd = petClient.findPetCustomDtoById(userId, dto.getPets());
 				return new GetSchedulesDetailPerMonthResponseDto<PetCustomDto>(
 					dto.getScheduleId(),
 					dto.getStatus(),
