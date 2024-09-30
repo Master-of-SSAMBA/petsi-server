@@ -3,7 +3,6 @@ package com.ssamba.petsi.schedule_service.domain.schedule.service;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ScheduleService {
 
 	private final ScheduleRepository scheduleRepository;
@@ -47,23 +47,10 @@ public class ScheduleService {
 			: scheduleRepository.getAllScheduledListWithPetId(userId, month, petId,
 			ScheduleStatus.ACTIVATED.getValue());
 
-		List<GetSchedulesDetailPerMonthResponseDto<Long>> temp = scheduledList.stream()
+		return toPetCustomDto(scheduledList.stream()
 			.map(GetSchedulesDetailPerMonthResponseDto::fromScheduleEntity)
-			.toList();
+			.toList(), userId);
 
-		return temp.stream()
-			.map(dto -> {
-				List<PetCustomDto> pcd = petClient.findPetCustomDtoById(userId, dto.getPets());
-				return new GetSchedulesDetailPerMonthResponseDto<PetCustomDto>(
-					dto.getScheduleId(),
-					dto.getStatus(),
-					dto.getDate(),
-					pcd,
-					dto.getScheduleCategory(),
-					dto.getDescription()
-				);
-			})
-			.toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -72,10 +59,13 @@ public class ScheduleService {
 			endedScheduleRepository.getAllEndedScheduledList(userId, month)
 			: endedScheduleRepository.getAllEndedScheduledListWithPetId(userId, month, petId);
 
-		List<GetSchedulesDetailPerMonthResponseDto<Long>> temp = endedScheduleList.stream()
+		return toPetCustomDto(endedScheduleList.stream()
 			.map(GetSchedulesDetailPerMonthResponseDto::fromEndedScheduleEntity)
-			.toList();
+			.toList(), userId);
 
+	}
+
+	public List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> toPetCustomDto(List<GetSchedulesDetailPerMonthResponseDto<Long>> temp, Long userId) {
 		return temp.stream()
 			.map(dto -> {
 				List<PetCustomDto> pcd = petClient.findPetCustomDtoById(userId, dto.getPets());
@@ -90,6 +80,7 @@ public class ScheduleService {
 			})
 			.toList();
 	}
+
 
 	@Transactional(readOnly = true)
 	public GetScheduleDetailResponseDto getScheduleDetail(Long userId, Long id) {
@@ -107,7 +98,6 @@ public class ScheduleService {
 		return dto;
 	}
 
-	@Transactional
 	public void deleteSchedule(Long userId, Long id) {
 		Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleCategoryUserIdAndStatus(id, userId,
 			ScheduleStatus.ACTIVATED.getValue()).orElseThrow(
@@ -117,7 +107,6 @@ public class ScheduleService {
 		schedule.setStatus(ScheduleStatus.INACTIVATED.getValue());
 	}
 
-	@Transactional
 	public void createSchedule(Long userId, CreateScheduleRequestDto createScheduleRequestDto, ScheduleCategory category) {
 
 		if(scheduleRepository.existsByDescriptionAndScheduleCategory(createScheduleRequestDto.getDescription(), category)) {
@@ -131,14 +120,12 @@ public class ScheduleService {
 		addPetToSchedule(createScheduleRequestDto.getPetId(), schedule);
 	}
 
-	@Transactional
 	public void addPetToSchedule(List<Long> pets, Schedule schedule) {
 		pets.stream()
 			.map(id -> new PetToSchedule(id, schedule))
 			.forEach(petToScheduleRepository::save);
 	}
 
-	@Transactional
 	public void updateSchedule(UpdateScheduleDto updateScheduleDto) throws IllegalAccessException {
 
 		Schedule existingSchedule = scheduleRepository.findById(updateScheduleDto.getScheduleId())
@@ -150,7 +137,6 @@ public class ScheduleService {
 
 			if (newValue != null) {
 				try {
-					//todo: petService에서 받아온 값으로 대체
 					if (dtoField.getName().equals("pets")) {
 						petToScheduleRepository.deleteByScheduleScheduleId(existingSchedule.getScheduleId());
 						addPetToSchedule(updateScheduleDto.getPets(), existingSchedule);
@@ -167,7 +153,6 @@ public class ScheduleService {
 
 	}
 
-	@Transactional
 	public void finishSchedule(Long userId, Long scheduleId) {
 		Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleCategoryUserIdAndStatus(scheduleId, userId,
 				ScheduleStatus.ACTIVATED.getValue())
@@ -189,7 +174,6 @@ public class ScheduleService {
 				schedule.getNextScheduleDate(), schedule.getIntervalDay()));
 	}
 
-	@Transactional
 	public void deleteFinishedSchedule(Long userId, Long endedScheduleId) {
 		EndedSchedule endedSchedule = endedScheduleRepository.findByEndedScheduleIdAndUserId(
 			endedScheduleId, userId).orElseThrow(()
