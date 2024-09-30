@@ -21,9 +21,9 @@ import org.springframework.web.client.RestTemplate;
 public class FinApiService {
 
     @Value("${fin.api-url}")
-    private final String FIN_API_URL;
+    private String FIN_API_URL;
     @Value("${fin.api-key}")
-    private final String apiKey;
+    private String apiKey;
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String addMember(String email) {
