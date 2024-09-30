@@ -22,7 +22,7 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     @Bean
-    SecurityWebFilterChain filterChain(ServerHttpSecurity http, ReactiveClientRegistrationRepository clientRegistrationRepository) throws Exception {
+    SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         return http
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers("/api/v1/user/signup").permitAll()
@@ -35,12 +35,6 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
                 .build();
-    }
-
-    private ServerLogoutSuccessHandler oidcLogoutSuccessHandler(ReactiveClientRegistrationRepository clientRegistrationRepository) {
-        var oidcLogoutSuccessHandler = new OidcClientInitiatedServerLogoutSuccessHandler(clientRegistrationRepository);
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
-        return oidcLogoutSuccessHandler;
     }
 
     @Bean
