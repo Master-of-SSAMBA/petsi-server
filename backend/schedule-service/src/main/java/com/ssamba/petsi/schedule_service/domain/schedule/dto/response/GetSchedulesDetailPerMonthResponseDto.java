@@ -26,7 +26,7 @@ public class GetSchedulesDetailPerMonthResponseDto<T> {
 	private GetScheduleCategoryResponseDto scheduleCategory;
 	private String description;
 
-	static public GetSchedulesDetailPerMonthResponseDto<Long> fromScheduleEntity(Schedule schedule) {
+	public static GetSchedulesDetailPerMonthResponseDto<Long> fromScheduleEntity(Schedule schedule) {
 		Long id = schedule.getScheduleId();
 		String status = ScheduleStatus.ACTIVATED.getValue();
 		DateResponseDto date = new DateResponseDto(schedule.getNextScheduleDate());
@@ -36,7 +36,7 @@ public class GetSchedulesDetailPerMonthResponseDto<T> {
 		return new GetSchedulesDetailPerMonthResponseDto(id, status, date, pets, scheduleCategory, title);
 	}
 
-	static public GetSchedulesDetailPerMonthResponseDto<Long> fromEndedScheduleEntity(EndedSchedule endedSchedule) {
+	public static GetSchedulesDetailPerMonthResponseDto<Long> fromEndedScheduleEntity(EndedSchedule endedSchedule) {
 		Long id = endedSchedule.getEndedScheduleId();
 		String status = ScheduleStatus.ENDED.getValue();
 		DateResponseDto date = new DateResponseDto(endedSchedule.getCreatedAt());
@@ -44,6 +44,18 @@ public class GetSchedulesDetailPerMonthResponseDto<T> {
 		List<Long> pets = endedSchedule.getPetToEndedSchedule().stream().map(PetToEndedSchedule::getPetId).toList();
 		GetScheduleCategoryResponseDto scheduleCategory = new GetScheduleCategoryResponseDto(null, endedSchedule.getSchedule_category_title());
 		return new GetSchedulesDetailPerMonthResponseDto(id, status, date, pets, scheduleCategory, title);
+	}
+
+	public static GetSchedulesDetailPerMonthResponseDto<PetCustomDto> toDto(
+		GetSchedulesDetailPerMonthResponseDto<Long> dto, List<PetCustomDto> pcd) {
+		return new GetSchedulesDetailPerMonthResponseDto<PetCustomDto>(
+			dto.getScheduleId(),
+			dto.getStatus(),
+			dto.getDate(),
+			pcd,
+			dto.getScheduleCategory(),
+			dto.getDescription()
+		);
 	}
 
 }

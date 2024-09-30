@@ -69,17 +69,8 @@ public class ScheduleService {
 
 	public List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> toPetCustomDto(List<GetSchedulesDetailPerMonthResponseDto<Long>> temp, Long userId) {
 		return temp.stream()
-			.map(dto -> {
-				List<PetCustomDto> pcd = petClient.findPetCustomDtoById(userId, dto.getPets());
-				return new GetSchedulesDetailPerMonthResponseDto<PetCustomDto>(
-					dto.getScheduleId(),
-					dto.getStatus(),
-					dto.getDate(),
-					pcd,
-					dto.getScheduleCategory(),
-					dto.getDescription()
-				);
-			})
+			.map(dto -> GetSchedulesDetailPerMonthResponseDto.toDto(
+				dto, petClient.findPetCustomDtoById(userId, dto.getPets())))
 			.toList();
 	}
 

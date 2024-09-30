@@ -23,13 +23,14 @@ public class GetScheduleDetailResponseDto {
 		PetCustomDto pet;
 		boolean isAssigned;
 
-		public static List<PetWithStatus> createPetWithStatusList(List<PetCustomDto> aList, List<Long> bList) {
-			return aList.stream()
+		public static List<PetWithStatus> createPetWithStatusList(
+			List<PetCustomDto> petCustomDtoList, List<Long> petIds) {
+			return petCustomDtoList.stream()
 				.map(pet -> new PetWithStatus(
 					pet,
-					bList.contains(pet.getPetId()) // petId가 bList에 있으면 true, 아니면 false
+					petIds.contains(pet.getPetId())
 				))
-				.collect(Collectors.toList());
+				.toList();
 		}
 
 	}

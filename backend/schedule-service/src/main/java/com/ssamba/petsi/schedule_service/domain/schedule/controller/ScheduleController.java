@@ -25,6 +25,7 @@ import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateSched
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetSchedulesDetailPerMonthResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory;
+import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleSortingStatus;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
 import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleCategoryService;
 import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleService;
@@ -70,17 +71,9 @@ public class ScheduleController {
 	public ResponseEntity<?> getSchedules(@RequestHeader("X-User-Id") Long userId, @RequestParam("month") int month,
 		@RequestParam(value = "petId", required = false) Long petId, @RequestParam(value = "status", required = false) String status) {
 
-		List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> returnList = new ArrayList<>();
-		if (ScheduleStatus.ACTIVATED.getValue().equals(status)) {
-			returnList = scheduleService.getUpcomingSchedulesPerMonth(userId, month, petId);
-		} else if (ScheduleStatus.ENDED.getValue().equals(status)) {
-			returnList = scheduleService.getEndedSchedulesPerMonth(userId, month, petId);
-		} else {
-			returnList.addAll(scheduleService.getUpcomingSchedulesPerMonth(userId, month, petId));
-			returnList.addAll(scheduleService.getEndedSchedulesPerMonth(userId, month, petId));
-		}
-
-		return ResponseEntity.status(HttpStatus.OK).body(returnList);
+		return ResponseEntity.status(HttpStatus.OK).body(ScheduleSortingStatus.fromValue(status).setReturnList(
+			scheduleService.getUpcomingSchedulesPerMonth(userId, month, petId),
+			scheduleService.getEndedSchedulesPerMonth(userId, month, petId)));
 	}
 
 
