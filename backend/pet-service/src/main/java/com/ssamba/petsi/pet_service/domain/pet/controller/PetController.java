@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,8 +78,13 @@ public class PetController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{userId}")
-    List<PetCustomDto> findAllWithPetCustomDto(@PathVariable Long userId) {
+    @PostMapping("/find-all-by-user-id")
+    List<PetCustomDto> findAllWithPetCustomDto(@RequestBody Long userId) {
         return petService.getPets(userId).stream().map(PetCustomDto::fromResponseDto).toList();
+    }
+
+    @PostMapping("/find-pets-by-pet-id/{userId}")
+    List<PetCustomDto> findPetCustomDtoById(@PathVariable Long userId, @RequestBody List<Long> pets) {
+        return pets.stream().map(id -> petService.getPet(userId, id)).map(PetCustomDto::fromResponseDto).toList();
     }
 }
