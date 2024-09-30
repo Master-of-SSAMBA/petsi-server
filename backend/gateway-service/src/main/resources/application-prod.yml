@@ -50,12 +50,10 @@ spring:
           uri: http://notification-service:9007
           predicates:
             - Path=${spring.cloud.gateway.default-path}/notification/**
-        - id: frontend-s3
-          uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
-          predicates:
-            - Path=/**
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: https://j11a403.p.ssafy.io/auth/realms/petsi
+frontend:
+  uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
