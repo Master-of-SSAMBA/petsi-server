@@ -26,51 +26,30 @@ spring:
           uri: http://user-service:9001
           predicates:
             - Path=${spring.cloud.gateway.default-path}/user/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: pet-service
           uri: http://pet-service:9002
           predicates:
             - Path=${spring.cloud.gateway.default-path}/pet/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: account-service
           uri: http://account-service:9003
           predicates:
             - Path=${spring.cloud.gateway.default-path}/account/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: picture-service
           uri: http://picture-service:9004
           predicates:
             - Path=${spring.cloud.gateway.default-path}/picture/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: expense-service
           uri: http://expense-service:9005
           predicates:
             - Path=${spring.cloud.gateway.default-path}/expense/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: schedule-service
           uri: http://schedule-service:9006
           predicates:
             - Path=${spring.cloud.gateway.default-path}/schedule/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: notification-service
           uri: http://notification-service:9007
           predicates:
             - Path=${spring.cloud.gateway.default-path}/notification/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: frontend-s3
           uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
           predicates:

@@ -27,60 +27,37 @@ spring:
           uri: ${spring.cloud.gateway.default-uri}:9001
           predicates:
             - Path=${spring.cloud.gateway.default-path}/user/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: pet-service
           uri: ${spring.cloud.gateway.default-uri}:9002
           predicates:
             - Path=${spring.cloud.gateway.default-path}/pet/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: account-service
           uri: ${spring.cloud.gateway.default-uri}:9003
           predicates:
             - Path=${spring.cloud.gateway.default-path}/account/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: picture-service
           uri: ${spring.cloud.gateway.default-uri}:9004
           predicates:
             - Path=${spring.cloud.gateway.default-path}/picture/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: expense-service
           uri: ${spring.cloud.gateway.default-uri}:9005
           predicates:
             - Path=${spring.cloud.gateway.default-path}/expense/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: schedule-service
           uri: ${spring.cloud.gateway.default-uri}:9006
           predicates:
             - Path=${spring.cloud.gateway.default-path}/schedule/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
         - id: notification-service
           uri: ${spring.cloud.gateway.default-uri}:9007
           predicates:
             - Path=${spring.cloud.gateway.default-path}/notification/**
-          filters:
-            - SetRequestHeader=X-User-Id,
-            - SetRequestHeader=X-User-Key,
-        - id: frontend-s3
-          uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
-          predicates:
-            - Path=/, /*, /assets/**, /fonts/**, /images/**, index.html, /*.css, /*.js, /*.ts, /*.tsx, /Symbol.ico
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8082/realms/petsi
+frontend:
+  uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
 logging:
   level:
     org.springframework.security: DEBUG

@@ -23,7 +23,7 @@ public class FinApiService {
     @Value("${fin.api-url}")
     private final String FIN_API_URL;
     @Value("${fin.api-key}")
-    private String apiKey;
+    private final String apiKey;
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String addMember(String email) {
