@@ -109,6 +109,18 @@ services:
   #     - 9007:9007
   #   networks:
   #     - petsi_backend_network 
+  eureka-service:
+    image: "petsi/eureka-service"
+    container_name: "eureka-service"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - TZ=Asia/Seoul
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+    ports:
+      - 8761:8761
+    networks:
+      - petsi_backend_network
 
 networks:
   petsi_backend_network:
