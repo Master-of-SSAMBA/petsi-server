@@ -2,7 +2,9 @@ package com.ssamba.petsi.schedule_service.domain.schedule.service;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,7 +93,7 @@ public class ScheduleService {
 		GetScheduleDetailResponseDto dto = new GetScheduleDetailResponseDto(schedule);
 
 		//todo : petList 갖고와서 dto에 set
-		List<PetCustomDto> petList = petClient.findAll(userId);
+		List<PetCustomDto> petList = petClient.findAllWithPetCustomDto(userId);
 		dto.setPet(GetScheduleDetailResponseDto.PetWithStatus
 			.createPetWithStatusList(petList, schedule.getPetToSchedule().stream().map(PetToSchedule::getPetId).toList()));
 

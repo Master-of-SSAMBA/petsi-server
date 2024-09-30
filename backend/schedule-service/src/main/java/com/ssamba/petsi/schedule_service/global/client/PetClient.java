@@ -1,6 +1,8 @@
 package com.ssamba.petsi.schedule_service.global.client;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +17,9 @@ import com.ssamba.petsi.schedule_service.global.dto.PetCustomDto;
 @FeignClient(name = "pet-service")
 public interface PetClient {
 
-	@GetMapping("/api/v1/pet/{userId}")
-	List<PetCustomDto> findAll(@PathVariable Long userId);
+	@PostMapping("/api/v1/pet/find-all-by-user-id")
+	List<PetCustomDto> findAllWithPetCustomDto(@RequestBody Long userId);
 
-	@PostMapping("/api/v1/pet/{userId}/getpets")
+	@PostMapping("/api/v1/pet/find-pets-by-pet-id/{userId}")
 	List<PetCustomDto> findPetCustomDtoById(@PathVariable Long userId, @RequestBody List<Long> pets);
 }
