@@ -22,7 +22,7 @@ public class UserController {
 
     private final UserService userservice;
 
-    @PostMapping("")
+    @PostMapping("/signup")
     @Operation(summary = "회원가입")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         userservice.signup(signupRequestDto);
