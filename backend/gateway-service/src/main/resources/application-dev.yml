@@ -4,7 +4,6 @@ server:
     connection-timeout: 2s
     idle-timeout: 15s
   shutdown: graceful
-
 spring:
   application:
     name: gateway-service
@@ -12,6 +11,8 @@ spring:
     timeout-per-shutdown-phase: 15s
   cloud:
     gateway:
+      default-filters:
+        - TokenRelay=
       default-uri: host.docker.internal
       default-path: /api/v1
       httpclient:
@@ -26,54 +27,61 @@ spring:
           uri: ${spring.cloud.gateway.default-uri}:9001
           predicates:
             - Path=${spring.cloud.gateway.default-path}/user/**
+          filters:
+            - SetRequestHeader=X-User-Id,
+            - SetRequestHeader=X-User-Key,
         - id: pet-service
           uri: ${spring.cloud.gateway.default-uri}:9002
           predicates:
             - Path=${spring.cloud.gateway.default-path}/pet/**
+          filters:
+            - SetRequestHeader=X-User-Id,
+            - SetRequestHeader=X-User-Key,
         - id: account-service
           uri: ${spring.cloud.gateway.default-uri}:9003
           predicates:
             - Path=${spring.cloud.gateway.default-path}/account/**
+          filters:
+            - SetRequestHeader=X-User-Id,
+            - SetRequestHeader=X-User-Key,
         - id: picture-service
           uri: ${spring.cloud.gateway.default-uri}:9004
           predicates:
             - Path=${spring.cloud.gateway.default-path}/picture/**
+          filters:
+            - SetRequestHeader=X-User-Id,
+            - SetRequestHeader=X-User-Key,
         - id: expense-service
           uri: ${spring.cloud.gateway.default-uri}:9005
           predicates:
             - Path=${spring.cloud.gateway.default-path}/expense/**
+          filters:
+            - SetRequestHeader=X-User-Id,
+            - SetRequestHeader=X-User-Key,
         - id: schedule-service
           uri: ${spring.cloud.gateway.default-uri}:9006
           predicates:
             - Path=${spring.cloud.gateway.default-path}/schedule/**
+          filters:
+            - SetRequestHeader=X-User-Id,
+            - SetRequestHeader=X-User-Key,
         - id: notification-service
           uri: ${spring.cloud.gateway.default-uri}:9007
           predicates:
             - Path=${spring.cloud.gateway.default-path}/notification/**
+          filters:
+            - SetRequestHeader=X-User-Id,
+            - SetRequestHeader=X-User-Key,
         - id: frontend-s3
           uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
           predicates:
             - Path=/, /*, /assets/**, /fonts/**, /images/**, index.html, /*.css, /*.js, /*.ts, /*.tsx, /Symbol.ico
-  data:
-    redis:
-      host: j11a403.p.ssafy.io
-      port: 6379
-      password: ${DB_PASSWORD}
-      timeout: 5000
-
   security:
     oauth2:
-      client:
-        registration:
-          keycloak:
-            client-id: your-client-id
-            client-secret: your-client-secret
-            authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
-            scope: openid, profile, email
-        provider:
-          keycloak:
-            issuer-uri: http://localhost:8080/auth/realms/{realm}
-            authorization-uri: http://localhost:8080/auth/realms/{realm}/protocol/openid-connect/auth
-            token-uri: http://localhost:8080/auth/realms/{realm}/protocol/openid-connect/token
-            user-info-uri: http://localhost:8080/auth/realms/{realm}/protocol/openid-connect/userinfo
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/petsi
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG

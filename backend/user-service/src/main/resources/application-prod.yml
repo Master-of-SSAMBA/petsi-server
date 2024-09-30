@@ -21,14 +21,22 @@ spring:
     hibernate:
       ddl-auto: none
       format_sql: true
-
 #swagger : account 부분 서비스로 변경
 springdoc:
   swagger-ui:
     path: /api/v1/user/swagger-ui.html
-
 #로그 관련
 logging:
   level:
     org.hibernate: DEBUG
     org.springframework: DEBUG
+fin:
+  api-url: "https://finopenapi.ssafy.io/ssafy/api/v1/member/"
+  api_key: ${FIN_API_KEY}
+keycloak:
+  realm: petsi
+  auth-server-url: https://j11a403.p.ssafy.io/auth
+  resource: user-service
+  credentials:
+    secret: ${USER_KEYCLOAK_SECRET}
+  ssl-required: external
