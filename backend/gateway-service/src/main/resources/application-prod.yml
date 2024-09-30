@@ -53,20 +53,8 @@ spring:
           uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
           predicates:
             - Path=/**
-  redis:
-    host: redis-gateway-service
-    port: 6379
-    password: ${DB_PASSWORD}
-    timeout: 5000
-
   security:
     oauth2:
-      client:
-        registration:
-          keycloak:
-            client-id: gateway-service
-            client-secret: ${GATEWAY_KEYCLOAK_SECRET}
-            scope: openid
-      provider:
-        keycloak:
-          issuer-uri: https://j11a403.p.ssafy.io/auth/realms/petsi
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/petsi

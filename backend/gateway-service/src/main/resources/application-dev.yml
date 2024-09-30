@@ -54,24 +54,11 @@ spring:
           uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
           predicates:
             - Path=/, /*, /assets/**, /fonts/**, /images/**, index.html, /*.css, /*.js, /*.ts, /*.tsx, /Symbol.ico
-  data:
-    redis:
-      host: j11a403.p.ssafy.io
-      port: 6379
-      password: ${DB_PASSWORD}
-      timeout: 5000
   security:
     oauth2:
-      client:
-        registration:
-          keycloak:
-            client-id: gateway-service
-            client-secret: NIX65o85Hr7gBq6WD1UtS6mVJAmvqPGt
-            scope: openid
-            redirect-uri: "{baseUrl}/login/oauth2/code/petsi"
-        provider:
-          keycloak:
-            issuer-uri: http://localhost:8082/realms/petsi
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/petsi
 
 logging:
   level:
