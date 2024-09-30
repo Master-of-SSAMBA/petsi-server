@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -21,17 +22,13 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class KeycloakService {
 
     private final Keycloak keycloak;
+    @Value("${keycloak.realm}")
     private final String realm;
     private final UserRepository userRepository;
-
-    public KeycloakService(Keycloak keycloak, @Value("${keycloak.realm}") String realm, UserRepository userRepository) {
-        this.keycloak = keycloak;
-        this.realm = realm;
-        this.userRepository = userRepository;
-    }
 
     public void registerUserInKeycloak(RegisterKeycloakUserRequestDto request) {
         UserRepresentation userRepresentation = createUserRepresentation(request);

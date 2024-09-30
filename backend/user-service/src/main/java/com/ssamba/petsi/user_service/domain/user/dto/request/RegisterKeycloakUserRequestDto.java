@@ -24,21 +24,4 @@ public class RegisterKeycloakUserRequestDto {
              .userKey(userKey)
              .build();
     }
-
-    public static Map<String, Object> createKeycloakUser(RegisterKeycloakUserRequestDto registerKeycloakUserRequestDto) {
-        Map<String, Object> keycloakUser = new HashMap<>();
-        keycloakUser.put("username", registerKeycloakUserRequestDto.getEmail());
-        keycloakUser.put("email", registerKeycloakUserRequestDto.getEmail());
-        keycloakUser.put("enabled", false); // 이메일 인증 완료 전까지 비활성화
-        keycloakUser.put("credentials", Arrays.asList(Map.of(
-                "type", "password",
-                "value", registerKeycloakUserRequestDto.getPassword(),
-                "temporary", false
-        )));
-        keycloakUser.put("attributes", Map.of(
-                "user_id", String.valueOf(registerKeycloakUserRequestDto.getUserId()),
-                "user_key", registerKeycloakUserRequestDto.getUserKey()
-        ));
-        return keycloakUser;
-    }
 }

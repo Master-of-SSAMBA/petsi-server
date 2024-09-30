@@ -7,6 +7,7 @@ import com.ssamba.petsi.user_service.global.util.HttpEntityUtil;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -19,7 +20,10 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class FinApiService {
 
-    private final String FIN_API_URL = "https://finopenapi.ssafy.io/ssafy/api/v1/member/";
+    @Value("${fin.api-url}")
+    private final String FIN_API_URL;
+    @Value("${fin.api-key}")
+    private String apiKey;
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String addMember(String email) {
@@ -39,7 +43,7 @@ public class FinApiService {
 
     private Map<String, Object> createFinApiDto(String email) {
         Map<String, Object> finApiDto = new HashMap<>();
-        finApiDto.put("apiKey", "2443ab151bab467083ba59ec8b9f6ef5");
+        finApiDto.put("apiKey", apiKey);
         finApiDto.put("userId", email);
         return finApiDto;
     }
