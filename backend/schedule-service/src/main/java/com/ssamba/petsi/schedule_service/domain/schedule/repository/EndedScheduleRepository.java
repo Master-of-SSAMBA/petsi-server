@@ -18,6 +18,7 @@ public interface EndedScheduleRepository extends JpaRepository<EndedSchedule, Lo
 
 	@Query("SELECT es FROM EndedSchedule es " +
 		"JOIN PetToEndedSchedule ptes " +
+		"ON ptes.endedSchedule = es " +
 		"WHERE es.userId = :userId " +
 		"AND ptes.petId = :petId " +
 		"AND FUNCTION('MONTH', es.createdAt) = :month " +

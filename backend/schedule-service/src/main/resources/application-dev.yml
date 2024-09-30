@@ -27,9 +27,17 @@ spring:
 springdoc:
   swagger-ui:
     path: /api/v1/schedule/swagger-ui.html
+#
+##로그 관련
+#logging:
+#  level:
+#    org.hibernate: DEBUG
+#    org.springframework: DEBUG
 
-#로그 관련
-logging:
-  level:
-    org.hibernate: DEBUG
-    org.springframework: DEBUG
+# Eureka 서버 주소
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

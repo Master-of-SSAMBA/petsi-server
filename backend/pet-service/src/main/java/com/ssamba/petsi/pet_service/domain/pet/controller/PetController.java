@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssamba.petsi.pet_service.domain.pet.dto.request.PetCreateRequestDto;
 import com.ssamba.petsi.pet_service.domain.pet.dto.request.PetUpdateRequestDto;
+import com.ssamba.petsi.pet_service.domain.pet.dto.response.PetCustomDto;
 import com.ssamba.petsi.pet_service.domain.pet.dto.response.PetResponseDto;
 import com.ssamba.petsi.pet_service.domain.pet.service.PetService;
 import com.ssamba.petsi.pet_service.global.exception.BusinessLogicException;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,5 +76,15 @@ public class PetController {
 
         petService.deletePet(userId, petId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/find-all-by-user-id")
+    List<PetCustomDto> findAllWithPetCustomDto(@RequestBody Long userId) {
+        return petService.getPets(userId).stream().map(PetCustomDto::fromResponseDto).toList();
+    }
+
+    @PostMapping("/find-pets-by-pet-id/{userId}")
+    List<PetCustomDto> findPetCustomDtoById(@PathVariable Long userId, @RequestBody List<Long> pets) {
+        return pets.stream().map(id -> petService.getPet(userId, id)).map(PetCustomDto::fromResponseDto).toList();
     }
 }
