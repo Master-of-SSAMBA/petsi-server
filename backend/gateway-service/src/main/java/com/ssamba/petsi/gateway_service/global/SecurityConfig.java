@@ -25,6 +25,7 @@ public class SecurityConfig {
     SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         return http
                 .authorizeExchange(exchange -> exchange
+                        .pathMatchers("/", "/favicon.ico", "/Symbol.ico", "/assets/**", "/css/**", "/js/**").permitAll()
                         .pathMatchers("/api/v1/user/signup").permitAll()
                         .pathMatchers("/api/v1/**").authenticated()
                         .anyExchange().permitAll()
