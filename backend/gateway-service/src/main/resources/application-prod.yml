@@ -57,3 +57,10 @@ spring:
           issuer-uri: https://j11a403.p.ssafy.io/auth/realms/petsi
 frontend:
   uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.http.server.reactive: DEBUG
+    reactor.netty: DEBUG
