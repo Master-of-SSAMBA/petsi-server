@@ -52,6 +52,11 @@ spring:
           uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
           predicates:
             - Path=/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://j11a403.p.ssafy.io/auth/realms/petsi
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
