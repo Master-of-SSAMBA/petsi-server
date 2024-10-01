@@ -20,11 +20,6 @@ public class SecurityConfig {
     SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         return http
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers(HttpMethod.GET, "/**").permitAll()
-                        .pathMatchers("/", "/index.html", "/*.ico", "/assets/**",
-                                "/fonts/**", "/images/**").permitAll()
-                        .pathMatchers("/api/v1/user/signup", "/api/v1/auth/**").permitAll()
-                        .pathMatchers("/api/v1/**").authenticated()
                         .anyExchange().permitAll()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
