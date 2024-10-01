@@ -25,7 +25,7 @@ public class SecurityConfig {
     SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         return http
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers("/", "/favicon.ico", "/Symbol.ico", "/assets/**", "/css/**", "/js/**").permitAll()
+                        .pathMatchers("/", "/favicon.ico", "/Symbol.ico", "/assets/**", "/css/**", "/js/**", "/auth/**").permitAll()
                         .pathMatchers("/api/v1/user/signup").permitAll()
                         .pathMatchers("/api/v1/**").authenticated()
                         .anyExchange().permitAll()
@@ -41,7 +41,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com"));
+        configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
