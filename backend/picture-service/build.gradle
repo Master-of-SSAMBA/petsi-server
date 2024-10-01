@@ -39,6 +39,11 @@ dependencies {
 	// https://mvnrepository.com/artifact/software.amazon.awssdk/s3
 	implementation group: 'software.amazon.awssdk', name: 's3', version: '2.27.17'
 	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.2.0'
+
+	//feign-client
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client', version: '4.0.3'
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.3'
+
 }
 
 tasks.named('test') {
