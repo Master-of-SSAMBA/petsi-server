@@ -19,10 +19,9 @@ public class SecurityConfig {
     SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         return http
                 .authorizeExchange(exchange -> exchange
-                        // 프론트엔드 리소스에 대한 접근 허용
+                        .pathMatchers(HttpMethod.GET, "/**").permitAll()
                         .pathMatchers("/", "/index.html", "/*.ico", "/assets/**",
                                 "/fonts/**", "/images/**").permitAll()
-                        // API 엔드포인트 설정
                         .pathMatchers("/api/v1/user/signup", "/api/v1/auth/**").permitAll()
                         .pathMatchers("/api/v1/**").authenticated()
                         .anyExchange().permitAll()
