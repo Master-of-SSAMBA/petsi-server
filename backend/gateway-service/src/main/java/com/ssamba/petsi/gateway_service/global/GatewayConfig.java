@@ -54,7 +54,10 @@ public class GatewayConfig {
                                 .tokenRelay()
                                 .filter(addHeadersFilter()))
                         .uri("http://notification-service:9007"))
+                .route("frontend-s3", r -> r.path("/**")
+                        .uri("http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/"))
                 .build();
+                
     }
 
     private GatewayFilter addHeadersFilter() {
