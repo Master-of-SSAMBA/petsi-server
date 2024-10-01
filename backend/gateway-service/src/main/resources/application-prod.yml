@@ -57,3 +57,8 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: https://j11a403.p.ssafy.io/auth/realms/petsi
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.cloud.gateway: DEBUG
