@@ -11,8 +11,6 @@ spring:
     timeout-per-shutdown-phase: 15s
   cloud:
     gateway:
-      default-filters:
-        - TokenRelay=
       default-path: /api/v1
       httpclient:
         connect-timeout: 2000
@@ -50,17 +48,12 @@ spring:
           uri: http://notification-service:9007
           predicates:
             - Path=${spring.cloud.gateway.default-path}/notification/**
+        - id: frontend-s3
+          uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
+          predicates:
+            - Path=/**
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: https://j11a403.p.ssafy.io/auth/realms/petsi
-frontend:
-  uri: http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com/
-logging:
-  level:
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.http.server.reactive: DEBUG
-    reactor.netty: DEBUG
