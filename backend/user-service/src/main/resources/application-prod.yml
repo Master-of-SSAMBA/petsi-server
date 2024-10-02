@@ -38,5 +38,5 @@ keycloak:
   auth-server-url: https://j11a403.p.ssafy.io/auth
   resource: user-service
   credentials:
-    secret: 0aHM2Mjx4Cgxa2L1Uwq07jFiRGqucQVQ
+    secret: ${USER_KEYCLOAK_SECRET}
   ssl-required: external

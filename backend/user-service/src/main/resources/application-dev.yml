@@ -40,5 +40,5 @@ keycloak:
   auth-server-url: http://localhost:8082
   resource: user-service
   credentials:
-    secret: 9rlfGP0nTTTpG7bhWh7i31zmg9k3jlED
+    secret: ${USER_KEYCLOAK_SECRET}
   ssl-required: external
