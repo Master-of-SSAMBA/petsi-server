@@ -43,10 +43,13 @@ public class SecurityConfig {
                             if (principal instanceof JwtAuthenticationToken jwtToken) {
                                 String userId = jwtToken.getToken().getClaimAsString("user_id");
                                 String userKey = jwtToken.getToken().getClaimAsString("user_key");
-                                exchange.getRequest().mutate()
+                                if (exchange.getRequest().getURI().getPath().startsWith("/api/v1/")
+                                    && !exchange.getRequest().getURI().getPath().startsWith("/api/v1/signup") {
+                                    exchange.getRequest().mutate()
                                         .header("X-User-Id", userId)
                                         .header("X-User-Key", userKey)
                                         .build();
+                                }
                             }
                             return chain.filter(exchange);
                         });
