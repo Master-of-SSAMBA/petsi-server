@@ -116,4 +116,11 @@ public class AccountController {
 		accountService.accountTransfer(userId, userKey, accountTransferRequestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
+
+	@PostMapping("/account-holder-name")
+	@Operation(summary = "예금주 명 조회")
+	public ResponseEntity<?> inquireDemandDepositAccountHolderName(@RequestHeader("X-User-Id") Long userId,
+		@RequestHeader("X-User-Key") String userKey, @RequestBody Map<String, String> req) {
+		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAccountHolderName(userId, userKey, req.get("accountNo")));
+	}
 }

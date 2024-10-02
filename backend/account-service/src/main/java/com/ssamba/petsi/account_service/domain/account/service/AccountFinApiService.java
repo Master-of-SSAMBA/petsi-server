@@ -256,4 +256,36 @@ public class AccountFinApiService {
 			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+
+	public FinApiResponseDto.InquireDemandDepositAccountHolderName InquireDemandDepositAccountHolderName(
+		String accountNo, String userKey) {
+		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.inquireDemandDepositAccountHolderName.name(),
+			FinApiUrl.inquireDemandDepositAccountHolderName.name());
+		header.setUserKey(userKey);
+		header.setApiKey(apiKey);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		Map<String, Object> finApiDto = new HashMap<>();
+		finApiDto.put("Header", header);
+		finApiDto.put("accountNo", accountNo);
+
+		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+
+		ParameterizedTypeReference<FinApiResponseDto<FinApiResponseDto.InquireDemandDepositAccountHolderName>> responseType =
+			new ParameterizedTypeReference<>() {
+			};
+
+		ResponseEntity<FinApiResponseDto<FinApiResponseDto.InquireDemandDepositAccountHolderName>> response =
+			restTemplate.exchange(
+				FinApiUrl.inquireDemandDepositAccountHolderName.getUrl(),
+				HttpMethod.POST,
+				request,
+				responseType
+			);
+
+		return response.getBody().getRec();
+	}
 }

@@ -20,6 +20,7 @@ import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccount
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateAccountNameRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateRecurringTransactionRequestDto;
+import com.ssamba.petsi.account_service.domain.account.dto.response.AccountHolderNameResponseDto;
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAccountDetailsResponseDto;
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAccountHistoryResponseDto;
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllAcountsResponseDto;
@@ -263,5 +264,12 @@ public class AccountService {
 		String withdrawalTransactionSummary = accountTransferRequestDto.getDescription();
 		accountFinApiService.updateDemandDepositAccountTransfer(userKey,
 			depositAccountNo, depositTransactionSummary, transactionBalance, withdrawalAccountNo, withdrawalTransactionSummary);
+	}
+
+	public AccountHolderNameResponseDto getAccountHolderName(Long userId, String userKey, String accountNo) {
+		FinApiResponseDto.InquireDemandDepositAccountHolderName dto = accountFinApiService
+			.InquireDemandDepositAccountHolderName(accountNo, userKey);
+		return new AccountHolderNameResponseDto(dto);
+
 	}
 }

@@ -14,7 +14,8 @@ public enum FinApiUrl {
 		"https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireTransactionHistoryList"),
 	inquireDemandDepositAccountList("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireDemandDepositAccountList"),
 	inquireDemandDepositAccount("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireDemandDepositAccount"),
-	updateDemandDepositAccountTransfer("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/updateDemandDepositAccountTransfer");
+	updateDemandDepositAccountTransfer("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/updateDemandDepositAccountTransfer"),
+	inquireDemandDepositAccountHolderName("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireDemandDepositAccountHolderName");
 
 	private String url;
 
