@@ -35,7 +35,7 @@ public class ExpenseService {
     private static final long EXPENSE_PER_PAGE = 20;
     private static final String CACHE_KEY_PREFIX = "expense:";
     // python AI 카테고리 예측 요청 URI
-    private static final String AI_PREDICT_URL = "http://127.0.0.1:8000/api/v1/predict_categories";
+    private static final String AI_PREDICT_URL = "http://ai-service:9008/api/v1/predict_categories";
     private final RestTemplate restTemplate = new RestTemplate();
     private final S3Service s3Service;
     private final PurchaseRepository purchaseRepository;
