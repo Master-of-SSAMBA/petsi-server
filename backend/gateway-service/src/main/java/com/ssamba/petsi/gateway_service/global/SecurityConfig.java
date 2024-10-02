@@ -34,31 +34,20 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public WebFilter addHeaderFilter() {
-        return (ServerWebExchange exchange, WebFilterChain chain) ->
-                exchange.getPrincipal()
-                        .flatMap(principal -> {
-                            if (principal instanceof JwtAuthenticationToken jwtToken) {
-                                String userId = jwtToken.getToken().getClaimAsString("user_id");
-                                String userKey = jwtToken.getToken().getClaimAsString("user_key");
-                                exchange.getRequest().mutate()
-                                        .header("X-User-Id", userId)
-                                        .header("X-User-Key", userKey)
-                                        .build();
-                            }
-                            return chain.filter(exchange);
-                        });
-    }
-
-    @Bean
-    SecurityWebFilterChain frontendSecurityFilterChain(ServerHttpSecurity http) {
-        http
-                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
-                .authorizeExchange(exchanges -> exchanges.anyExchange().permitAll())
-                .csrf(CsrfSpec::disable)
-                .cors(CorsSpec::disable);
-        return http.build();
-    }
-
+    // @Bean
+    // public WebFilter addHeaderFilter() {
+    //     return (ServerWebExchange exchange, WebFilterChain chain) ->
+    //             exchange.getPrincipal()
+    //                     .flatMap(principal -> {
+    //                         if (principal instanceof JwtAuthenticationToken jwtToken) {
+    //                             String userId = jwtToken.getToken().getClaimAsString("user_id");
+    //                             String userKey = jwtToken.getToken().getClaimAsString("user_key");
+    //                             exchange.getRequest().mutate()
+    //                                     .header("X-User-Id", userId)
+    //                                     .header("X-User-Key", userKey)
+    //                                     .build();
+    //                         }
+    //                         return chain.filter(exchange);
+    //                     });
+    // }
 }
