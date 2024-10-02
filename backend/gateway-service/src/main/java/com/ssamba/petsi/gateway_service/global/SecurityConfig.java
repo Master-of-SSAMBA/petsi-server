@@ -54,7 +54,7 @@ public class SecurityConfig {
     @Bean
     SecurityWebFilterChain frontendSecurityFilterChain(ServerHttpSecurity http) {
         http
-                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**"))
+                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
                 .authorizeExchange(exchanges -> exchanges.anyExchange().permitAll())
                 .csrf(CsrfSpec::disable)
                 .cors(CorsSpec::disable);
