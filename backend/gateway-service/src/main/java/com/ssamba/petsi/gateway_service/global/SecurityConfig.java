@@ -1,10 +1,13 @@
 package com.ssamba.petsi.gateway_service.global;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity.CorsSpec;
+import org.springframework.security.config.web.server.ServerHttpSecurity.CsrfSpec;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
@@ -12,22 +15,22 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 
+@Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
     @Bean
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http
+                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**"))
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/", "/assets/**", "/fonts/**", "/images/**", "/index.html", "/Symbol.ico").permitAll()
-                        .pathMatchers("/api/v1/user/signup").permitAll()
-                        .pathMatchers("/api/v1/**").authenticated()
-                        .anyExchange().permitAll()
+                        .pathMatchers("/api/v1/user/signup", "/api/v1/auth/**").permitAll()
+                        .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .cors(ServerHttpSecurity.CorsSpec::disable);
-//                .addFilterAt(addHeaderFilter(), SecurityWebFiltersOrder.AUTHORIZATION);
+                .csrf(CsrfSpec::disable)
+                .cors(CorsSpec::disable)
+                .addFilterAt(addHeaderFilter(), SecurityWebFiltersOrder.AUTHORIZATION);
         return http.build();
     }
 
@@ -46,5 +49,14 @@ public class SecurityConfig {
                             }
                             return chain.filter(exchange);
                         });
+    }
+
+    @Bean
+    SecurityWebFilterChain frontendSecurityFilterChain(ServerHttpSecurity http) {
+        http
+                .authorizeExchange(exchanges -> exchanges.anyExchange().permitAll())
+                .csrf(CsrfSpec::disable)
+                .cors(CorsSpec::disable);
+        return http.build();
     }
 }
