@@ -30,24 +30,25 @@ public class SecurityConfig {
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .csrf(CsrfSpec::disable)
-                .cors(CorsSpec::disable);
+                .cors(CorsSpec::disable)
+                .addFilterAt(addHeaderFilter(), SecurityWebFiltersOrder.AUTHORIZATION);
         return http.build();
     }
 
     // @Bean
-    // public WebFilter addHeaderFilter() {
-    //     return (ServerWebExchange exchange, WebFilterChain chain) ->
-    //             exchange.getPrincipal()
-    //                     .flatMap(principal -> {
-    //                         if (principal instanceof JwtAuthenticationToken jwtToken) {
-    //                             String userId = jwtToken.getToken().getClaimAsString("user_id");
-    //                             String userKey = jwtToken.getToken().getClaimAsString("user_key");
-    //                             exchange.getRequest().mutate()
-    //                                     .header("X-User-Id", userId)
-    //                                     .header("X-User-Key", userKey)
-    //                                     .build();
-    //                         }
-    //                         return chain.filter(exchange);
-    //                     });
-    // }
+    public WebFilter addHeaderFilter() {
+        return (ServerWebExchange exchange, WebFilterChain chain) ->
+                exchange.getPrincipal()
+                        .flatMap(principal -> {
+                            if (principal instanceof JwtAuthenticationToken jwtToken) {
+                                String userId = jwtToken.getToken().getClaimAsString("user_id");
+                                String userKey = jwtToken.getToken().getClaimAsString("user_key");
+                                exchange.getRequest().mutate()
+                                        .header("X-User-Id", userId)
+                                        .header("X-User-Key", userKey)
+                                        .build();
+                            }
+                            return chain.filter(exchange);
+                        });
+    }
 }
