@@ -51,4 +51,14 @@ public class SecurityConfig {
                             return chain.filter(exchange);
                         });
     }
+
+    @Bean
+    SecurityWebFilterChain frontendSecurityFilterChain(ServerHttpSecurity http) {
+        http
+                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
+                .authorizeExchange(exchanges -> exchanges.anyExchange().permitAll())
+                .csrf(CsrfSpec::disable)
+                .cors(CorsSpec::disable);
+        return http.build();
+    }
 }
