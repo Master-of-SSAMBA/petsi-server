@@ -39,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AccountService {
 
 	private final LinkedAccountRepository linkedAccountRepository;
@@ -51,7 +52,7 @@ public class AccountService {
 	public List<GetAllProductsResponseDto> getAllProducts() {
 		return accountProductRepository.findAll().stream()
 			.map(GetAllProductsResponseDto::from)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	public void openAccountAuth(OpenAccountAuthRequestDto openAccountAuthRequestDto, String userKey) {
@@ -63,11 +64,10 @@ public class AccountService {
 		accountFinApiService.openAccountAuth(userKey, openAccountAuthRequestDto.getAccountNo());
 	}
 
-	@Transactional
 	public void createAccountBySteps(CreateAccountRequestDto createAccountRequestDto, String userKey, Long userId) {
 
-		CheckAccountAuthDto checkAccountAuthDto = new CheckAccountAuthDto(createAccountRequestDto);
-		checkAccountAuthDto.setUserKey(userKey);
+		CheckAccountAuthDto checkAccountAuthDto = CheckAccountAuthDto.fromCreateAccountDto(
+			createAccountRequestDto, userKey);
 
 		accountFinApiService.checkAuthCode(userKey, createAccountRequestDto.getAccountNo(),
 			createAccountRequestDto.getCode());
@@ -116,19 +116,11 @@ public class AccountService {
 		return returnList;
 	}
 
-	@Transactional
 	public void deleteAccount(Long userId, String userKey, Long accountId) {
-		Account account = accountRepository.findByIdWithRecurringTransaction(accountId);
-		if (account == null) {
-			throw new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND);
-		}
-		if (userId != account.getUserId()) {
-			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
-		}
-
-		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
-			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
-		}
+		Account account = accountRepository.findByAccountIdAndStatusAndUserId(accountId,
+			AccountStatus.ACTIVATED.getValue(), userId).orElseThrow(
+				() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND)
+		);
 
 		account.setStatus(AccountStatus.INACTIVATED.getValue());
 		if (account.getRecurringTransaction() != null) {
@@ -139,18 +131,20 @@ public class AccountService {
 			account.getLinkedAccount().getAccountNumber());
 	}
 
-	@Transactional
-	public void updateRecurringTransaction(UpdateRecurringTransactionRequestDto updateRecurringTransactionRequestDto,
-		Long userId) {
-		Account account = accountRepository.findByIdWithRecurringTransaction(
-			updateRecurringTransactionRequestDto.getAccountId());
-
-		if (account == null) {
-			throw new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND);
-		}
+	private void validateAccountWithUserId(Account account, Long userId) {
 		if (userId != account.getUserId()) {
 			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
 		}
+	}
+
+	public void updateRecurringTransaction(UpdateRecurringTransactionRequestDto updateRecurringTransactionRequestDto,
+		Long userId) {
+		Account account = accountRepository.findByIdWithRecurringTransaction(
+			updateRecurringTransactionRequestDto.getAccountId()).orElseThrow(
+				() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND)
+		);
+
+		validateAccountWithUserId(account, userId);
 
 		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
 			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
@@ -180,24 +174,22 @@ public class AccountService {
 
 	}
 
-	@Transactional
 	public void updateAccountName(UpdateAccountNameRequestDto updateAccountNameRequestDto, Long userId) {
-		Account account = accountRepository.findById(updateAccountNameRequestDto.getAccountId()).orElseThrow();
+		Account account = accountRepository.findById(updateAccountNameRequestDto.getAccountId()).orElseThrow(
+			() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND)
+		);
 		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
 			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
 		}
-		if (account.getUserId() != userId) {
-			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
-		}
+		validateAccountWithUserId(account, userId);
 		account.setName(updateAccountNameRequestDto.getName());
 	}
 
 	@Transactional(readOnly = true)
 	public GetAccountDetailsResponseDto getAccountDetails(Long userId, String userKey, Long accountId) {
-		Account account = accountRepository.findByIdWithRecurringTransaction(accountId);
-		if (account == null) {
-			throw new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND);
-		}
+		Account account = accountRepository.findByIdWithRecurringTransaction(accountId).orElseThrow(
+			() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND)
+		);
 		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
 			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
 		}
@@ -224,16 +216,16 @@ public class AccountService {
 		int sortOption) {
 		Pageable pageable = PageRequest.of(page, 12);
 
-		Account account = accountRepository.findByIdWithRecurringTransaction(accountId);
+		Account account = accountRepository.findByIdWithRecurringTransaction(accountId).orElseThrow(
+			() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND)
+		);
 		if (account == null) {
 			throw new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND);
 		}
 		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
 			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
 		}
-		if (account.getUserId() != userId) {
-			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
-		}
+		validateAccountWithUserId(account, userId);
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 		LocalDate nowDate = LocalDate.now();
@@ -261,9 +253,7 @@ public class AccountService {
 		Account account = accountRepository.findById(accountTransferRequestDto.getAccountId()).orElseThrow(
 			() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND));
 
-		if (account.getUserId() != userId) {
-			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
-		}
+		validateAccountWithUserId(account, userId);
 
 		String depositAccountNo = accountTransferRequestDto.getDestinationAccountNo();
 		String depositTransactionSummary = accountTransferRequestDto.getDestinationDescription();

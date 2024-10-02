@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiHeaderRequestDto;
+import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiResponseDto;
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
 import com.ssamba.petsi.account_service.domain.account.enums.FinApiUrl;
@@ -33,20 +34,14 @@ public class AccountFinApiService {
 	private String apiKey;
 
 	public void openAccountAuth(String userKey, String accountNo) {
-		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.openAccountAuth.name(),
-			FinApiUrl.openAccountAuth.name());
-		header.setUserKey(userKey);
-		header.setApiKey(apiKey);
-
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		Map<String, Object> finApiDto = new HashMap<>();
-		finApiDto.put("Header", header);
-		finApiDto.put("accountNo", accountNo);
-		finApiDto.put("authText", "petsi");
+		FinApiRequestDto<FinApiRequestDto.OpenAccountAuthRequestDto> dto = FinApiRequestDto.OpenAccountAuthRequestDto
+			.toOpenAccountAuth(userKey, accountNo);
+		dto.getHeader().setApiKey(apiKey);
 
-		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+		HttpEntity<FinApiRequestDto<FinApiRequestDto.OpenAccountAuthRequestDto>> request = new HttpEntity<>(dto, headers);
 
 		try {
 			ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.openAccountAuth.getUrl(), request,
@@ -57,21 +52,14 @@ public class AccountFinApiService {
 	}
 
 	public void checkAuthCode(String userKey, String accountNo, String authCode) {
-		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.checkAuthCode.name(),
-			FinApiUrl.checkAuthCode.name());
-		header.setUserKey(userKey);
-		header.setApiKey(apiKey);
-
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		Map<String, Object> finApiDto = new HashMap<>();
-		finApiDto.put("Header", header);
-		finApiDto.put("accountNo", accountNo);
-		finApiDto.put("authText", "petsi");
-		finApiDto.put("authCode", authCode);
+		FinApiRequestDto<FinApiRequestDto.CheckAuthCodeRequestDto> dto = FinApiRequestDto.CheckAuthCodeRequestDto
+			.toCheckAuthCode(userKey, accountNo, authCode);
+		dto.getHeader().setApiKey(apiKey);
 
-		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+		HttpEntity<FinApiRequestDto<FinApiRequestDto.CheckAuthCodeRequestDto>> request = new HttpEntity<>(dto, headers);
 
 		try {
 			ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.checkAuthCode.getUrl(), request,
@@ -82,19 +70,14 @@ public class AccountFinApiService {
 	}
 
 	public String createDemandDepositAccount(String accountTypeUniqueNo, String userKey) {
-		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.createDemandDepositAccount.name(),
-			FinApiUrl.createDemandDepositAccount.name());
-		header.setUserKey(userKey);
-		header.setApiKey(apiKey);
-
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		Map<String, Object> finApiDto = new HashMap<>();
-		finApiDto.put("Header", header);
-		finApiDto.put("accountTypeUniqueNo", accountTypeUniqueNo);
+		FinApiRequestDto<FinApiRequestDto.CreateAccountRequestDto> dto = FinApiRequestDto.CreateAccountRequestDto
+			.toCreateAccount(userKey, accountTypeUniqueNo);
+		dto.getHeader().setApiKey(apiKey);
 
-		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+		HttpEntity<FinApiRequestDto<FinApiRequestDto.CreateAccountRequestDto>> request = new HttpEntity<>(dto, headers);
 
 		ParameterizedTypeReference<FinApiResponseDto<FinApiResponseDto.CreateAccountResponseDto>> responseType =
 			new ParameterizedTypeReference<>() {
@@ -116,8 +99,7 @@ public class AccountFinApiService {
 
 	public List<FinApiResponseDto.AccountListResponseDto> inquireDemandDepositAccountList(String userKey) {
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.inquireDemandDepositAccountList.name(),
-			FinApiUrl.inquireDemandDepositAccountList.name());
-		header.setUserKey(userKey);
+			FinApiUrl.inquireDemandDepositAccountList.name(), userKey);
 		header.setApiKey(apiKey);
 
 		HttpHeaders headers = new HttpHeaders();
@@ -144,20 +126,14 @@ public class AccountFinApiService {
 	}
 
 	public void deleteDemandDepositAccount(String userKey, String accountNo, String refundAccountNo) {
-		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.deleteDemandDepositAccount.name(),
-			FinApiUrl.deleteDemandDepositAccount.name());
-		header.setUserKey(userKey);
-		header.setApiKey(apiKey);
-
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		Map<String, Object> finApiDto = new HashMap<>();
-		finApiDto.put("Header", header);
-		finApiDto.put("accountNo", accountNo);
-		finApiDto.put("refundAccountNo", refundAccountNo);
+		FinApiRequestDto<FinApiRequestDto.DeleteAccountRequestDto> dto = FinApiRequestDto.DeleteAccountRequestDto
+			.toDeleteAccount(userKey, accountNo, refundAccountNo);
+		dto.getHeader().setApiKey(apiKey);
 
-		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+		HttpEntity<FinApiRequestDto<FinApiRequestDto.DeleteAccountRequestDto>> request = new HttpEntity<>(dto, headers);
 
 		ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.deleteDemandDepositAccount.getUrl(),
 			request,
@@ -166,19 +142,14 @@ public class AccountFinApiService {
 	}
 
 	public FinApiResponseDto.AccountListResponseDto inquireDemandDepositAccount(String userKey, String accountNo) {
-		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.inquireDemandDepositAccount.name(),
-			FinApiUrl.inquireDemandDepositAccount.name());
-		header.setUserKey(userKey);
-		header.setApiKey(apiKey);
-
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		Map<String, Object> finApiDto = new HashMap<>();
-		finApiDto.put("Header", header);
-		finApiDto.put("accountNo", accountNo);
+		FinApiRequestDto<FinApiRequestDto.InquireAccount> dto = FinApiRequestDto.InquireAccount
+			.toInquireAccount(userKey, accountNo);
+		dto.getHeader().setApiKey(apiKey);
 
-		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+		HttpEntity<FinApiRequestDto<FinApiRequestDto.InquireAccount>> request = new HttpEntity<>(dto, headers);
 
 		ParameterizedTypeReference<FinApiResponseDto<FinApiResponseDto.AccountListResponseDto>> responseType =
 			new ParameterizedTypeReference<>() {
@@ -197,23 +168,14 @@ public class AccountFinApiService {
 
 	public FinApiResponseDto.TransactionHistoryResponseDto inquireTransactionHistoryList(
 		Account account, String startDate, String endDate, String userKey) {
-		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.inquireTransactionHistoryList.name(),
-			FinApiUrl.inquireTransactionHistoryList.name());
-		header.setUserKey(userKey);
-		header.setApiKey(apiKey);
-
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		Map<String, Object> finApiDto = new HashMap<>();
-		finApiDto.put("Header", header);
-		finApiDto.put("accountNo", account.getAccountNo());
-		finApiDto.put("startDate", startDate);
-		finApiDto.put("endDate", endDate);
-		finApiDto.put("transactionType", "A");
-		finApiDto.put("orderByType", "DESC");
+		FinApiRequestDto<FinApiRequestDto.TransactionHistory> dto = FinApiRequestDto.TransactionHistory
+			.toHistoryList(userKey, account.getAccountNo(), startDate, endDate);
+		dto.getHeader().setApiKey(apiKey);
 
-		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+		HttpEntity<FinApiRequestDto<FinApiRequestDto.TransactionHistory>> request = new HttpEntity<>(dto, headers);
 
 		ParameterizedTypeReference<FinApiResponseDto<FinApiResponseDto.TransactionHistoryResponseDto>> responseType =
 			new ParameterizedTypeReference<>() {
@@ -228,26 +190,19 @@ public class AccountFinApiService {
 			);
 
 		return response.getBody().getRec();
+
 	}
 
 	public void updateDemandDepositAccountTransfer(String userKey, String depositAccountNo, String depositTransactionSummary, Long transactionBalance, String withdrawalAccountNo, String withdrawalTransactionSummary) {
-		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.updateDemandDepositAccountTransfer.name(),
-			FinApiUrl.updateDemandDepositAccountTransfer.name());
-		header.setUserKey(userKey);
-		header.setApiKey(apiKey);
-
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		Map<String, Object> finApiDto = new HashMap<>();
-		finApiDto.put("Header", header);
-		finApiDto.put("depositAccountNo", depositAccountNo);
-		finApiDto.put("depositTransactionSummary", depositTransactionSummary);
-		finApiDto.put("transactionBalance", transactionBalance);
-		finApiDto.put("withdrawalAccountNo", withdrawalAccountNo);
-		finApiDto.put("withdrawalTransactionSummary", withdrawalTransactionSummary);
+		FinApiRequestDto<FinApiRequestDto.UpdateTransfer> dto = FinApiRequestDto.UpdateTransfer
+			.toUpdateTransfer(userKey, depositAccountNo, depositTransactionSummary, transactionBalance,
+				withdrawalAccountNo, withdrawalTransactionSummary);
+		dto.getHeader().setApiKey(apiKey);
 
-		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+		HttpEntity<FinApiRequestDto<FinApiRequestDto.UpdateTransfer>> request = new HttpEntity<>(dto, headers);
 
 		try {
 			ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.updateDemandDepositAccountTransfer.getUrl(), request,
