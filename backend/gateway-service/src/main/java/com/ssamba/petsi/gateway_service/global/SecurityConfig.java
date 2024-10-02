@@ -25,7 +25,8 @@ public class SecurityConfig {
                 .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**"))
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/api/v1/user/signup", "/api/v1/auth/**").permitAll()
-                        .anyExchange().authenticated()
+                        .pathMatchers("/api/v1/**").authenticated()
+                        .anyExchange().permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .csrf(CsrfSpec::disable)
