@@ -30,8 +30,7 @@ public class SecurityConfig {
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .csrf(CsrfSpec::disable)
-                .cors(CorsSpec::disable)
-                .addFilterAt(addHeaderFilter(), SecurityWebFiltersOrder.AUTHORIZATION);
+                .cors(CorsSpec::disable);
         return http.build();
     }
 
@@ -51,4 +50,15 @@ public class SecurityConfig {
                             return chain.filter(exchange);
                         });
     }
+
+    @Bean
+    SecurityWebFilterChain frontendSecurityFilterChain(ServerHttpSecurity http) {
+        http
+                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**"))
+                .authorizeExchange(exchanges -> exchanges.anyExchange().permitAll())
+                .csrf(CsrfSpec::disable)
+                .cors(CorsSpec::disable);
+        return http.build();
+    }
+
 }
