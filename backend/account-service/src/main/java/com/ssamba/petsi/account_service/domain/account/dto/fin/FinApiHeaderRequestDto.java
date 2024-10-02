@@ -30,14 +30,14 @@ public class FinApiHeaderRequestDto {
 	private String institutionTransactionUniqueNo;
 	@Setter
 	private String apiKey;
+	@Setter
 	private String userKey;
 
-	public FinApiHeaderRequestDto(String apiName, String apiServiceCode, String userKey) {
+	public FinApiHeaderRequestDto(String apiName, String apiServiceCode) {
 		String[] timeUnits = LocalDateTime.now().toString().split("T");
 		String date = timeUnits[0].replaceAll("-", "");
 		String time = timeUnits[1].replaceAll(":", "").replaceAll("\\.\\d+", "");
 		this.apiName = apiName;
-		this.userKey = userKey;
 		this.apiServiceCode = apiServiceCode;
 		this.transmissionDate = date;
 		this.transmissionTime = time;

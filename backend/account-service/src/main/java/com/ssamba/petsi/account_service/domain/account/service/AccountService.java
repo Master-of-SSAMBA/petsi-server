@@ -66,8 +66,9 @@ public class AccountService {
 
 	public void createAccountBySteps(CreateAccountRequestDto createAccountRequestDto, String userKey, Long userId) {
 
-		CheckAccountAuthDto checkAccountAuthDto = CheckAccountAuthDto.fromCreateAccountDto(
-			createAccountRequestDto, userKey);
+		CheckAccountAuthDto checkAccountAuthDto = new CheckAccountAuthDto(createAccountRequestDto);
+		checkAccountAuthDto.setUserKey(userKey);
+
 
 		accountFinApiService.checkAuthCode(userKey, createAccountRequestDto.getAccountNo(),
 			createAccountRequestDto.getCode());
