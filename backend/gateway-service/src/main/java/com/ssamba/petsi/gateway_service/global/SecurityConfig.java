@@ -35,23 +35,24 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // @Bean
-    public WebFilter addHeaderFilter() {
-        return (ServerWebExchange exchange, WebFilterChain chain) ->
-                exchange.getPrincipal()
+    private WebFilter addHeaderFilter() {
+        return (ServerWebExchange exchange, WebFilterChain chain) -> {
+            if (exchange.getRequest().getURI().getPath().startsWith("/api/v1/")
+            && !exchange.getRequest().getURI().getPath().startsWith("/api/v1/signup")) {
+                return exchange.getPrincipal()
                         .flatMap(principal -> {
                             if (principal instanceof JwtAuthenticationToken jwtToken) {
                                 String userId = jwtToken.getToken().getClaimAsString("user_id");
                                 String userKey = jwtToken.getToken().getClaimAsString("user_key");
-                                if (exchange.getRequest().getURI().getPath().startsWith("/api/v1/")
-                                    && !exchange.getRequest().getURI().getPath().startsWith("/api/v1/signup") {
-                                    exchange.getRequest().mutate()
+                                exchange.getRequest().mutate()
                                         .header("X-User-Id", userId)
                                         .header("X-User-Key", userKey)
                                         .build();
-                                }
                             }
                             return chain.filter(exchange);
                         });
+            }
+            return chain.filter(exchange);
+        };
     }
 }
