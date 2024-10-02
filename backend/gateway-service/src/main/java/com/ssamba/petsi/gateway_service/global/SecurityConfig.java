@@ -18,8 +18,8 @@ public class SecurityConfig {
     @Bean
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http
-                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**"))
                 .authorizeExchange(exchanges -> exchanges
+                        .pathMatchers("/", "/assets/**", "/fonts/**", "/images/**", "/index.html", "/Symbol.ico").permitAll()
                         .pathMatchers("/api/v1/user/signup").permitAll()
                         .pathMatchers("/api/v1/**").authenticated()
                         .anyExchange().permitAll()
