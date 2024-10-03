@@ -20,9 +20,9 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class FinApiService {
 
-    @Value("${fin.api-url}")
+    @Value("${spring.fin.api-url}")
     private String FIN_API_URL;
-    @Value("${fin.api-key}")
+    @Value("${spring.fin.api-key}")
     private String apiKey;
     private final RestTemplate restTemplate = new RestTemplate();
 

@@ -23,7 +23,6 @@ spring:
       ddl-auto: none #dev에서는 편안한 옵션 선택
       format_sql: true
 
-
 #swagger : account 부분 서비스로 변경
 springdoc:
   swagger-ui:
@@ -34,3 +33,13 @@ logging:
   level:
     org.hibernate: DEBUG
     org.springframework: DEBUG
+
+cloud:
+  aws:
+    s3:
+      bucket: petsi-images-bucket
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
