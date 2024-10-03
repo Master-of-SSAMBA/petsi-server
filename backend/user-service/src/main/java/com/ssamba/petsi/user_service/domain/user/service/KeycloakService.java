@@ -27,7 +27,7 @@ public class KeycloakService {
     private final String realm;
     private final UserRepository userRepository;
 
-    public KeycloakService(Keycloak keycloak, @Value("${keycloak.realm}") String realm, UserRepository userRepository) {
+    public KeycloakService(Keycloak keycloak, @Value("${spring.keycloak.realm}") String realm, UserRepository userRepository) {
         this.keycloak = keycloak;
         this.realm = realm;
         this.userRepository = userRepository;
