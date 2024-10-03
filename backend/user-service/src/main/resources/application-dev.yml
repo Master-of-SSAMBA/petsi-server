@@ -22,6 +22,16 @@ spring:
     hibernate:
       ddl-auto: create #dev에서는 편안한 옵션 선택
       format_sql: true
+  fin:
+    api-url: "https://finopenapi.ssafy.io/ssafy/api/v1/member/"
+    api_key: ${FIN_API_KEY}
+  keycloak:
+    realm: petsi
+    auth-server-url: http://localhost:8082
+    resource: user-service
+    credentials:
+      secret: ${USER_KEYCLOAK_SECRET}
+    ssl-required: external
 ##swagger : account 부분 서비스로 변경
 #springdoc:
 #  swagger-ui:
@@ -32,13 +42,3 @@ logging:
   level:
     org.hibernate: DEBUG
     org.springframework: DEBUG
-fin:
-  api-url: "https://finopenapi.ssafy.io/ssafy/api/v1/member/"
-  api_key: ${FIN_API_KEY}
-keycloak:
-  realm: petsi
-  auth-server-url: http://localhost:8082
-  resource: user-service
-  credentials:
-    secret: ${USER_KEYCLOAK_SECRET}
-  ssl-required: external
