@@ -107,6 +107,14 @@ public class PictureService {
         return new PictureResponseDto.Detail(findPicture.getPictureId(), findPicture.getImg(), findPicture.getContent(), dateDto);
     }
 
+    @Transactional(readOnly = true)
+    public List<Integer> getMonthlyPictures(Long year, Long month, Long userId) {
+        List<Integer> list = pictureRepository.findByUserIdAndYearAndMonth(userId, year, month).stream()
+                .map(p -> p.getCreatedAt().getDayOfMonth())
+                .toList();
+        return list;
+    }
+
     // 확장자 확인 메서드
     private boolean isValidImageMimeType(MultipartFile file) {
         // 허용되는 MIME 타입 목록
@@ -152,4 +160,6 @@ public class PictureService {
         String time = dateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
         return new DateResponseDto(date, time);
     }
+
+
 }

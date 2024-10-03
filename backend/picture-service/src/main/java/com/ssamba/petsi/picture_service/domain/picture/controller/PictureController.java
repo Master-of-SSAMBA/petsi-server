@@ -58,8 +58,9 @@ public class PictureController {
         Long year = req.get("year");
         Long month = req.get("month");
         Long userId = req.get("userId");
+
         //todo: 해당 달 유저가 사진 인증한 일자 List return
-        return null;
+        return pictureService.getMonthlyPictures(year, month, userId);
     }
 
 }
