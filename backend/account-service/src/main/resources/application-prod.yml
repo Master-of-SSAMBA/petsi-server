@@ -40,3 +40,4 @@ logging:
   level:
     org.hibernate: DEBUG
     org.springframework: DEBUG
+    org.flywaydb: DEBUG
