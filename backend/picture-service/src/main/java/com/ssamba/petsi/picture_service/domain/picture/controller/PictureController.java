@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,6 +51,16 @@ public class PictureController {
     public ResponseEntity<?> findPicture(@RequestHeader("X-User-Id") Long userId, @PathVariable("pictureId") Long pictureId) {
         PictureResponseDto.Detail detail = pictureService.getPicture(userId, pictureId);
         return ResponseEntity.ok(detail);
+    }
+
+    @PostMapping("/get-monthly-picture")
+    public List<Integer> getMonthlyPicture(@RequestBody Map<String, Long> req) {
+        Long year = req.get("year");
+        Long month = req.get("month");
+        Long userId = req.get("userId");
+
+        //todo: 해당 달 유저가 사진 인증한 일자 List return
+        return pictureService.getMonthlyPictures(year, month, userId);
     }
 
 }
