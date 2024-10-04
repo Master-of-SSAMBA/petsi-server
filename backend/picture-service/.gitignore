@@ -46,4 +46,3 @@ out/
 bin/
 
 .env
-*.sql
