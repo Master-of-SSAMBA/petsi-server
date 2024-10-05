@@ -27,7 +27,7 @@ public class CreateAccountRequestDto {
 	private int nextTransactionDay;
 	@Length(min = 1000, max = 3000000)
 	private int amount;
-	private List<Integer> pets;
+	private List<Long> pets;
 	private String name;
 	@NotNull
 	@Length(min = 4, max = 4)

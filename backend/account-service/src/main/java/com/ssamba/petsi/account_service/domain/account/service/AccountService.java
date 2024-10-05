@@ -35,6 +35,7 @@ import com.ssamba.petsi.account_service.domain.account.enums.AccountStatus;
 import com.ssamba.petsi.account_service.domain.account.repository.AccountProductRepository;
 import com.ssamba.petsi.account_service.domain.account.repository.AccountRepository;
 import com.ssamba.petsi.account_service.domain.account.repository.LinkedAccountRepository;
+import com.ssamba.petsi.account_service.domain.account.repository.PetToAccountRepository;
 import com.ssamba.petsi.account_service.domain.account.repository.RecurringTransactionRepository;
 import com.ssamba.petsi.account_service.global.client.PetClient;
 import com.ssamba.petsi.account_service.global.client.PictureClient;
@@ -56,6 +57,7 @@ public class AccountService {
 	private final AccountFinApiService accountFinApiService;
 	private final PetClient petClient;
 	private final PictureClient pictureClient;
+	private final PetToAccountRepository petToAccountRepository;
 
 	@Transactional(readOnly = true)
 	public List<GetAllProductsResponseDto> getAllProducts() {
@@ -74,24 +76,38 @@ public class AccountService {
 	}
 
 	public void createAccountBySteps(CreateAccountRequestDto createAccountRequestDto, String userKey, Long userId) {
+
+		//1. 인증 코드 체크
 		accountFinApiService.checkAuthCode(userKey, createAccountRequestDto.getAccountNo(),
 			createAccountRequestDto.getCode());
 
+		//2. 계좌 상품 조회
 		AccountProduct product = accountProductRepository.findById(createAccountRequestDto.getAccountProductId())
 			.orElseThrow(() -> new BusinessLogicException(ExceptionCode.ACCOUNT_CATEGORY_NOT_FOUND));
 
+		//3. 계좌 번호 갖고오기
 		String accountNo = accountFinApiService.createDemandDepositAccount(product.getAccountTypeUniqueNo(), userKey);
 
-		Account account = CreateAccountRequestDto.toAccount(createAccountRequestDto, product, accountNo, userId, userKey);
-		account = accountRepository.save(account);
+		//4. DB에 저장
+		Account account = accountRepository.save(
+			CreateAccountRequestDto.toAccount(createAccountRequestDto, product, accountNo, userId));
 
+		//5. 연결된 계좌 저장
 		linkedAccountRepository.save(
 			CreateAccountRequestDto.toLinkedAccount(createAccountRequestDto, account));
 
+		//6. Pet 매핑
+		List<Long> petIds = createAccountRequestDto.getPets();
+		petIds.forEach(petId ->
+			petToAccountRepository.save(
+				new PetToAccount(null, account, petId)
+			)
+		);
+
+		//7. 주기적 거래 저장
 		if (createAccountRequestDto.getIsAuto()) {
-			RecurringTransaction recurringTransaction = CreateAccountRequestDto.toRecurringTransaction(
-				createAccountRequestDto, account);
-			recurringTransactionRepository.save(recurringTransaction);
+			recurringTransactionRepository.save(CreateAccountRequestDto.toRecurringTransaction(
+				createAccountRequestDto, account));
 		}
 
 	}
@@ -255,7 +271,8 @@ public class AccountService {
 		String withdrawalAccountNo = account.getAccountNo();
 		String withdrawalTransactionSummary = accountTransferRequestDto.getDescription();
 		accountFinApiService.updateDemandDepositAccountTransfer(userKey,
-			depositAccountNo, depositTransactionSummary, transactionBalance, withdrawalAccountNo, withdrawalTransactionSummary);
+			depositAccountNo, depositTransactionSummary, transactionBalance,
+			withdrawalAccountNo, withdrawalTransactionSummary);
 	}
 
 	public AccountHolderNameResponseDto getAccountHolderName(String userKey, String accountNo) {

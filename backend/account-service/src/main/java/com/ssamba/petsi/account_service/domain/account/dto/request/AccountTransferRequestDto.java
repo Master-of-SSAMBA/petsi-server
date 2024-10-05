@@ -9,11 +9,14 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@NotNull
 public class AccountTransferRequestDto {
+	@NotNull
 	private Long accountId;
+	@NotNull
 	private String destinationAccountNo;
+	@NotNull
 	private Long amount;
+	@NotNull
 	private String description;
 	private String destinationDescription;
 	@Length(min = 4, max = 4)
