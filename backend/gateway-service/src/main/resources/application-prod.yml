@@ -57,13 +57,3 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: https://j11a403.p.ssafy.io/auth/realms/petsi
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.http.server.reactive: DEBUG
-    org.springframework.web.reactive: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
-    reactor.netty: DEBUG
-    reactor.netty.http.client: DEBUG
-    reactor.netty.http.server: DEBUG
