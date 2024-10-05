@@ -41,6 +41,7 @@ import com.ssamba.petsi.account_service.domain.account.repository.RecurringTrans
 import com.ssamba.petsi.account_service.global.client.PetClient;
 import com.ssamba.petsi.account_service.global.client.PictureClient;
 import com.ssamba.petsi.account_service.global.dto.PetCustomDto;
+import com.ssamba.petsi.account_service.global.dto.PictureMonthlyRequestDto;
 import com.ssamba.petsi.account_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.account_service.global.exception.ExceptionCode;
 
@@ -115,12 +116,8 @@ public class AccountService {
 
 	@Transactional(readOnly = true)
 	public GetAllAcountsResponseDto getAllAccounts(Long userId, String userKey) {
-
-		Map<String, Long> req = new HashMap<>();
-		req.put("userId", userId);
-		req.put("year", 2024L);
-		req.put("month", (long) LocalDate.now().getMonth().getValue());
-		int pictureCnt = pictureClient.getMonthlyPicture(req).size();
+		int pictureCnt = pictureClient.getMonthlyPicture(
+			new PictureMonthlyRequestDto(userId, 2024, LocalDate.now().getMonth().getValue())).size();
 		double interest = Math.min(1 + pictureCnt * 0.1, 3);
 
 		List<PetCustomDto> petList = petClient.findAllWithPetCustomDto(userId);
