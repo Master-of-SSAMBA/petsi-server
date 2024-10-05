@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiResponseDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.AccountTransferRequestDto;
-import com.ssamba.petsi.account_service.domain.account.dto.request.CheckAccountAuthDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccountRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateAccountNameRequestDto;

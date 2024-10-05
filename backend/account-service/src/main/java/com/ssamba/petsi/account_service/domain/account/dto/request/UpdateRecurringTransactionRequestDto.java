@@ -1,5 +1,7 @@
 package com.ssamba.petsi.account_service.domain.account.dto.request;
 
+import org.hibernate.validator.constraints.Length;
+
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -13,11 +15,8 @@ import lombok.NoArgsConstructor;
 public class UpdateRecurringTransactionRequestDto {
 	@NotNull
 	private Long accountId;
-	@Min(1000)
-	@Max(3000000)
+	@Length(min = 1000, max = 3000000)
 	private int amount;
-
-	@Min(1)
-	@Max(31)
+	@Length(min = 1, max = 31)
 	private int day;
 }

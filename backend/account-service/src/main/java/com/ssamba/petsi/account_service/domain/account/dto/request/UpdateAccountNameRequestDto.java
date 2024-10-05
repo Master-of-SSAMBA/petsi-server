@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@NotNull
 public class UpdateAccountNameRequestDto {
-	@NotNull
 	private Long accountId;
-	@NotNull
 	private String name;
 }
