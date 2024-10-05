@@ -32,6 +32,9 @@ public class AccountFinApiService {
 	@Value("${spring.fin.api-key}")
 	private String apiKey;
 
+	@Value("${spring.fin.manager-account}")
+	private String managerAccount;
+
 	public void openAccountAuth(String userKey, String accountNo) {
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.openAccountAuth.name(),
 			FinApiUrl.openAccountAuth.name());
@@ -287,5 +290,32 @@ public class AccountFinApiService {
 			);
 
 		return response.getBody().getRec();
+	}
+
+	public void addInterest(Account account, Long calculatedInterest) {
+		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.updateDemandDepositAccountTransfer.name(),
+			FinApiUrl.updateDemandDepositAccountTransfer.name());
+		header.setUserKey(account.getUserKey());
+		header.setApiKey(apiKey);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		Map<String, Object> finApiDto = new HashMap<>();
+		finApiDto.put("Header", header);
+		finApiDto.put("depositAccountNo", account.getAccountNo());
+		finApiDto.put("depositTransactionSummary", "정기 적금 이자");
+		finApiDto.put("transactionBalance", calculatedInterest);
+		finApiDto.put("withdrawalAccountNo", managerAccount);
+		finApiDto.put("withdrawalTransactionSummary", "이자지급");
+
+		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+
+		try {
+			ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.updateDemandDepositAccountTransfer.getUrl(), request,
+				String.class);
+		} catch (Exception e) {
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
