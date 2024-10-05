@@ -31,7 +31,7 @@ public class HeaderFilter implements WebFilter {
                 .map(authentication -> (JwtAuthenticationToken) authentication)
                 .map(JwtAuthenticationToken::getToken)
                 .map(jwt -> {
-                    String userId = jwt.getClaimAsString(USER_ID_CLAIM);
+                    Long userId = jwt.getClaim(USER_ID_CLAIM);
                     String userKey = jwt.getClaimAsString(USER_KEY_CLAIM);
 
                     log.debug("Extracted userId: {}, userKey: {}", userId, userKey);
@@ -39,7 +39,7 @@ public class HeaderFilter implements WebFilter {
                     ServerHttpRequest request = exchange.getRequest().mutate()
                             .headers(headers -> {
                                 if (userId != null) {
-                                    headers.set(X_USER_ID_HEADER, String.valueOf(userId));
+                                    headers.set(X_USER_ID_HEADER, userId);
                                 }
                                 if (userKey != null) {
                                     headers.set(X_USER_KEY_HEADER, userKey);
