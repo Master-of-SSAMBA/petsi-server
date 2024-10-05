@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -113,45 +114,53 @@ public class AccountService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<?> getAllAccounts(Long userId, String userKey) {
-		Map<String, Object> returnMap = new HashMap<>();
+	public GetAllAcountsResponseDto getAllAccounts(Long userId, String userKey) {
 
-		//todo: 월별 사진 인증 횟수 및 이자율 계산해서 같이 return
 		Map<String, Long> req = new HashMap<>();
 		req.put("userId", userId);
 		req.put("year", 2024L);
-		req.put("month", (long) LocalDate.now().getMonth().minus(1).getValue());
+		req.put("month", (long) LocalDate.now().getMonth().getValue());
 		int pictureCnt = pictureClient.getMonthlyPicture(req).size();
-		Double interest = Math.min(1 + pictureCnt * 0.1, 3);
+		double interest = Math.min(1 + pictureCnt * 0.1, 3);
 
-		returnMap.put("interest", interest);
 		List<PetCustomDto> petList = petClient.findAllWithPetCustomDto(userId);
 
 		List<FinApiResponseDto.AccountListResponseDto> accountList = accountFinApiService.inquireDemandDepositAccountList(userKey);
 		List<Account> localAccountList = accountRepository.findAllByUserIdAndStatus(userId, AccountStatus.ACTIVATED.getValue());
 
-		List<GetAllAcountsResponseDto> returnList = new ArrayList<>();
+		List<GetAllAcountsResponseDto.AccountDto> returnList = localAccountList.stream()
+			.map(account -> {
+				GetAllAcountsResponseDto.AccountDto dto = GetAllAcountsResponseDto.AccountDto.from(account);
 
-		for (Account account : localAccountList) {
-			GetAllAcountsResponseDto dto = GetAllAcountsResponseDto.from(account);
+				// PetToAccount에서 첫 번째 petId 가져오기
+				List<Long> petIds = account.getPetToAccounts().stream()
+					.map(PetToAccount::getPetId)
+					.toList();
 
-			FinApiResponseDto.AccountListResponseDto matchingAccount = accountList.stream()
-				.filter(dtoAccount -> dtoAccount.getAccountNo().equals(dto.getAccountNo()))
-				.findFirst()
-				.orElseThrow(() -> new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR));
+				// petList가 비어 있거나, petId와 일치하는 PetCustomDto를 찾지 못하면 null 설정
+				dto.setPetPicture(Optional.ofNullable(petIds)
+					.filter(ids -> !ids.isEmpty())
+					.flatMap(ids -> petList.stream()
+						.filter(p -> p.getPetId().equals(ids.get(0)))
+						.findFirst()
+						.map(PetCustomDto::getPetImg))
+					.orElse(null));
 
-			dto.setBalance(matchingAccount.getAccountBalance());
 
-			List<Long> petIds = account.getPetToAccounts().stream().map(PetToAccount::getPetId).toList();
-			petList.stream()
-				.filter(p -> p.getPetId().equals(petIds.get(0)))
-				.findFirst()
-				.ifPresent(p -> dto.setPetPicture(p.getPetImg()));
+				// FinApiResponseDto와 accountNo를 매칭하여 balance 설정
+				return accountList.stream()
+					.filter(dtoAccount -> dtoAccount.getAccountNo().equals(dto.getAccountNo()))
+					.findFirst()
+					.map(dtoAccount -> {
+						dto.setBalance(dtoAccount.getAccountBalance());
+						return dto;
+					})
+					.orElseThrow(() -> new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR));
+			})
+			.toList();
 
-			returnList.add(dto);
-		}
 
-		return returnList;
+		return new GetAllAcountsResponseDto(pictureCnt, interest, returnList);
 	}
 
 	public void deleteAccount(Long userId, String userKey, Long accountId) {
