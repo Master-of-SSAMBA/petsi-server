@@ -31,7 +31,7 @@ public class HeaderFilter implements WebFilter {
                 .map(authentication -> (JwtAuthenticationToken) authentication)
                 .map(JwtAuthenticationToken::getToken)
                 .map(jwt -> {
-                    Long userId = jwt.getClaim(USER_ID_CLAIM);
+                    String userId = jwt.getClaimAsString(USER_ID_CLAIM);
                     String userKey = jwt.getClaimAsString(USER_KEY_CLAIM);
 
                     log.debug("Extracted userId: {}, userKey: {}", userId, userKey);
