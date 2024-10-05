@@ -16,7 +16,7 @@ public class UpdateRecurringTransactionRequestDto {
 	@NotNull
 	private Long accountId;
 	@Length(min = 1000, max = 3000000)
-	private int amount;
+	private Long amount;
 	@Length(min = 1, max = 31)
 	private int day;
 }

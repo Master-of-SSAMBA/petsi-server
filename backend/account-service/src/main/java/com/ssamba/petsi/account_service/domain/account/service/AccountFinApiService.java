@@ -292,7 +292,7 @@ public class AccountFinApiService {
 		return response.getBody().getRec();
 	}
 
-	public void addInterest(Account account, Long calculatedInterest) {
+	public void addBalance(Account account, Long balance, String withdrawalAccountNo) {
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.updateDemandDepositAccountTransfer.name(),
 			FinApiUrl.updateDemandDepositAccountTransfer.name());
 		header.setUserKey(account.getUserKey());
@@ -305,9 +305,17 @@ public class AccountFinApiService {
 		finApiDto.put("Header", header);
 		finApiDto.put("depositAccountNo", account.getAccountNo());
 		finApiDto.put("depositTransactionSummary", "정기 적금 이자");
-		finApiDto.put("transactionBalance", calculatedInterest);
-		finApiDto.put("withdrawalAccountNo", managerAccount);
-		finApiDto.put("withdrawalTransactionSummary", "이자지급");
+		finApiDto.put("transactionBalance", balance);
+		if (withdrawalAccountNo != null) {
+			finApiDto.put("withdrawalAccountNo", withdrawalAccountNo);
+			finApiDto.put("depositTransactionSummary", "정기 적금 이체");
+			finApiDto.put("withdrawalTransactionSummary", "정기 적금 이체");
+		} else {
+			finApiDto.put("withdrawalAccountNo", managerAccount);
+			finApiDto.put("depositTransactionSummary", "정기 적금 이자");
+			finApiDto.put("withdrawalTransactionSummary", "정기 적금 이자 지급");
+		}
+
 
 		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
 

@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import org.aspectj.weaver.ast.Var;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,6 @@ import com.ssamba.petsi.account_service.domain.account.enums.AccountStatus;
 import com.ssamba.petsi.account_service.domain.account.enums.RecurringTransactionStatus;
 import com.ssamba.petsi.account_service.domain.account.repository.AccountRepository;
 import com.ssamba.petsi.account_service.domain.account.repository.RecurringTransactionRepository;
-import com.ssamba.petsi.account_service.global.client.PetClient;
 import com.ssamba.petsi.account_service.global.client.PictureClient;
 import com.ssamba.petsi.account_service.global.dto.PictureMonthlyRequestDto;
 
@@ -39,7 +37,8 @@ public class AccountSchedulerService {
 
 		accounts.forEach(account -> {
 			try {
-				//todo: FinApi 호출하여 적금 자동이체
+				accountFinApiService.addBalance(account.getAccount(), account.getAmount(),
+					account.getAccount().getLinkedAccount().getAccountNumber());
 			} catch (Exception e) {
 				account.setStatus(RecurringTransactionStatus.UNCOMPLETED.getValue());
 			}
@@ -50,7 +49,7 @@ public class AccountSchedulerService {
 
 	}
 
-	//todo: 매월 1일 지난 달 이자율 확인 후 갱신 및 잔액 갱신
+	//todo: 매월 1일 지난 달 이자율 확인 후 갱신
 	@Scheduled(cron = "0 0 0 1 * *")
 	void updateAccountPerMonth() {
 		List<Account> accounts = accountRepository.findAllByStatus(AccountStatus.ACTIVATED.getValue());
@@ -87,70 +86,62 @@ public class AccountSchedulerService {
 		String startDate = date.withDayOfMonth(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String endDate = date.withDayOfMonth(date.lengthOfMonth()).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		List<Account> accounts = accountRepository.findAllByStatus(AccountStatus.ACTIVATED.getValue());
+
 		accounts.forEach(account -> {
-			double interest = account.getInterestRate();
-			FinApiResponseDto.TransactionHistoryResponseDto returnValue =
+			double interestRate = account.getInterestRate();
+			FinApiResponseDto.TransactionHistoryResponseDto transactionHistory =
 				accountFinApiService.inquireTransactionHistoryList(account, startDate, endDate, account.getUserKey());
-			//만약 cnt가 0이면, 그 전달까지 endDate로 잡고 balance값 다 적용
-			if(returnValue.getList().isEmpty()) {
-				String newEndDate = date.minusMonths(1).withDayOfMonth(
-					date.minusMonths(1).lengthOfMonth()).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-				returnValue = accountFinApiService.inquireTransactionHistoryList(
-					account, "20200101", newEndDate, account.getUserKey());
 
-				List<FinApiResponseDto.TransactionHistoryResponseDto.Transaction> transactions = returnValue.getList();
-				if(!transactions.isEmpty()) {
-					//마지막 날 잔액 가져오기
-					Long balance = transactions.get(0).getTransactionBalance();
+			// 거래 내역이 없을 때 처리
+			if (transactionHistory.getList().isEmpty()) {
+				transactionHistory = handleNoTransactionHistory(account, date);
+			}
 
-					//계산로직
-					Long calculatedInterest = (long)(balance * account.getInterestRate() / 12);
-					if(calculatedInterest != 0) {
-						//todo: 이자 이체
-						accountFinApiService.addInterest(account, calculatedInterest);
-					}
-				}
-			} else {
-				//거래 내역이 있다면
-				int weightedBalanceSum = 0;
-				int previousDay = 1;
-				List<FinApiResponseDto.TransactionHistoryResponseDto.Transaction> transactions = returnValue.getList();
-
-				//1. 가장 마지막 객체 가져와서 날짜 확인
-				for(int t = transactions.size()-1; t >= 0; t--) {
-					FinApiResponseDto.TransactionHistoryResponseDto.Transaction transaction =
-						transactions.get(t);
-
-					int day = Integer.parseInt(transaction.getTransactionDate().substring(6));
-					Long adjustedBalance = adjustBalance(transaction);
-
-					weightedBalanceSum += adjustedBalance * (day - previousDay);
-
-					previousDay = day;
-				}
-
-				if(previousDay != date.lengthOfMonth()) {
-					weightedBalanceSum += (int)(transactions.get(0).getTransactionAfterBalance()
-											* (date.lengthOfMonth()-previousDay+1));
-				}
-
-				Long calculatedInterest = (long) (weightedBalanceSum * account.getInterestRate()
-					/ (12L * date.lengthOfMonth()));
-				if(calculatedInterest != 0) {
-					//todo: 이자 이체
-					accountFinApiService.addInterest(account, calculatedInterest);
-				}
-
+			Long calculatedInterest = calculateInterest(transactionHistory, account, date);
+			if (calculatedInterest != 0) {
+				accountFinApiService.addBalance(account, calculatedInterest, null);
 			}
 		});
 	}
 
+	// 거래 내역이 없을 때, 전체 거래 내역을 조회하는 로직
+	private FinApiResponseDto.TransactionHistoryResponseDto handleNoTransactionHistory(Account account, LocalDate date) {
+		String newEndDate = date.minusMonths(1).withDayOfMonth(date.minusMonths(1).lengthOfMonth())
+			.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+		return accountFinApiService.inquireTransactionHistoryList(account, "20200101", newEndDate, account.getUserKey());
+	}
+
+	// 이자 계산 로직을 별도로 추출
+	private Long calculateInterest(FinApiResponseDto.TransactionHistoryResponseDto returnValue, Account account, LocalDate date) {
+		List<FinApiResponseDto.TransactionHistoryResponseDto.Transaction> transactions = returnValue.getList();
+		Long weightedBalanceSum = 0L;
+		int previousDay = 1;
+
+		// 거래 내역 처리
+		for (int t = transactions.size() - 1; t >= 0; t--) {
+			FinApiResponseDto.TransactionHistoryResponseDto.Transaction transaction = transactions.get(t);
+			int transactionDay = Integer.parseInt(transaction.getTransactionDate().substring(6));
+			Long adjustedBalance = adjustBalance(transaction);
+			weightedBalanceSum += adjustedBalance * (transactionDay - previousDay);
+			previousDay = transactionDay;
+		}
+
+		// 마지막 거래일 이후 날짜 처리
+		if (previousDay != date.lengthOfMonth()) {
+			weightedBalanceSum += transactions.get(0).getTransactionAfterBalance()
+				* (date.lengthOfMonth() - previousDay + 1);
+		}
+
+		// 이자 계산
+		return (long) (weightedBalanceSum * account.getInterestRate() / 12 / date.lengthOfMonth());
+	}
+
+	// 거래 후 잔액 조정 로직
 	private Long adjustBalance(FinApiResponseDto.TransactionHistoryResponseDto.Transaction transaction) {
 		Long balance = transaction.getTransactionAfterBalance();
-		if (transaction.getTransactionType().equals("1")) {
-			return balance - transaction.getTransactionBalance();
-		} else {
-			return balance + transaction.getTransactionBalance();
-		}
+		return transaction.getTransactionType().equals("1")
+			? balance - transaction.getTransactionBalance()
+			: balance + transaction.getTransactionBalance();
 	}
+
 }

@@ -42,7 +42,7 @@ public class RecurringTransaction {
 
 	@Setter
 	@Column(nullable = false)
-	private int amount;
+	private Long amount;
 
 	@Setter
 	@Column(nullable = false)
