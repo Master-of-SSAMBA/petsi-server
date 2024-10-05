@@ -1,5 +1,6 @@
 package com.ssamba.petsi.gateway_service.global;
 
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
