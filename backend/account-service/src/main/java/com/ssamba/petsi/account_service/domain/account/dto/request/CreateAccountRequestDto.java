@@ -51,7 +51,7 @@ public class CreateAccountRequestDto {
 	}
 
 	public static Account toAccount(CreateAccountRequestDto createAccountRequestDto, AccountProduct accountProduct,
-		String accountNo, Long userId) {
+		String accountNo, Long userId, String userKey) {
 		LocalDate date = LocalDate.now();
 		date = date.plusYears(20);
 
@@ -62,6 +62,7 @@ public class CreateAccountRequestDto {
 			.maturityDate(date)
 			.name(createAccountRequestDto.getName())
 			.userId(userId)
+			.userKey(userKey)
 			.build();
 
 		return account;

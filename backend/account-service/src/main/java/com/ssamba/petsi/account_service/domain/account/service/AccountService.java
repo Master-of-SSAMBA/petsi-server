@@ -77,7 +77,7 @@ public class AccountService {
 
 		String accountNo = accountFinApiService.createDemandDepositAccount(product.getAccountTypeUniqueNo(), userKey);
 
-		Account account = CreateAccountRequestDto.toAccount(createAccountRequestDto, product, accountNo, userId);
+		Account account = CreateAccountRequestDto.toAccount(createAccountRequestDto, product, accountNo, userId, userKey);
 		account = accountRepository.save(account);
 
 		linkedAccountRepository.save(
@@ -100,16 +100,17 @@ public class AccountService {
 		List<Account> localAccountList = accountRepository.findAllByUserIdAndStatus(userId, AccountStatus.ACTIVATED.getValue());
 
 		List<GetAllAcountsResponseDto> returnList = new ArrayList<>();
-		addAccounts: for(Account account : localAccountList) {
+
+		for (Account account : localAccountList) {
 			GetAllAcountsResponseDto dto = GetAllAcountsResponseDto.from(account);
-			for(FinApiResponseDto.AccountListResponseDto dtoAccount : accountList) {
-				if(dtoAccount.getAccountNo().equals(dto.getAccountNo())) {
-					dto.setBalance(dtoAccount.getAccountBalance());
-					returnList.add(dto);
-					continue addAccounts;
-				}
-			}
-			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+
+			FinApiResponseDto.AccountListResponseDto matchingAccount = accountList.stream()
+				.filter(dtoAccount -> dtoAccount.getAccountNo().equals(dto.getAccountNo()))
+				.findFirst()
+				.orElseThrow(() -> new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR));
+
+			dto.setBalance(matchingAccount.getAccountBalance());
+			returnList.add(dto);
 		}
 
 		return returnList;
