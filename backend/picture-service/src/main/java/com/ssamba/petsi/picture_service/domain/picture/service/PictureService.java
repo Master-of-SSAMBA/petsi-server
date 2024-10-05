@@ -108,7 +108,7 @@ public class PictureService {
     }
 
     @Transactional(readOnly = true)
-    public List<Integer> getMonthlyPictures(Long year, Long month, Long userId) {
+    public List<Integer> getMonthlyPictures(int year, int month, Long userId) {
         List<Integer> list = pictureRepository.findByUserIdAndYearAndMonth(userId, year, month).stream()
                 .map(p -> p.getCreatedAt().getDayOfMonth())
                 .toList();

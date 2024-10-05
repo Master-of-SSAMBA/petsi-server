@@ -1,5 +1,6 @@
 package com.ssamba.petsi.picture_service.domain.picture.controller;
 
+import com.ssamba.petsi.picture_service.domain.picture.dto.request.PictureMonthlyRequestDto;
 import com.ssamba.petsi.picture_service.domain.picture.dto.response.PictureResponseDto;
 import com.ssamba.petsi.picture_service.domain.picture.service.PictureService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -54,13 +55,8 @@ public class PictureController {
     }
 
     @PostMapping("/get-monthly-picture")
-    public List<Integer> getMonthlyPicture(@RequestBody Map<String, Long> req) {
-        Long year = req.get("year");
-        Long month = req.get("month");
-        Long userId = req.get("userId");
-
-        //todo: 해당 달 유저가 사진 인증한 일자 List return
-        return pictureService.getMonthlyPictures(year, month, userId);
+    public List<Integer> getMonthlyPicture(@RequestBody PictureMonthlyRequestDto req) {
+        return pictureService.getMonthlyPictures(req.getYear(), req.getMonth(), req.getUserId());
     }
 
 }
