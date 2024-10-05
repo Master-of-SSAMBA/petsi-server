@@ -92,7 +92,7 @@ public class AccountService {
 
 		//4. DB에 저장
 		Account account = accountRepository.save(
-			CreateAccountRequestDto.toAccount(createAccountRequestDto, product, accountNo, userId));
+			CreateAccountRequestDto.toAccount(createAccountRequestDto, product, accountNo, userId, userKey));
 
 		//5. 연결된 계좌 저장
 		linkedAccountRepository.save(
