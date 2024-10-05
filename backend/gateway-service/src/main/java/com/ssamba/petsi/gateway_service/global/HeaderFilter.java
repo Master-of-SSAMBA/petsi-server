@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class HeaderFilter implements WebFilter {
     private static final String USER_ID_CLAIM = "userId";
-    private static final String USER_Key_CLAIM = "userKey";
+    private static final String USER_KEY_CLAIM = "userKey";
     private static final String X_USER_ID_HEADER = "X-User-Id";
     private static final String X_USER_KEY_HEADER = "X-User-Key";
 
@@ -24,19 +24,21 @@ public class HeaderFilter implements WebFilter {
                 .map(authentication -> (JwtAuthenticationToken) authentication)
                 .map(JwtAuthenticationToken::getToken)
                 .map(jwt -> {
+                    ServerHttpRequest.Builder mutatedRequest = exchange.getRequest().mutate();
+                
                     String userId = jwt.getClaimAsString(USER_ID_CLAIM);
-                    String userKey = jwt.getClaimAsString(USER_Key_CLAIM);
+                    String userKey = jwt.getClaimAsString(USER_KEY_CLAIM);
+                
                     if (userId != null) {
-                        exchange.getRequest().mutate()
-                                .header(X_USER_ID_HEADER, userId)
-                                .build();
+                        mutatedRequest.header(X_USER_ID_HEADER, userId);
                     }
                     if (userKey != null) {
-                        exchange.getRequest().mutate()
-                                .header(X_USER_KEY_HEADER, userKey)
-                                .build();
+                        mutatedRequest.header(X_USER_KEY_HEADER, userKey);
                     }
-                    return exchange;
+                
+                    return exchange.mutate()
+                        .request(mutatedRequest.build())
+                        .build();
                 })
                 .defaultIfEmpty(exchange)
                 .flatMap(chain::filter);
