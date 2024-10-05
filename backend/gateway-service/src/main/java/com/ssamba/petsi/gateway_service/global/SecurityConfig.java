@@ -8,19 +8,15 @@ import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity.CorsSpec;
 import org.springframework.security.config.web.server.ServerHttpSecurity.CsrfSpec;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
 
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
     @Bean
-    SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, HeaderFilter headerFilter) {
         http
                 .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**"))
                 .authorizeExchange(exchanges -> exchanges
@@ -31,28 +27,7 @@ public class SecurityConfig {
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .csrf(CsrfSpec::disable)
                 .cors(CorsSpec::disable)
-                .addFilterAt(addHeaderFilter(), SecurityWebFiltersOrder.AUTHORIZATION);
+                .addFilterAt(headerFilter, SecurityWebFiltersOrder.AUTHORIZATION);
         return http.build();
-    }
-
-    private WebFilter addHeaderFilter() {
-        return (ServerWebExchange exchange, WebFilterChain chain) -> {
-            if (exchange.getRequest().getURI().getPath().startsWith("/api/v1/")
-            && !exchange.getRequest().getURI().getPath().startsWith("/api/v1/signup")) {
-                return exchange.getPrincipal()
-                        .flatMap(principal -> {
-                            if (principal instanceof JwtAuthenticationToken jwtToken) {
-                                String userId = jwtToken.getToken().getClaimAsString("user_id");
-                                String userKey = jwtToken.getToken().getClaimAsString("user_key");
-                                exchange.getRequest().mutate()
-                                        .header("X-User-Id", userId)
-                                        .header("X-User-Key", userKey)
-                                        .build();
-                            }
-                            return chain.filter(exchange);
-                        });
-            }
-            return chain.filter(exchange);
-        };
     }
 }

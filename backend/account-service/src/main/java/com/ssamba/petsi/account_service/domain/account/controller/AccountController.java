@@ -63,8 +63,6 @@ public class AccountController {
 	@Operation(summary = "계좌 전체 조회")
 	public ResponseEntity<?> getAllAccounts(@RequestHeader("X-User-Id") Long userId,
 		@RequestHeader("X-User-Key") String userKey) {
-		System.out.println("**************************************************************************************");
-		System.out.println(userId + " " + userKey);
 		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAllAccounts(userId, userKey));
 	}
 
