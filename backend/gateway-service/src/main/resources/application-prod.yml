@@ -57,3 +57,9 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: https://j11a403.p.ssafy.io/auth/realms/petsi
+logging:
+  level:
+    root: INFO
+    com.ssamba.petsi.gateway: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: DEBUG
