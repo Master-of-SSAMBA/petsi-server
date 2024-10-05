@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiResponseDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.AccountTransferRequestDto;
+import com.ssamba.petsi.account_service.domain.account.dto.request.CheckAccountPassword;
 import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccountRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateAccountNameRequestDto;
@@ -262,5 +263,15 @@ public class AccountService {
 			.InquireDemandDepositAccountHolderName(accountNo, userKey);
 		return new AccountHolderNameResponseDto(dto);
 
+	}
+
+	public void checkAccountPassword(Long userId, CheckAccountPassword checkAccountPassword) {
+		Account account = accountRepository.findByAccountIdAndStatusAndUserIdAndAccountNo(checkAccountPassword.getAccountId(),
+			AccountStatus.ACTIVATED.getValue(), userId, checkAccountPassword.getAccountNo()).orElseThrow(
+				() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND));
+
+		if(account.getPassword().equals(checkAccountPassword.getPassword())) {
+			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_PASSWORD);
+		}
 	}
 }

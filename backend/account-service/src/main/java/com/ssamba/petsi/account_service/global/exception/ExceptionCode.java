@@ -15,6 +15,7 @@ public enum ExceptionCode {
 	INVALID_AMOUNT(400, "적절한 형태의 자동 이체 금액을 입력하세요."),
 	ACCOUNT_USER_NOT_MATCH(401, "계좌주와 로그인한 유저가 일치하지 않습니다."),
 	INVALID_ACCOUNT_STATUS(400, "계좌가 활성된 상태가 아닙니다."),
+	INVALID_ACCOUNT_PASSWORD(401, "잘못된 계좌 비밀번호 입니다."),
 	EMPTY_REQUEST(400, "변경할 사항이 없습니다.");
 
 	private final int status;

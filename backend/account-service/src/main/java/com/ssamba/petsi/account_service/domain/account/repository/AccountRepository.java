@@ -18,4 +18,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	Optional<Account> findByIdWithRecurringTransaction(@Param("accountId") Long accountId);
 
 	Optional<Account> findByAccountIdAndStatusAndUserId(Long accountId, String status, Long userId);
+
+	Optional<Account> findByAccountIdAndStatusAndUserIdAndAccountNo(Long accountId, String value, Long userId, String accountNo);
 }
