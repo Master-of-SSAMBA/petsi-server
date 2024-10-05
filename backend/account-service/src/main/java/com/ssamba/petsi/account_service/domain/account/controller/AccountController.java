@@ -61,9 +61,9 @@ public class AccountController {
 
 	@GetMapping("")
 	@Operation(summary = "계좌 전체 조회")
-	public ResponseEntity<?> getAllAccounts(@RequestHeader("X-User-Id") Long userId,
+	public ResponseEntity<?> getAllAccounts(@RequestHeader("X-User-Id") String userId,
 		@RequestHeader("X-User-Key") String userKey) {
-		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAllAccounts(userId, userKey));
+		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAllAccounts(Long.parseLong(userId), userKey));
 	}
 
 	@DeleteMapping("")
