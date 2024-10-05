@@ -8,8 +8,9 @@ import lombok.Getter;
 public class PetCustomDto {
 	private Long petId;
 	private String petName;
+	private String petImg;
 
 	public static PetCustomDto fromResponseDto(PetResponseDto petResponseDto) {
-		return new PetCustomDto(petResponseDto.getPetId(), petResponseDto.getName());
+		return new PetCustomDto(petResponseDto.getPetId(), petResponseDto.getName(), petResponseDto.getImage());
 	}
 }
