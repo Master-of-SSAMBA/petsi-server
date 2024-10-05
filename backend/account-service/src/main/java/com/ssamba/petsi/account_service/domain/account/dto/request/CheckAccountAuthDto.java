@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+@Deprecated
 @Getter
 @AllArgsConstructor
 public class CheckAccountAuthDto {
@@ -13,9 +14,7 @@ public class CheckAccountAuthDto {
 	private String bankName;
 	private String code;
 
-	public CheckAccountAuthDto(CreateAccountRequestDto createAccountRequestDto) {
-		this.accountNo = createAccountRequestDto.getAccountNo();
-		this.bankName = createAccountRequestDto.getBankName();
-		this.code = createAccountRequestDto.getCode();
+	public static CheckAccountAuthDto toDto(CreateAccountRequestDto dto, String userKey) {
+		return new CheckAccountAuthDto(userKey, dto.getAccountNo(), dto.getBankName(), dto.getCode());
 	}
 }

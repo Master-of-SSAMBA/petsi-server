@@ -2,6 +2,7 @@ package com.ssamba.petsi.account_service.domain.account.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -17,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -84,6 +86,9 @@ public class Account {
 	@Setter
 	@Column(nullable = false)
 	private String status;
+
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+	private List<PetToAccount> petToAccounts;
 
 	@PrePersist
 	protected void onCreate() {

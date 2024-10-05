@@ -5,7 +5,9 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -27,12 +29,16 @@ import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllAcount
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllProductsResponseDto;
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
 import com.ssamba.petsi.account_service.domain.account.entity.AccountProduct;
+import com.ssamba.petsi.account_service.domain.account.entity.PetToAccount;
 import com.ssamba.petsi.account_service.domain.account.entity.RecurringTransaction;
 import com.ssamba.petsi.account_service.domain.account.enums.AccountStatus;
 import com.ssamba.petsi.account_service.domain.account.repository.AccountProductRepository;
 import com.ssamba.petsi.account_service.domain.account.repository.AccountRepository;
 import com.ssamba.petsi.account_service.domain.account.repository.LinkedAccountRepository;
 import com.ssamba.petsi.account_service.domain.account.repository.RecurringTransactionRepository;
+import com.ssamba.petsi.account_service.global.client.PetClient;
+import com.ssamba.petsi.account_service.global.client.PictureClient;
+import com.ssamba.petsi.account_service.global.dto.PetCustomDto;
 import com.ssamba.petsi.account_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.account_service.global.exception.ExceptionCode;
 
@@ -48,6 +54,8 @@ public class AccountService {
 	private final AccountRepository accountRepository;
 	private final RecurringTransactionRepository recurringTransactionRepository;
 	private final AccountFinApiService accountFinApiService;
+	private final PetClient petClient;
+	private final PictureClient pictureClient;
 
 	@Transactional(readOnly = true)
 	public List<GetAllProductsResponseDto> getAllProducts() {
@@ -66,11 +74,6 @@ public class AccountService {
 	}
 
 	public void createAccountBySteps(CreateAccountRequestDto createAccountRequestDto, String userKey, Long userId) {
-
-		CheckAccountAuthDto checkAccountAuthDto = new CheckAccountAuthDto(createAccountRequestDto);
-		checkAccountAuthDto.setUserKey(userKey);
-
-
 		accountFinApiService.checkAuthCode(userKey, createAccountRequestDto.getAccountNo(),
 			createAccountRequestDto.getCode());
 
@@ -95,8 +98,18 @@ public class AccountService {
 
 	@Transactional(readOnly = true)
 	public List<?> getAllAccounts(Long userId, String userKey) {
+		Map<String, Object> returnMap = new HashMap<>();
+
 		//todo: 월별 사진 인증 횟수 및 이자율 계산해서 같이 return
-		//todo: 계좌 내 매핑된 pet의 사진 같이 return
+		Map<String, Long> req = new HashMap<>();
+		req.put("userId", userId);
+		req.put("year", 2024L);
+		req.put("month", (long) LocalDate.now().getMonth().minus(1).getValue());
+		int pictureCnt = pictureClient.getMonthlyPicture(req).size();
+		Double interest = Math.min(1 + pictureCnt * 0.1, 3);
+
+		returnMap.put("interest", interest);
+		List<PetCustomDto> petList = petClient.findAllWithPetCustomDto(userId);
 
 		List<FinApiResponseDto.AccountListResponseDto> accountList = accountFinApiService.inquireDemandDepositAccountList(userKey);
 		List<Account> localAccountList = accountRepository.findAllByUserIdAndStatus(userId, AccountStatus.ACTIVATED.getValue());
@@ -112,6 +125,13 @@ public class AccountService {
 				.orElseThrow(() -> new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR));
 
 			dto.setBalance(matchingAccount.getAccountBalance());
+
+			List<Long> petIds = account.getPetToAccounts().stream().map(PetToAccount::getPetId).toList();
+			petList.stream()
+				.filter(p -> p.getPetId().equals(petIds.get(0)))
+				.findFirst()
+				.ifPresent(p -> dto.setPetPicture(p.getPetImg()));
+
 			returnList.add(dto);
 		}
 
@@ -133,24 +153,12 @@ public class AccountService {
 			account.getLinkedAccount().getAccountNumber());
 	}
 
-	private void validateAccountWithUserId(Account account, Long userId) {
-		if (userId != account.getUserId()) {
-			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
-		}
-	}
-
 	public void updateRecurringTransaction(UpdateRecurringTransactionRequestDto updateRecurringTransactionRequestDto,
 		Long userId) {
-		Account account = accountRepository.findByIdWithRecurringTransaction(
-			updateRecurringTransactionRequestDto.getAccountId()).orElseThrow(
+		Account account = accountRepository.findByAccountIdAndStatusAndUserId(
+			updateRecurringTransactionRequestDto.getAccountId(), AccountStatus.ACTIVATED.getValue(), userId).orElseThrow(
 				() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND)
 		);
-
-		validateAccountWithUserId(account, userId);
-
-		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
-			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
-		}
 
 		if (account.getRecurringTransaction().getAmount() == updateRecurringTransactionRequestDto.getAmount()
 			&& account.getRecurringTransaction().getPaymentDate() == updateRecurringTransactionRequestDto.getDay()) {
@@ -177,13 +185,10 @@ public class AccountService {
 	}
 
 	public void updateAccountName(UpdateAccountNameRequestDto updateAccountNameRequestDto, Long userId) {
-		Account account = accountRepository.findById(updateAccountNameRequestDto.getAccountId()).orElseThrow(
+		Account account = accountRepository.findByAccountIdAndStatusAndUserId(updateAccountNameRequestDto.getAccountId()
+		, AccountStatus.ACTIVATED.getValue(), userId).orElseThrow(
 			() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND)
 		);
-		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
-			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
-		}
-		validateAccountWithUserId(account, userId);
 		account.setName(updateAccountNameRequestDto.getName());
 	}
 
@@ -192,12 +197,6 @@ public class AccountService {
 		Account account = accountRepository.findByIdWithRecurringTransaction(accountId).orElseThrow(
 			() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND)
 		);
-		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
-			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
-		}
-		if (account.getUserId() != userId) {
-			throw new BusinessLogicException(ExceptionCode.ACCOUNT_USER_NOT_MATCH);
-		}
 
 		GetAccountDetailsResponseDto returnDto = new GetAccountDetailsResponseDto(account);
 		LocalDate nowDate = LocalDate.now();
@@ -218,16 +217,10 @@ public class AccountService {
 		int sortOption) {
 		Pageable pageable = PageRequest.of(page, 12);
 
-		Account account = accountRepository.findByIdWithRecurringTransaction(accountId).orElseThrow(
+		Account account = accountRepository.findByAccountIdAndStatusAndUserId(accountId,
+			AccountStatus.ACTIVATED.getValue(), userId).orElseThrow(
 			() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND)
 		);
-		if (account == null) {
-			throw new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND);
-		}
-		if (!account.getStatus().equals(AccountStatus.ACTIVATED.getValue())) {
-			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_STATUS);
-		}
-		validateAccountWithUserId(account, userId);
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 		LocalDate nowDate = LocalDate.now();
@@ -252,10 +245,9 @@ public class AccountService {
 	}
 
 	public void accountTransfer(Long userId, String userKey, AccountTransferRequestDto accountTransferRequestDto) {
-		Account account = accountRepository.findById(accountTransferRequestDto.getAccountId()).orElseThrow(
+		Account account = accountRepository.findByAccountIdAndStatusAndUserId(accountTransferRequestDto.getAccountId(),
+			AccountStatus.ACTIVATED.getValue(), userId).orElseThrow(
 			() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND));
-
-		validateAccountWithUserId(account, userId);
 
 		String depositAccountNo = accountTransferRequestDto.getDestinationAccountNo();
 		String depositTransactionSummary = accountTransferRequestDto.getDestinationDescription();
@@ -266,7 +258,7 @@ public class AccountService {
 			depositAccountNo, depositTransactionSummary, transactionBalance, withdrawalAccountNo, withdrawalTransactionSummary);
 	}
 
-	public AccountHolderNameResponseDto getAccountHolderName(Long userId, String userKey, String accountNo) {
+	public AccountHolderNameResponseDto getAccountHolderName(String userKey, String accountNo) {
 		FinApiResponseDto.InquireDemandDepositAccountHolderName dto = accountFinApiService
 			.InquireDemandDepositAccountHolderName(accountNo, userKey);
 		return new AccountHolderNameResponseDto(dto);

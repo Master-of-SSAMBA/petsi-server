@@ -121,6 +121,6 @@ public class AccountController {
 	@Operation(summary = "예금주 명 조회")
 	public ResponseEntity<?> inquireDemandDepositAccountHolderName(@RequestHeader("X-User-Id") Long userId,
 		@RequestHeader("X-User-Key") String userKey, @RequestBody Map<String, String> req) {
-		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAccountHolderName(userId, userKey, req.get("accountNo")));
+		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAccountHolderName(userKey, req.get("accountNo")));
 	}
 }

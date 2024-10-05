@@ -14,6 +14,7 @@ public class GetAllAcountsResponseDto {
 	private Long accountId;
 	private String accountNo;
 	private String name;
+	@Setter
 	private String petPicture;
 	@Setter
 	private Long balance;

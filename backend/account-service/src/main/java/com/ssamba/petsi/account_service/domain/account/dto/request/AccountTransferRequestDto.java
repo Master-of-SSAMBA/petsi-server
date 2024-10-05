@@ -6,9 +6,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class AccountTransferRequestDto {
-	public Long accountId;
-	public String destinationAccountNo;
-	public Long amount;
-	public String description;
-	public String destinationDescription;
+	private Long accountId;
+	private String destinationAccountNo;
+	private Long amount;
+	private String description;
+	private String destinationDescription;
+	private String password;
 }
