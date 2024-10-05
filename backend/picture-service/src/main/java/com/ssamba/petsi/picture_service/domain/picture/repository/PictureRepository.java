@@ -21,6 +21,6 @@ public interface PictureRepository extends JpaRepository<Picture, Long> {
     @Query("SELECT p FROM Picture p WHERE p.userId = :userId " +
             "AND YEAR(p.createdAt) = :year AND MONTH(p.createdAt) = :month")
     List<Picture> findByUserIdAndYearAndMonth(@Param("userId") Long userId,
-                                              @Param("year") Long year,
-                                              @Param("month") Long month);
+                                              @Param("year") int year,
+                                              @Param("month") int month);
 }
