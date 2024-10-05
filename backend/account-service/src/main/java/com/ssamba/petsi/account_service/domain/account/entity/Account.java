@@ -42,6 +42,9 @@ public class Account {
 	@Column(nullable = false)
 	private Long userId;
 
+	@Column(nullable = false)
+	private String userKey;
+
 	@Column(nullable = false, unique = true)
 	private String accountNo;
 
