@@ -18,7 +18,4 @@ public interface PetClient {
 	@PostMapping("/api/v1/pet/find-pets-by-pet-id/{userId}")
 	List<PetCustomDto> findPetCustomDtoById(@PathVariable Long userId, @RequestBody List<Long> pets);
 
-	@PostMapping("/api/v1/pet/find-pets-by-pet-id/{petId}")
-	PetCustomDto findPetCustomDtoByPetId(@PathVariable Long petId);
-
 }
