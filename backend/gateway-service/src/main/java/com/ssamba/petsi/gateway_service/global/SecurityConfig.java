@@ -20,7 +20,7 @@ public class SecurityConfig {
         http
                 .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**"))
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/api/v1/user/signup", "/api/v1/auth/**").permitAll()
+                        .pathMatchers("/api/v1/user/signup", "api/v1/user/email-check" "/api/v1/auth/**").permitAll()
                         .pathMatchers("/api/v1/**").authenticated()
                         .anyExchange().permitAll()
                 )
