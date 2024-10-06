@@ -41,7 +41,7 @@ public class PictureService {
 
     public static final int PICTURES_PER_PAGE = 20;
     public static final String REDIS_KEY_PREFIX = "photo_auth:";
-    public static final String IS_PET_PREDICT_URL = "http://localhost:8000/api/v1/predict-is-pet";
+    public static final String IS_PET_PREDICT_URL = "http://ai2-service:9009/api/v1/predict-is-pet";
     private final RedisTemplate<String, String> redisTemplate;
     private final PictureRepository pictureRepository;
     private final RestTemplate restTemplate = new RestTemplate();
