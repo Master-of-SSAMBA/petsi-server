@@ -14,7 +14,7 @@ public class GetAccountHistoryResponseDto {
 	private String transactionType;
 	private Long transactionAmount;
 	private Long transactionAfterBalance;
-	private String transactionMemo;
+	private String transactionSummary;
 
 	public static GetAccountHistoryResponseDto from(FinApiResponseDto.TransactionHistoryResponseDto.Transaction transaction) {
 
@@ -32,7 +32,7 @@ public class GetAccountHistoryResponseDto {
 			.transactionType(transaction.getTransactionType().equals("1") ? "입금":"출금")
 			.transactionAmount(transaction.getTransactionBalance())
 			.transactionAfterBalance(transaction.getTransactionAfterBalance())
-			.transactionMemo(transaction.getTransactionMemo())
+			.transactionSummary(transaction.getTransactionSummary())
 			.build();
 
 		return dto;

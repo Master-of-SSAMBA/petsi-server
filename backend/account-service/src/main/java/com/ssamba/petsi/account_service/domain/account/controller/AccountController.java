@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssamba.petsi.account_service.domain.account.dto.request.AccountTransferRequestDto;
+import com.ssamba.petsi.account_service.domain.account.dto.request.CheckAccountPassword;
 import com.ssamba.petsi.account_service.domain.account.dto.request.CreateAccountRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.OpenAccountAuthRequestDto;
 import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateAccountNameRequestDto;
@@ -115,5 +116,20 @@ public class AccountController {
 		@RequestHeader("X-User-Key") String userKey, @RequestBody AccountTransferRequestDto accountTransferRequestDto) {
 		accountService.accountTransfer(userId, userKey, accountTransferRequestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
+	}
+
+	@PostMapping("/account-holder-name")
+	@Operation(summary = "예금주 명 조회")
+	public ResponseEntity<?> inquireDemandDepositAccountHolderName(@RequestHeader("X-User-Id") Long userId,
+		@RequestHeader("X-User-Key") String userKey, @RequestBody Map<String, String> req) {
+		return ResponseEntity.status(HttpStatus.OK).body(accountService.getAccountHolderName(userKey, req.get("accountNo")));
+	}
+
+	@PostMapping("/check-account-password")
+	@Operation(summary = "계좌 비밀번호 확인")
+	public ResponseEntity<?> checkAccountPassword(@RequestHeader("X-User-Id") Long userId,
+		@RequestBody CheckAccountPassword checkAccountPassword) {
+		accountService.checkAccountPassword(userId, checkAccountPassword);
+		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 }

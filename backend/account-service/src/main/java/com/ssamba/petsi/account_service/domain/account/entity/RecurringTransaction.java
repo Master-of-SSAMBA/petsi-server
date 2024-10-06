@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "RecurringTransaction")
+@Table(name = "Recurring_Transaction")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,7 +42,7 @@ public class RecurringTransaction {
 
 	@Setter
 	@Column(nullable = false)
-	private int amount;
+	private Long amount;
 
 	@Setter
 	@Column(nullable = false)

@@ -20,16 +20,14 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CreateAccountRequestDto {
 	@NotNull
-	@Min(1)
+	@Length(min = 1)
 	private Long accountProductId;
 	@NotNull
-	@Min(1)
-	@Max(31)
+	@Length(min = 1, max = 31)
 	private int nextTransactionDay;
-	@Min(1000)
-	@Max(3000000)
-	private int amount;
-	private List<Integer> pets;
+	@Length(min = 1000, max = 3000000)
+	private Long amount;
+	private List<Long> pets;
 	private String name;
 	@NotNull
 	@Length(min = 4, max = 4)

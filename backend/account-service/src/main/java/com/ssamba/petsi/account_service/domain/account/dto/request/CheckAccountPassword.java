@@ -3,13 +3,12 @@ package com.ssamba.petsi.account_service.domain.account.dto.request;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 @NotNull
-public class UpdateAccountNameRequestDto {
+public class CheckAccountPassword {
 	private Long accountId;
-	private String name;
+	private String accountNo;
+	private String password;
 }

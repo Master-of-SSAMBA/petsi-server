@@ -32,6 +32,9 @@ public class AccountFinApiService {
 	@Value("${spring.fin.api-key}")
 	private String apiKey;
 
+	@Value("${spring.fin.manager-account}")
+	private String managerAccount;
+
 	public void openAccountAuth(String userKey, String accountNo) {
 		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.openAccountAuth.name(),
 			FinApiUrl.openAccountAuth.name());
@@ -246,6 +249,73 @@ public class AccountFinApiService {
 		finApiDto.put("transactionBalance", transactionBalance);
 		finApiDto.put("withdrawalAccountNo", withdrawalAccountNo);
 		finApiDto.put("withdrawalTransactionSummary", withdrawalTransactionSummary);
+
+		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+
+		try {
+			ResponseEntity<String> response = restTemplate.postForEntity(FinApiUrl.updateDemandDepositAccountTransfer.getUrl(), request,
+				String.class);
+		} catch (Exception e) {
+			throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+
+	public FinApiResponseDto.InquireDemandDepositAccountHolderName InquireDemandDepositAccountHolderName(
+		String accountNo, String userKey) {
+		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.inquireDemandDepositAccountHolderName.name(),
+			FinApiUrl.inquireDemandDepositAccountHolderName.name());
+		header.setUserKey(userKey);
+		header.setApiKey(apiKey);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		Map<String, Object> finApiDto = new HashMap<>();
+		finApiDto.put("Header", header);
+		finApiDto.put("accountNo", accountNo);
+
+		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
+
+		ParameterizedTypeReference<FinApiResponseDto<FinApiResponseDto.InquireDemandDepositAccountHolderName>> responseType =
+			new ParameterizedTypeReference<>() {
+			};
+
+		ResponseEntity<FinApiResponseDto<FinApiResponseDto.InquireDemandDepositAccountHolderName>> response =
+			restTemplate.exchange(
+				FinApiUrl.inquireDemandDepositAccountHolderName.getUrl(),
+				HttpMethod.POST,
+				request,
+				responseType
+			);
+
+		return response.getBody().getRec();
+	}
+
+	public void addBalance(Account account, Long balance, String withdrawalAccountNo) {
+		FinApiHeaderRequestDto header = new FinApiHeaderRequestDto(FinApiUrl.updateDemandDepositAccountTransfer.name(),
+			FinApiUrl.updateDemandDepositAccountTransfer.name());
+		header.setUserKey(account.getUserKey());
+		header.setApiKey(apiKey);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		Map<String, Object> finApiDto = new HashMap<>();
+		finApiDto.put("Header", header);
+		finApiDto.put("depositAccountNo", account.getAccountNo());
+		finApiDto.put("depositTransactionSummary", "정기 적금 이자");
+		finApiDto.put("transactionBalance", balance);
+		if (withdrawalAccountNo != null) {
+			finApiDto.put("withdrawalAccountNo", withdrawalAccountNo);
+			finApiDto.put("depositTransactionSummary", "정기 적금 이체");
+			finApiDto.put("withdrawalTransactionSummary", "정기 적금 이체");
+		} else {
+			finApiDto.put("withdrawalAccountNo", managerAccount);
+			finApiDto.put("depositTransactionSummary", "정기 적금 이자");
+			finApiDto.put("withdrawalTransactionSummary", "정기 적금 이자 지급");
+		}
+
 
 		HttpEntity<Map<String, Object>> request = new HttpEntity<>(finApiDto, headers);
 

@@ -1,5 +1,7 @@
 package com.ssamba.petsi.account_service.domain.account.dto.response;
 
+import java.util.List;
+
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
 
 import lombok.AllArgsConstructor;
@@ -11,28 +13,41 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 public class GetAllAcountsResponseDto {
-	private Long accountId;
-	private String accountNo;
-	private String name;
-	private String petPicture;
-	@Setter
-	private Long balance;
-	private Double interestRate;
-	private String productName;
-	private String status;
 
-	private GetAllAcountsResponseDto(Account account, String petPicture) {
-		this.accountId = account.getAccountId();
-		this.accountNo = account.getAccountNo();
-		this.name = account.getName();
-		this.petPicture = petPicture;
-		this.balance = account.getBalance();
-		this.interestRate = account.getInterestRate();
-		this.productName = account.getAccountProduct().getTitle();
-		this.status = account.getStatus();
+	private int pictureCnt;
+	private double interest;
+
+	private List<AccountDto> accounts;
+
+	@Getter
+	@AllArgsConstructor
+	public static class AccountDto {
+		private Long accountId;
+		private String accountNo;
+		private String name;
+		@Setter
+		private String petPicture;
+		@Setter
+		private Long balance;
+		private Double interestRate;
+		private String productName;
+		private String status;
+
+
+		private AccountDto(Account account, String petPicture) {
+			this.accountId = account.getAccountId();
+			this.accountNo = account.getAccountNo();
+			this.name = account.getName();
+			this.petPicture = petPicture;
+			this.balance = account.getBalance();
+			this.interestRate = account.getInterestRate();
+			this.productName = account.getAccountProduct().getTitle();
+			this.status = account.getStatus();
+		}
+
+		public static AccountDto from(Account account) {
+			return new AccountDto(account, null);
+		}
 	}
 
-	public static GetAllAcountsResponseDto from(Account account) {
-		return new GetAllAcountsResponseDto(account, null);
-	}
 }

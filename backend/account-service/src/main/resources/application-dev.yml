@@ -32,6 +32,16 @@ spring:
       enabled: always
   fin:
     api_key: ${FIN_API_KEY}
+    manager-account: ${MANAGER_ACCOUNT_NO}
 springdoc:
   swagger-ui:
     path: /petsi/swagger-ui.html
+
+# Eureka 서버 주소
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+

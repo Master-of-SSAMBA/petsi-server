@@ -66,4 +66,13 @@ public class FinApiResponseDto<T> {
 		private String lastTransactionDate;
 		private String currency;
 	}
+
+	@Getter
+	public static class InquireDemandDepositAccountHolderName {
+		private String bankCode;
+		private String bankName;
+		private String accountNo;
+		private String userName;
+		private String currency;
+	}
 }
