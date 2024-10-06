@@ -8,10 +8,13 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +43,8 @@ public class KeycloakService {
         if (response.getStatus() != 201) {
             throw new BusinessLogicException(ExceptionCode.KEYCLOAK_REGISTER_ERROR);
         }
+        String userId = CreatedResponseUtil.getCreatedId(response);
+        sendEmail(userId);
     }
 
     private UserRepresentation createUserRepresentation(RegisterKeycloakUserRequestDto request) {
@@ -61,6 +66,15 @@ public class KeycloakService {
         credential.setType(CredentialRepresentation.PASSWORD);
         credential.setValue(password);
         return credential;
+    }
+
+    private void sendEmail(String userId) {
+        try {
+            UserResource userResource = keycloak.realm(realm).users().get(userId);
+            userResource.executeActionsEmail(Arrays.asList("VERIFY_EMAIL"));
+        } catch (Exception e) {
+            throw new BusinessLogicException(ExceptionCode.EMAIL_SENDING_ERROR);
+        }
     }
 
     @Transactional
