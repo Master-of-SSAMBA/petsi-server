@@ -25,6 +25,7 @@ spring:
       format_sql: true
   fin:
     api-key: ${FIN_API_KEY}
+    manager-account: ${MANAGER_ACCOUNT_NO}
   redis:
     host: redis-account-service
     port: 6380
