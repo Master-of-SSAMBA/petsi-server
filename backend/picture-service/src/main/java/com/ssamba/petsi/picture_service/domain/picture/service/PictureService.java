@@ -2,20 +2,28 @@ package com.ssamba.petsi.picture_service.domain.picture.service;
 
 import com.ssamba.petsi.picture_service.domain.picture.dto.response.DateResponseDto;
 import com.ssamba.petsi.picture_service.domain.picture.dto.response.PictureResponseDto;
+import com.ssamba.petsi.picture_service.domain.picture.dto.response.PredictResponse;
 import com.ssamba.petsi.picture_service.domain.picture.entity.Picture;
 import com.ssamba.petsi.picture_service.domain.picture.repository.PictureRepository;
 import com.ssamba.petsi.picture_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.picture_service.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,8 +41,10 @@ public class PictureService {
 
     public static final int PICTURES_PER_PAGE = 20;
     public static final String REDIS_KEY_PREFIX = "photo_auth:";
+    public static final String IS_PET_PREDICT_URL = "http://localhost:8000/api/v1/predict-is-pet";
     private final RedisTemplate<String, String> redisTemplate;
     private final PictureRepository pictureRepository;
+    private final RestTemplate restTemplate = new RestTemplate();
     private final S3Service s3Service;
 
     @Transactional(readOnly = true)
@@ -53,6 +63,39 @@ public class PictureService {
 
     @Transactional
     public void savePicture(long userId, MultipartFile file, String content) {
+
+        // 반려동물이 사진에 있는지 확인
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        try {
+            body.add("file", new ByteArrayResource(file.getBytes()) {
+                @Override
+                public String getFilename() {
+                    return file.getOriginalFilename();
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read image file", e);
+        }
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<PredictResponse> response = restTemplate.exchange(
+                IS_PET_PREDICT_URL,
+                HttpMethod.POST,
+                requestEntity,
+                PredictResponse.class
+        );
+
+        if(response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            if (!response.getBody().isPet()) {
+                throw new BusinessLogicException(ExceptionCode.PET_NOT_EXIST);
+            }
+        }
+
+        // 사진 저장 로직
         // 사진 확장자인지 확인
         if(!isValidImageMimeType(file)) {
             throw new BusinessLogicException(ExceptionCode.INVALID_FILE_FORM);
