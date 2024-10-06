@@ -38,6 +38,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	// https://mvnrepository.com/artifact/software.amazon.awssdk/s3
+	implementation group: 'software.amazon.awssdk', name: 's3', version: '2.27.17'
 }
 
 tasks.named('test') {

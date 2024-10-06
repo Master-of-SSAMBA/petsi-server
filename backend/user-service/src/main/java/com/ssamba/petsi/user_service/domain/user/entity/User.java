@@ -3,6 +3,7 @@ package com.ssamba.petsi.user_service.domain.user.entity;
 import java.time.LocalDateTime;
 
 import com.ssamba.petsi.user_service.domain.user.enums.UserStatus;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -13,10 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "user")
@@ -37,9 +34,11 @@ public class User {
     @Column(nullable = false)
     private String name;
 
+    @Setter
     @Column(nullable = false, unique = true)
     private String nickname;
 
+    @Setter
     @Column(nullable = true)
     private String profileImage;
 

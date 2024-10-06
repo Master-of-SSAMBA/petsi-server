@@ -9,8 +9,8 @@ spring:
     #로컬에서 사용할 db로 설정, account 부분을 서비스 이름으로 변경
     url: jdbc:mysql://localhost:3306/petsi_user?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: ssafy
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   flyway:
     enabled: false #dev에서는 편안한 옵션 선택
   jpa:
@@ -42,3 +42,13 @@ logging:
   level:
     org.hibernate: DEBUG
     org.springframework: DEBUG
+
+cloud:
+  aws:
+    s3:
+      bucket: petsi-images-bucket
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
