@@ -1,5 +1,6 @@
 package com.ssamba.petsi.user_service.domain.user.controller;
 
+import com.ssamba.petsi.user_service.domain.user.dto.request.CheckEmailRequestDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
 import com.ssamba.petsi.user_service.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,5 +28,12 @@ public class UserController {
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         userservice.signup(signupRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
+    }
+
+    @PostMapping("/check-email")
+    @Operation(summary = "이메일 확인")
+    public ResponseEntity<?> checkDuplicateEmail(@Valid @RequestBody CheckEmailRequestDto checkEmailRequestDto) {
+        userservice.isValidEmail(checkEmailRequestDto.getEmail());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }
