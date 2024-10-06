@@ -52,6 +52,7 @@ public class KeycloakService {
         userRepresentation.setUsername(request.getEmail());
         userRepresentation.setEmail(request.getEmail());
         userRepresentation.setEnabled(true);
+        userRepresentation.setEmailVerified(false);
         userRepresentation.setCredentials(Collections.singletonList(createPasswordCredentials(request.getPassword())));
         Map<String, List<String>> attributes = new HashMap<>();
         attributes.put("userId", Collections.singletonList(String.valueOf(request.getUserId())));
