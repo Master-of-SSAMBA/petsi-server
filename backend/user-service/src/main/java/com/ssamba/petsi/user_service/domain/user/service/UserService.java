@@ -1,5 +1,6 @@
 package com.ssamba.petsi.user_service.domain.user.service;
 
+import com.ssamba.petsi.user_service.domain.user.dto.request.CheckEmailRequestDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.RegisterKeycloakUserRequestDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
 import com.ssamba.petsi.user_service.domain.user.entity.User;
@@ -34,7 +35,7 @@ public class UserService {
         isValidNickname(signupRequestDto.getNickname());
     }
 
-    private void isValidEmail(String email) {
+    public void isValidEmail(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new BusinessLogicException(ExceptionCode.DUPLICATED_EMAIL);
         }
