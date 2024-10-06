@@ -52,4 +52,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
+    @GetMapping("")
+    @Operation(summary = "내 정보 조회")
+    public ResponseEntity<?> getUserInfo(@RequestHeader("X-User-Id") Long userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(userservice.getUserInfo(userId));
+    }
+
 }

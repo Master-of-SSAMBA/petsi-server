@@ -4,8 +4,11 @@ import com.ssamba.petsi.user_service.domain.user.dto.request.CheckEmailRequestDt
 import com.ssamba.petsi.user_service.domain.user.dto.request.PatchNicknameDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.RegisterKeycloakUserRequestDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
+import com.ssamba.petsi.user_service.domain.user.dto.response.GetUserInfoResponseDto;
 import com.ssamba.petsi.user_service.domain.user.entity.User;
 import com.ssamba.petsi.user_service.domain.user.repository.UserRepository;
+import com.ssamba.petsi.user_service.global.client.PetClient;
+import com.ssamba.petsi.user_service.global.dto.PetCustomDto;
 import com.ssamba.petsi.user_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.user_service.global.exception.ExceptionCode;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -25,6 +29,7 @@ public class UserService {
     private final KeycloakService keycloakService;
     private final FinApiService finApiService;
     private final S3Service s3Service;
+    private final PetClient petClient;
 
     @Transactional
     public void signup(SignupRequestDto signupRequestDto) {
@@ -97,6 +102,12 @@ public class UserService {
         return mimeType != null && Arrays.asList(validMimeTypes).contains(mimeType);
     }
 
+	public GetUserInfoResponseDto getUserInfo(Long userId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(()
+            -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
 
+        List<PetCustomDto> petList = petClient.findAllWithPetCustomDto(userId);
 
+        return new GetUserInfoResponseDto(user, petList);
+	}
 }
