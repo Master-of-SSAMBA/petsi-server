@@ -34,3 +34,11 @@ logging:
   level:
     org.hibernate: DEBUG
     org.springframework: DEBUG
+
+# Eureka 서버 주소
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://eureka-service:8761/eureka/
