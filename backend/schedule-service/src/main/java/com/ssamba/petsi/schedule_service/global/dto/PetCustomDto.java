@@ -8,4 +8,5 @@ import lombok.Getter;
 public class PetCustomDto {
 	private Long petId;
 	private String petName;
+	private String petImg;
 }
