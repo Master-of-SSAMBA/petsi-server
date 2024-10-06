@@ -45,3 +45,12 @@ logging:
     org.hibernate: DEBUG
     org.springframework: DEBUG
 
+cloud:
+  aws:
+    s3:
+      bucket: petsi-images-bucket
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
