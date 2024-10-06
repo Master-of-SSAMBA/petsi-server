@@ -13,10 +13,6 @@ public class DateResponseDto {
 	private String date;
 	private String time;
 
-	public DateResponseDto(LocalDate date) {
-		this.date = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-	}
-
 	public DateResponseDto(LocalDateTime createdAt) {
 		this.date = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 	}

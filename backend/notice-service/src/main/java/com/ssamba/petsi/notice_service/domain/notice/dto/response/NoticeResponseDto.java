@@ -8,7 +8,7 @@ import lombok.Getter;
 public class NoticeResponseDto {
 	private Long noticeId;
 	private String category;
-	private String title;
+	private String content;
 	private DateResponseDto date;
 	private boolean isRead;
 	private Long link;

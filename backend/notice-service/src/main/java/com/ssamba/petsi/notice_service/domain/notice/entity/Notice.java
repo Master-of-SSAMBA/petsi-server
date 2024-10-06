@@ -32,7 +32,7 @@ public class Notice {
 	private String category;
 
 	@Column(nullable = false)
-	private String title;
+	private String content;
 
 	@Column(nullable = false)
 	private boolean isRead;
