@@ -10,8 +10,9 @@ public enum ExceptionCode {
 	DUPLICATED_NICKNAME(400, "이미 가입된 닉네임이 있습니다!"),
 	KEYCLOAK_REGISTER_ERROR(500, "키클록 유저 등록에 실패했습니다!"),
 	FINAPI_REGISTER_ERROR(500, "금융API 유저 등록에 실패했습니다!"),
-	EMAIL_SENDING_ERROR(500, "인증 이메일 전송에 실패했습니다!")
-	;
+	EMAIL_SENDING_ERROR(500, "인증 이메일 전송에 실패했습니다!"),
+	USER_NOT_FOUND(404, "유저 아이디에 해당하는 유저가 없습니다."),
+	INVALID_FILE_FORM(400, "올바르지 않은 파일 형식입니다." );
 
 	private final int status;
 	private final String message;
