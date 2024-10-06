@@ -30,7 +30,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
-    @PostMapping("/check-email")
+    @PostMapping("/email-check")
     @Operation(summary = "이메일 확인")
     public ResponseEntity<?> checkDuplicateEmail(@Valid @RequestBody CheckEmailRequestDto checkEmailRequestDto) {
         userservice.isValidEmail(checkEmailRequestDto.getEmail());
