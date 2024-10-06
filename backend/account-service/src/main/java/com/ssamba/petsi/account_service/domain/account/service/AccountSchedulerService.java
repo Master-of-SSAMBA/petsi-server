@@ -4,8 +4,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssamba.petsi.account_service.domain.account.dto.fin.FinApiResponseDto;
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
@@ -21,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AccountSchedulerService {
 
 	private final RecurringTransactionRepository recurringTransactionRepository;
@@ -28,9 +32,13 @@ public class AccountSchedulerService {
 	private final PictureClient pictureClient;
 	private final AccountFinApiService accountFinApiService;
 
-	//todo: 매일 적금 자동이체 확인 후 이체
+	@Retryable(
+		value = { Exception.class },
+		maxAttempts = 20,
+		backoff = @Backoff(delay = 10000)
+	)
 	@Scheduled(cron = "0 0 8 * * *")
-	void autoTransfer() {
+	void autoTransfer() { //매일 오전 8시 적금 자동이체
 		List<RecurringTransaction> accounts = recurringTransactionRepository
 			.findAllByStatusNotAndNextTransactionDateLessThanEqual(RecurringTransactionStatus.COMPLETED.getValue(),
 				LocalDate.now());
@@ -49,9 +57,13 @@ public class AccountSchedulerService {
 
 	}
 
-	//todo: 매월 1일 지난 달 이자율 확인 후 갱신
+	@Retryable(
+		value = { Exception.class },
+		maxAttempts = 20,
+		backoff = @Backoff(delay = 10000)
+	)
 	@Scheduled(cron = "0 0 0 1 * *")
-	void updateAccountPerMonth() {
+	void updateAccountPerMonth() { //매월 1일 지난 달 이자율 확인 후 갱신
 		List<Account> accounts = accountRepository.findAllByStatus(AccountStatus.ACTIVATED.getValue());
 		accounts.forEach(account -> {
 			PictureMonthlyRequestDto req = new PictureMonthlyRequestDto(
@@ -62,9 +74,13 @@ public class AccountSchedulerService {
 		});
 	}
 
-	//todo: 매월 1일 자동이체 날짜 갱신
+	@Retryable(
+		value = { Exception.class },
+		maxAttempts = 20,
+		backoff = @Backoff(delay = 10000)
+	)
 	@Scheduled(cron = "0 0 0 1 * *")
-	void updateRecurringTransactionPerMonth() {
+	void updateRecurringTransactionPerMonth() {//todo: 매월 1일 자동이체 날짜 갱신
 		List<RecurringTransaction> accounts = recurringTransactionRepository.findAll();
 		accounts.forEach(account -> {
 			int day = LocalDate.now().lengthOfMonth();
@@ -79,9 +95,13 @@ public class AccountSchedulerService {
 
 	}
 
-	//todo: 매월 10일 이자 지급
+	@Retryable(
+		value = { Exception.class },
+		maxAttempts = 20,
+		backoff = @Backoff(delay = 10000)
+	)
 	@Scheduled(cron = "0 0 1 10 * *")
-	void addInterest() {
+	void addInterest() {//todo: 매월 10일 이자 지급
 		LocalDate date = LocalDate.now().minusMonths(1);
 		String startDate = date.withDayOfMonth(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String endDate = date.withDayOfMonth(date.lengthOfMonth()).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
