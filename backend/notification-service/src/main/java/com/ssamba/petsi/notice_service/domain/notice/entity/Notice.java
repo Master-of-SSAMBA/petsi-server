@@ -41,7 +41,7 @@ public class Notice {
 	private boolean isRead;
 
 	@Column(nullable = false)
-	private Long link;
+	private Long linkId;
 
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
