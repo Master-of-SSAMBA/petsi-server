@@ -2,9 +2,8 @@ package com.ssamba.petsi.schedule_service.domain.schedule.service;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.time.YearMonth;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +18,7 @@ import com.ssamba.petsi.schedule_service.domain.schedule.entity.PetToSchedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.Schedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.IntervalType;
+import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleSortingStatus;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.EndedScheduleRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.PetToEndedScheduleRepository;
@@ -42,11 +42,29 @@ public class ScheduleService {
 	private final PetToEndedScheduleRepository petToEndedScheduleRepository;
 	private final PetClient petClient;
 
+
+	public List<?> getSchedules(Long userId, String date, Long petId, String status) {
+		String[] dateElements = date.split("-");
+		int year = Integer.parseInt(dateElements[0]);
+		int month = Integer.parseInt(dateElements[1]);
+
+		YearMonth yearMonth = YearMonth.of(year, month);
+
+		LocalDate startDate = LocalDate.of(year, month, 1);
+		LocalDate endDate = yearMonth.atEndOfMonth();
+
+		return ScheduleSortingStatus.fromValue(status)
+			.setReturnList(
+				getUpcomingSchedulesPerMonth(userId, startDate, endDate, petId),
+				getEndedSchedulesPerMonth(userId, startDate, endDate, petId));
+	}
+
 	@Transactional(readOnly = true)
-	public List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> getUpcomingSchedulesPerMonth(Long userId, int month, Long petId) {
-		List<Schedule> scheduledList = petId == null ? scheduleRepository.getAllScheduledList(userId, month,
+	public List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> getUpcomingSchedulesPerMonth(Long userId,
+		LocalDate startDate, LocalDate endDate, Long petId) {
+		List<Schedule> scheduledList = petId == null ? scheduleRepository.getAllScheduledList(userId, startDate, endDate,
 			ScheduleStatus.ACTIVATED.getValue())
-			: scheduleRepository.getAllScheduledListWithPetId(userId, month, petId,
+			: scheduleRepository.getAllScheduledListWithPetId(userId, startDate, endDate, petId,
 			ScheduleStatus.ACTIVATED.getValue());
 
 		return toPetCustomDto(scheduledList.stream()
@@ -56,10 +74,11 @@ public class ScheduleService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> getEndedSchedulesPerMonth(Long userId, int month, Long petId) {
+	public List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> getEndedSchedulesPerMonth(Long userId,
+		LocalDate startDate, LocalDate endDate, Long petId) {
 		List<EndedSchedule> endedScheduleList = petId == null ?
-			endedScheduleRepository.getAllEndedScheduledList(userId, month)
-			: endedScheduleRepository.getAllEndedScheduledListWithPetId(userId, month, petId);
+			endedScheduleRepository.getAllEndedScheduledList(userId, startDate, endDate)
+			: endedScheduleRepository.getAllEndedScheduledListWithPetId(userId, startDate, endDate, petId);
 
 		return toPetCustomDto(endedScheduleList.stream()
 			.map(GetSchedulesDetailPerMonthResponseDto::fromEndedScheduleEntity)
@@ -174,4 +193,5 @@ public class ScheduleService {
 		);
 		endedScheduleRepository.delete(endedSchedule);
 	}
+
 }

@@ -1,5 +1,6 @@
 package com.ssamba.petsi.schedule_service.domain.schedule.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,18 +13,18 @@ public interface EndedScheduleRepository extends JpaRepository<EndedSchedule, Lo
 
 	@Query("SELECT es FROM EndedSchedule es " +
 		"WHERE es.userId = :userId " +
-		"AND FUNCTION('MONTH', es.createdAt) = :month " +
+		"AND es.createdAt between :startDate and :endDate " +
 		"ORDER BY es.createdAt DESC")
-	List<EndedSchedule> getAllEndedScheduledList(Long userId, int month);
+	List<EndedSchedule> getAllEndedScheduledList(Long userId, LocalDate startDate, LocalDate endDate);
 
 	@Query("SELECT es FROM EndedSchedule es " +
 		"JOIN PetToEndedSchedule ptes " +
 		"ON ptes.endedSchedule = es " +
 		"WHERE es.userId = :userId " +
 		"AND ptes.petId = :petId " +
-		"AND FUNCTION('MONTH', es.createdAt) = :month " +
+		"AND es.createdAt between :startDate and :endDate " +
 		"ORDER BY es.createdAt DESC")
-	List<EndedSchedule> getAllEndedScheduledListWithPetId(Long userId, int month, Long petId);
+	List<EndedSchedule> getAllEndedScheduledListWithPetId(Long userId, LocalDate startDate, LocalDate endDate, Long petId);
 
 	Optional<EndedSchedule> findByEndedScheduleIdAndUserId(Long endedScheduleId, Long userId);
 }
