@@ -1,5 +1,6 @@
 package com.ssamba.petsi.schedule_service.domain.schedule.enums;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetSchedulesDetailPerMonthResponseDto;
@@ -15,8 +16,10 @@ public enum ScheduleSortingStatus {
 		@Override
 		public List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> setReturnList(List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> upcomingList,
 			List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> endedScheduleList) {
-			upcomingList.addAll(endedScheduleList);
-			return upcomingList;
+			List<GetSchedulesDetailPerMonthResponseDto<PetCustomDto>> returnList = new ArrayList<>();
+			returnList.addAll(upcomingList);
+			returnList.addAll(endedScheduleList);
+			return returnList;
 		}
 	},
 	UPCOMING("예정") {
