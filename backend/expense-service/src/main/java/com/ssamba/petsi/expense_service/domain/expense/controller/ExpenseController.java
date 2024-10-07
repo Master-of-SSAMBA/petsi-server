@@ -48,8 +48,8 @@ public class ExpenseController {
     @PostMapping("/ai")
     @Operation(summary = "구매 목록 자동 등록")
     public ResponseEntity<?> expenseAiCreate(@RequestHeader("X-User-Id") Long userId,
-                                             @RequestBody List<@Valid PurchaseAiPostRequestDto> purchaseDtos) {
-        expenseService.saveExpenseAi(userId, purchaseDtos);
+                                             @RequestBody @Valid MarketLoginDto marketLoginDto) {
+        expenseService.saveExpenseAi(userId, marketLoginDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

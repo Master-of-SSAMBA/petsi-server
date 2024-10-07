@@ -1,16 +1,18 @@
 package com.ssamba.petsi.expense_service.domain.expense.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.util.List;
-
-@Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PredictRequestDto {
-    MarketLoginDto loginInfo;
+public class MarketLoginDto {
+
+    @NotBlank
+    private String username;
+    @NotBlank
+    private String password;
+
 }

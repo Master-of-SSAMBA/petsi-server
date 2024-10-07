@@ -76,11 +76,11 @@ public class ExpenseService {
     }
 
     @Transactional
-    public void saveExpenseAi(Long userId, List<PurchaseAiPostRequestDto> purchaseDtos) {
+    public void saveExpenseAi(Long userId, MarketLoginDto marketLoginDto) {
         ResponseEntity<List<PurchaseAiSaveDto>> response = restTemplate.exchange(
                 AI_PREDICT_URL,
                 HttpMethod.POST,
-                new HttpEntity<>(new PredictRequestDto(purchaseDtos)),
+                new HttpEntity<>(marketLoginDto),
                 new ParameterizedTypeReference<List<PurchaseAiSaveDto>>() {
                 }
         );
