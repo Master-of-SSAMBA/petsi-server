@@ -37,6 +37,11 @@ spring:
 springdoc:
   swagger-ui:
     path: /api/v1/notice/swagger-ui.html
+
+firebase:
+  config:
+    path: classpath:firebase/GoogleServiceAccount.json
+    project-id: petsi
 #
 ##로그 관련
 #logging:
