@@ -1,10 +1,7 @@
 package com.ssamba.petsi.schedule_service.domain.schedule.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,16 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.CreateScheduleRequestDto;
-import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleCategoryRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleRequestDto;
-import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetSchedulesDetailPerMonthResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleSortingStatus;
-import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
 import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleCategoryService;
 import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleService;
-import com.ssamba.petsi.schedule_service.global.dto.PetCustomDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -68,12 +61,9 @@ public class ScheduleController {
 
 	@GetMapping("/detail")
 	@Operation(summary = "월별 상세 일정 불러오기")
-	public ResponseEntity<?> getSchedules(@RequestHeader("X-User-Id") Long userId, @RequestParam("month") int month,
+	public ResponseEntity<?> getSchedules(@RequestHeader("X-User-Id") Long userId, @RequestParam("date") String date,
 		@RequestParam(value = "petId", required = false) Long petId, @RequestParam(value = "status", required = false) String status) {
-
-		return ResponseEntity.status(HttpStatus.OK).body(ScheduleSortingStatus.fromValue(status).setReturnList(
-			scheduleService.getUpcomingSchedulesPerMonth(userId, month, petId),
-			scheduleService.getEndedSchedulesPerMonth(userId, month, petId)));
+		return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getSchedules(userId, date, petId, status));
 	}
 
 

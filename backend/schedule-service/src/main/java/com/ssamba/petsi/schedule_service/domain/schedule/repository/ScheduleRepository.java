@@ -1,5 +1,6 @@
 package com.ssamba.petsi.schedule_service.domain.schedule.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,19 +21,19 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 		"LEFT JOIN s.petToSchedule ps " +
 		"WHERE sc.userId = :userId " +
 		"AND s.status = :status " +
-		"AND FUNCTION('MONTH', s.nextScheduleDate) = :month " +
+		"AND s.nextScheduleDate between :startDate and :endDate " +
 		"ORDER BY s.nextScheduleDate")
-	List<Schedule> getAllScheduledList(Long userId, int month, String status);
+	List<Schedule> getAllScheduledList(Long userId, LocalDate startDate, LocalDate endDate, String status);
 
 	@Query("SELECT s FROM Schedule s " +
 		"JOIN s.scheduleCategory sc " +
 		"LEFT JOIN s.petToSchedule ps " +
 		"WHERE sc.userId = :userId " +
 		"AND s.status = :status " +
-		"AND FUNCTION('MONTH', s.nextScheduleDate) = :month " +
+		"AND s.nextScheduleDate between :startDate and :endDate " +
 		"AND ps.petId = :petId " +
 		"ORDER BY s.nextScheduleDate")
-	List<Schedule> getAllScheduledListWithPetId(Long userId, int month, Long petId, String status);
+	List<Schedule> getAllScheduledListWithPetId(Long userId, LocalDate startDate, LocalDate endDate, Long petId, String status);
 
 	boolean existsByDescriptionAndScheduleCategory(String description, ScheduleCategory scheduleCategory);
 }
