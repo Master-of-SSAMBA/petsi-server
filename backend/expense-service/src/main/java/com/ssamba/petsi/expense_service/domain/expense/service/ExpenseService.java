@@ -35,7 +35,8 @@ public class ExpenseService {
     private static final long EXPENSE_PER_PAGE = 20;
     private static final String CACHE_KEY_PREFIX = "expense:";
     // python AI 카테고리 예측 요청 URI
-    private static final String AI_PREDICT_URL = "http://ai-service:9008/api/v1/predict_categories";
+//    private static final String AI_PREDICT_URL = "http://ai-service:9008/api/v1/predict_categories";
+    private static final String AI_PREDICT_URL = "http://localhost:8000/api/v1/predict_categories";
     private final RestTemplate restTemplate = new RestTemplate();
     private final S3Service s3Service;
     private final UserClient userClient;
@@ -76,11 +77,11 @@ public class ExpenseService {
     }
 
     @Transactional
-    public void saveExpenseAi(Long userId, List<PurchaseAiPostRequestDto> purchaseDtos) {
+    public void saveExpenseAi(Long userId, MarketLoginDto marketLoginDto) {
         ResponseEntity<List<PurchaseAiSaveDto>> response = restTemplate.exchange(
                 AI_PREDICT_URL,
                 HttpMethod.POST,
-                new HttpEntity<>(new PredictRequestDto(purchaseDtos)),
+                new HttpEntity<>(marketLoginDto),
                 new ParameterizedTypeReference<List<PurchaseAiSaveDto>>() {
                 }
         );
