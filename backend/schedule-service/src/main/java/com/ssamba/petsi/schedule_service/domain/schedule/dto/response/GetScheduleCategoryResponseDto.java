@@ -10,11 +10,13 @@ import lombok.Getter;
 public class GetScheduleCategoryResponseDto {
 	private Long id;
 	private String title;
+	private String icon;
 
 	public static GetScheduleCategoryResponseDto fromEntity(ScheduleCategory scheduleCategory) {
 		return new GetScheduleCategoryResponseDto(
 			scheduleCategory.getScheduleCategoryId(),
-			scheduleCategory.getTitle()
+			scheduleCategory.getTitle(),
+			scheduleCategory.getIcon()
 		);
 	}
 }

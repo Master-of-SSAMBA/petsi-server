@@ -2,7 +2,7 @@ package com.ssamba.petsi.schedule_service.domain.schedule.entity;
 
 import java.util.List;
 
-import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleStatus;
+import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.AddScheduleCategoryRequestDto;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,7 +11,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,6 +38,9 @@ public class ScheduleCategory {
 	@Column(nullable = false)
 	private String title;
 
+	@Column(nullable = false)
+	private String icon;
+
 	@OneToMany(mappedBy = "scheduleCategory", cascade = CascadeType.ALL)
 	private List<Schedule> schedules;
 
@@ -47,4 +49,9 @@ public class ScheduleCategory {
 		this.title = title;
 	}
 
+	public ScheduleCategory(Long userId, AddScheduleCategoryRequestDto dto) {
+		this.userId = userId;
+		this.title = dto.getTitle();
+		this.icon = dto.getIcon();
+	}
 }

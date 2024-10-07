@@ -42,6 +42,9 @@ public class EndedSchedule {
 	private String schedule_category_title;
 
 	@Column(nullable = false)
+	private String schedule_category_icon;
+
+	@Column(nullable = false)
 	private String schedule_description;
 
 	@Column(nullable = false)
@@ -53,6 +56,7 @@ public class EndedSchedule {
 	public EndedSchedule(Schedule schedule) {
 		this.userId = schedule.getScheduleCategory().getUserId();
 		this.schedule_category_title = schedule.getScheduleCategory().getTitle();
+		this.schedule_category_icon = schedule.getScheduleCategory().getIcon();
 		this.schedule_description = schedule.getDescription();
 		this.createdAt = schedule.getNextScheduleDate();
 	}

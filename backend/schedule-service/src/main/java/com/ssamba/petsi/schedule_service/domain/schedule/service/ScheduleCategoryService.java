@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.AddScheduleCategoryRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleCategoryRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.response.GetScheduleCategoryResponseDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory;
@@ -37,13 +38,12 @@ public class ScheduleCategoryService {
 	}
 
 	@Transactional
-	public void addScheduleCategory(Long userId, String title) {
-		ScheduleCategory category = scheduleCategoryRepository.findByUserIdAndTitle(userId, title);
+	public void addScheduleCategory(Long userId, AddScheduleCategoryRequestDto dto) {
+		ScheduleCategory category = scheduleCategoryRepository.findByUserIdAndTitle(userId, dto.getTitle());
 		if (category != null) {
 			throw new BusinessLogicException(ExceptionCode.DUPLICATED_SCHEDULE_CATEGORY);
 		}
-		ScheduleCategory scheduleCategory = new ScheduleCategory(userId, title);
-		scheduleCategoryRepository.save(scheduleCategory);
+		scheduleCategoryRepository.save(new ScheduleCategory(userId, dto));
 	}
 
 	@Transactional

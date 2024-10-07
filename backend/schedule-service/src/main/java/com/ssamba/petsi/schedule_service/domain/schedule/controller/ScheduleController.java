@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.AddScheduleCategoryRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.CreateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleRequestDto;
@@ -46,8 +47,9 @@ public class ScheduleController {
 
 	@PostMapping("/category")
 	@Operation(summary = "일정 카테고리 추가하기")
-	public ResponseEntity<?> addScheduleCategory(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, String> title) {
-		scheduleCategoryService.addScheduleCategory(userId, title.get("title"));
+	public ResponseEntity<?> addScheduleCategory(@RequestHeader("X-User-Id") Long userId, @RequestBody
+		AddScheduleCategoryRequestDto dto) {
+		scheduleCategoryService.addScheduleCategory(userId, dto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
@@ -65,7 +67,6 @@ public class ScheduleController {
 		@RequestParam(value = "petId", required = false) Long petId, @RequestParam(value = "status", required = false) String status) {
 		return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getSchedules(userId, date, petId, status));
 	}
-
 
 	@GetMapping("/{scheduleId}")
 	@Operation(summary = "상세 일정 불러오기")

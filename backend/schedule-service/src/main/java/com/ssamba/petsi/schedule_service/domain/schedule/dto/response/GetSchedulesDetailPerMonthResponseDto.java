@@ -42,7 +42,8 @@ public class GetSchedulesDetailPerMonthResponseDto<T> {
 		DateResponseDto date = new DateResponseDto(endedSchedule.getCreatedAt());
 		String title = endedSchedule.getSchedule_description();
 		List<Long> pets = endedSchedule.getPetToEndedSchedule().stream().map(PetToEndedSchedule::getPetId).toList();
-		GetScheduleCategoryResponseDto scheduleCategory = new GetScheduleCategoryResponseDto(null, endedSchedule.getSchedule_category_title());
+		GetScheduleCategoryResponseDto scheduleCategory = new GetScheduleCategoryResponseDto(
+			null, endedSchedule.getSchedule_category_title(), endedSchedule.getSchedule_category_icon());
 		return new GetSchedulesDetailPerMonthResponseDto(id, status, date, pets, scheduleCategory, title);
 	}
 
