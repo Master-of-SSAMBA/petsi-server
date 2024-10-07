@@ -28,7 +28,7 @@ springdoc:
 
 firebase:
   config:
-    path: classpath:firebase/GoogleServiceAccount.json
+    path: src/main/resources/firebase/GoogleServiceAccount.json
     project-id: petsi
 
 #로그 관련
