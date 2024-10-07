@@ -4,7 +4,7 @@ spring:
   config:
     import: optional:file:.env[.properties]
   application:
-    name: notice-service #현재 서비스 이름으로 변경
+    name: notification-service #현재 서비스 이름으로 변경
   datasource:
     #로컬에서 사용할 db로 설정, account 부분을 서비스 이름으로 변경
     url: jdbc:mysql://localhost:3306/petsi_notice?serverTimezone=Asia/Seoul&characterEncoding=UTF-8

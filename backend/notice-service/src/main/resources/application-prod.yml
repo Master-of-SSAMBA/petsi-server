@@ -2,10 +2,10 @@ server:
   port: 9007 #실행할 포트로 설정
 spring:
   application:
-    name: notice-service #현재 서비스 이름으로 변경
+    name: notification-service #현재 서비스 이름으로 변경
   datasource:
     #account 부분을 현재 서비스 이름으로 변경
-    url: jdbc:mysql://mysql_notice_service:3306/petsi_notice?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://mysql_notification_service:3306/petsi_notice?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
@@ -26,7 +26,7 @@ spring:
 
 springdoc:
   swagger-ui:
-    path: /api/v1/notice/swagger-ui.html
+    path: /api/v1/notification/swagger-ui.html
 
 #로그 관련
 logging:
