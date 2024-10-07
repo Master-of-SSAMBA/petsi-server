@@ -11,9 +11,7 @@ spring:
     password: ${DB_PASSWORD}
   #차후 설정 예정
   flyway:
-    enabled: true
-    locations : classpath:db/migration
-    baseline-on-migrate: true
+    enabled: false
   jpa:
     database: mysql
     properties:
