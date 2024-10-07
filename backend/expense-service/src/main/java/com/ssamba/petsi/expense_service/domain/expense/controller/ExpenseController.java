@@ -92,6 +92,12 @@ public class ExpenseController {
         return ResponseEntity.ok(expenseService.getMedicalExpense(userId, medicalExpenseId));
     }
 
+    @GetMapping("/monthly-expense")
+    @Operation(summary = "월 별 소비 금액 조회")
+    public ResponseEntity<?> findMonthlyExpense(@RequestHeader("X-User-Id") Long userId) {
+        return ResponseEntity.ok(expenseService.getMonthlyExpense(userId));
+    }
+
     @PutMapping("/purchase")
     @Operation(summary = "구매 내역 수정")
     public ResponseEntity<?> updatePurchase(@RequestHeader("X-User-Id") Long userId,

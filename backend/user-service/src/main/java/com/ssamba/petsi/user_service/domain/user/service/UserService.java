@@ -4,6 +4,7 @@ import com.ssamba.petsi.user_service.domain.user.dto.request.CheckEmailRequestDt
 import com.ssamba.petsi.user_service.domain.user.dto.request.PatchNicknameDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.RegisterKeycloakUserRequestDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
+import com.ssamba.petsi.user_service.domain.user.dto.response.ExpenseInfoResponseDto;
 import com.ssamba.petsi.user_service.domain.user.dto.response.GetUserInfoResponseDto;
 import com.ssamba.petsi.user_service.domain.user.entity.User;
 import com.ssamba.petsi.user_service.domain.user.repository.UserRepository;
@@ -102,6 +103,7 @@ public class UserService {
         return mimeType != null && Arrays.asList(validMimeTypes).contains(mimeType);
     }
 
+    @Transactional(readOnly = true)
 	public GetUserInfoResponseDto getUserInfo(Long userId) {
         User user = userRepository.findByUserId(userId).orElseThrow(()
             -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
@@ -110,4 +112,12 @@ public class UserService {
 
         return new GetUserInfoResponseDto(user, petList);
 	}
+
+    @Transactional(readOnly = true)
+    public ExpenseInfoResponseDto getExpenseInfo(Long userId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(()
+                -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
+
+        return new ExpenseInfoResponseDto(user.getNickname(), user.getProfileImage());
+    }
 }
