@@ -13,10 +13,10 @@ public class NoticeResponseDto {
 	private String content;
 	private DateResponseDto date;
 	private boolean isRead;
-	private Long link;
+	private Long linkId;
 
 	public static NoticeResponseDto fromEntity(Notice notice) {
 		return new NoticeResponseDto(notice.getNoticeId(), notice.getCategory(), notice.getContent(),
-			new DateResponseDto(notice.getCreatedAt()), notice.isRead(), notice.getLink());
+			new DateResponseDto(notice.getCreatedAt()), notice.isRead(), notice.getLinkId());
 	}
 }
