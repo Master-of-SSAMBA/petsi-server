@@ -9,8 +9,8 @@ spring:
     #로컬에서 사용할 db로 설정, account 부분을 서비스 이름으로 변경
     url: jdbc:mysql://localhost:3306/petsi_user?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: petsi
+    password: petsi0909!
   flyway:
     enabled: false #dev에서는 편안한 옵션 선택
   jpa:
@@ -24,18 +24,18 @@ spring:
       format_sql: true
   fin:
     api-url: "https://finopenapi.ssafy.io/ssafy/api/v1/member/"
-    api_key: ${FIN_API_KEY}
+    api_key: 1234
   keycloak:
     realm: petsi
     auth-server-url: http://localhost:8082
     resource: user-service
     credentials:
-      secret: ${USER_KEYCLOAK_SECRET}
+      secret: 515355
     ssl-required: external
 ##swagger : account 부분 서비스로 변경
-#springdoc:
-#  swagger-ui:
-#    path: /api/v1/user/swagger-ui.html
+springdoc:
+  swagger-ui:
+    path: /api/v1/user/swagger-ui.html
 
 #로그 관련
 logging:
@@ -50,8 +50,8 @@ cloud:
     stack.auto: false
     region.static: ap-northeast-2
     credentials:
-      access-key: ${S3_ACCESS_KEY}
-      secret-key: ${S3_SECRET_KEY}
+      access-key: AKIAZ3MGNG6NT7HPQKVS
+      secret-key: 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
 
 
 # Eureka 서버 주소

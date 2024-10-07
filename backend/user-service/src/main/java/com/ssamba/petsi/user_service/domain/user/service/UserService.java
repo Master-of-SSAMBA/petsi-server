@@ -10,6 +10,7 @@ import com.ssamba.petsi.user_service.domain.user.entity.User;
 import com.ssamba.petsi.user_service.domain.user.repository.UserRepository;
 import com.ssamba.petsi.user_service.global.client.PetClient;
 import com.ssamba.petsi.user_service.global.dto.PetCustomDto;
+import com.ssamba.petsi.user_service.global.dto.PetResponseDto;
 import com.ssamba.petsi.user_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.user_service.global.exception.ExceptionCode;
 import org.springframework.stereotype.Service;
@@ -108,7 +109,7 @@ public class UserService {
         User user = userRepository.findByUserId(userId).orElseThrow(()
             -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
 
-        List<PetCustomDto> petList = petClient.findAllWithPetCustomDto(userId);
+        List<PetResponseDto> petList = petClient.findPetForUserInfo(userId);
 
         return new GetUserInfoResponseDto(user, petList);
 	}
