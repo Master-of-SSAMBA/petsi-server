@@ -15,5 +15,6 @@ public class DateResponseDto {
 
 	public DateResponseDto(LocalDateTime createdAt) {
 		this.date = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		this.time = createdAt.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 	}
 }
