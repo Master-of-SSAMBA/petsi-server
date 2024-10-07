@@ -7,17 +7,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PurchaseSumDto implements Comparable<PurchaseSumDto> {
+public class PurchaseSumDto {
 
     private String category;
     private long sum;
-
-    @Override
-    public int compareTo(PurchaseSumDto o) {
-        if (this.sum == o.sum) {
-            return this.category.compareTo(o.category);
-        }
-        return Long.compare(o.sum, this.sum);
-    }
 
 }

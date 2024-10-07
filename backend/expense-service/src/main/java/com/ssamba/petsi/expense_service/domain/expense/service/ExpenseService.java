@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -132,21 +133,25 @@ public class ExpenseService {
         int month = now.getMonthValue();
 
         UserDto userDto = userClient.getUser(userId);
-        List<PurchaseSumDto> categoryToSum = new ArrayList<>(purchaseRepository.getSumByCategory(userId, start, end).stream()
-                .map(p -> new PurchaseSumDto(p.getCategory(), p.getSum()))
-                .toList());
 
+        List<PurchaseSumDto> purchases = purchaseRepository.getSumByCategory(userId, start, end);
         long medicalExpense = medicalExpenseRepository.sumCostByMonth(start, end);
-        categoryToSum.add(new PurchaseSumDto("의료비", medicalExpense));
 
-        Collections.sort(categoryToSum);
+        Map<String, Long> categoryToSum = purchases.stream()
+                .collect(Collectors.toMap(
+                        PurchaseSumDto::getCategory,
+                        PurchaseSumDto::getSum,
+                        (v1, v2) -> v1,
+                        () -> new HashMap<>(Map.of("사료", 0L, "간식", 0L, "장난감", 0L, "물품", 0L))
+                ));
 
-        long total = medicalExpense;
-        for(PurchaseSumDto p : categoryToSum) {
-            total += p.getSum();
-        }
+        long food = categoryToSum.get("사료");
+        long snack = categoryToSum.get("간식");
+        long toy = categoryToSum.get("장난감");
+        long product = categoryToSum.get("물품");
+        long total = food + snack + toy + product + medicalExpense;
 
-        return new MonthlyExpenseResponseDto(userDto.getNickname(), userDto.getImg(), month, total, categoryToSum);
+        return new MonthlyExpenseResponseDto(userDto.getNickname(), userDto.getImg(), month, total, food, snack, toy, product, medicalExpense);
     }
 
     @Transactional

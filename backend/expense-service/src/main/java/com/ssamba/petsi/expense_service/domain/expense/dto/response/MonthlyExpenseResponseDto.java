@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,7 +13,11 @@ public class MonthlyExpenseResponseDto {
     private String img;
     private int month;
     private Long total;
-    private List<PurchaseSumDto> costs;
+    private Long food;
+    private Long snack;
+    private Long toy;
+    private Long product;
+    private Long medicalExpense;
 
 }
 
