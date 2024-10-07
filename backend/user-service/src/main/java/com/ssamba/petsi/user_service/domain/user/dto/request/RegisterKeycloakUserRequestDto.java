@@ -1,8 +1,5 @@
 package com.ssamba.petsi.user_service.domain.user.dto.request;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

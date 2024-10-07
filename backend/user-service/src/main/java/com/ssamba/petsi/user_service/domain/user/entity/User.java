@@ -42,6 +42,7 @@ public class User {
     @Column(nullable = true)
     private String profileImage;
 
+    @Setter
     @Column(nullable = false)
     private String status;
 

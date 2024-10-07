@@ -78,6 +78,33 @@ public class KeycloakService {
         }
     }
 
+    public void changePassword(String username, String password) {
+        UserResource userResource = findUserResource(username);
+        CredentialRepresentation newCredential = createPasswordCredentials(password);
+        userResource.resetPassword(newCredential);
+    }
+
+    private UserResource findUserResource(String username) {
+        List<UserRepresentation> users = keycloak.realm(realm).users().search(username);
+        if (users == null || users.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.USER_NOT_FOUND);
+        }
+        UserRepresentation user = users.get(0);
+        String userId = user.getId();
+        return keycloak.realm(realm).users().get(userId);
+    }
+
+    public void deactivateUser(String username) {
+        try {
+            UserResource userResource = findUserResource(username);
+            UserRepresentation userRepresentation = userResource.toRepresentation();
+            userRepresentation.setEnabled(false);
+            userResource.update(userRepresentation);
+        } catch (Exception e) {
+            throw new BusinessLogicException(ExceptionCode.USER_DEACTIVATION_ERROR);
+        }
+    }
+
     @Transactional
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void deleteUnverifiedUsers() {

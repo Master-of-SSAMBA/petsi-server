@@ -1,12 +1,13 @@
 package com.ssamba.petsi.user_service.domain.user.service;
 
-import com.ssamba.petsi.user_service.domain.user.dto.request.CheckEmailRequestDto;
+import com.ssamba.petsi.user_service.domain.user.dto.request.ChangePasswordDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.PatchNicknameDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.RegisterKeycloakUserRequestDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
 import com.ssamba.petsi.user_service.domain.user.dto.response.ExpenseInfoResponseDto;
 import com.ssamba.petsi.user_service.domain.user.dto.response.GetUserInfoResponseDto;
 import com.ssamba.petsi.user_service.domain.user.entity.User;
+import com.ssamba.petsi.user_service.domain.user.enums.UserStatus;
 import com.ssamba.petsi.user_service.domain.user.repository.UserRepository;
 import com.ssamba.petsi.user_service.global.client.PetClient;
 import com.ssamba.petsi.user_service.global.dto.PetCustomDto;
@@ -45,16 +46,26 @@ public class UserService {
 
     @Transactional
     public void changeNickname(Long userId, PatchNicknameDto patchNicknameDto) {
+        User user = getUserById(userId);
+        user.setNickname(patchNicknameDto.getNickname());
+    }
+
+    private User getUserById(Long userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
-        user.setNickname(patchNicknameDto.getNickname());
+        isLeaveUser(user);
+        return user;
+    }
+
+    private void isLeaveUser(User user) {
+        if (( UserStatus.INACTIVATED.getValue().equals(user.getStatus()))) {
+            throw new BusinessLogicException(ExceptionCode.LEAVE_USER);
+        }
     }
 
     @Transactional
     public void changeImg(Long userId, MultipartFile file) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
-
+        User user = getUserById(userId);
         // 사진 저장 로직
         // 사진 확장자인지 확인
         if(!isValidImageMimeType(file)) {
@@ -106,8 +117,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
 	public GetUserInfoResponseDto getUserInfo(Long userId) {
-        User user = userRepository.findByUserId(userId).orElseThrow(()
-            -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
+        User user = getUserById(userId);
 
         List<PetResponseDto> petList = petClient.findPetForUserInfo(userId);
 
@@ -116,9 +126,21 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public ExpenseInfoResponseDto getExpenseInfo(Long userId) {
-        User user = userRepository.findByUserId(userId).orElseThrow(()
-                -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
+        User user = getUserById(userId);
 
         return new ExpenseInfoResponseDto(user.getNickname(), user.getProfileImage());
+    }
+
+    @Transactional
+    public void changePassword(Long userId, ChangePasswordDto changePasswordDto) {
+        keycloakService.changePassword(getUserById(userId).getEmail()
+                , changePasswordDto.getPassword());
+    }
+
+    @Transactional
+    public void leave(Long userId) {
+        User user = getUserById(userId);
+        user.setStatus(UserStatus.INACTIVATED.getValue());
+        keycloakService.deactivateUser(user.getEmail());
     }
 }

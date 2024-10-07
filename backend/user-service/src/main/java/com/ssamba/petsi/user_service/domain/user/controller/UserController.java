@@ -1,5 +1,6 @@
 package com.ssamba.petsi.user_service.domain.user.controller;
 
+import com.ssamba.petsi.user_service.domain.user.dto.request.ChangePasswordDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.CheckEmailRequestDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.PatchNicknameDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
@@ -65,4 +66,18 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userservice.getExpenseInfo(userId));
     }
 
+    @PatchMapping("/password")
+    @Operation(summary = "비밀번호 변경")
+    public ResponseEntity<?> changePassword(@RequestHeader("X-User-Id") Long userId,
+                                            @Valid @RequestBody ChangePasswordDto changePasswordDto) {
+        userservice.changePassword(userId, changePasswordDto);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @DeleteMapping("")
+    @Operation(summary = "회원 탈퇴")
+    public ResponseEntity<?> leave(@RequestHeader("X-User-Id") Long userId) {
+        userservice.leave(userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
 }
