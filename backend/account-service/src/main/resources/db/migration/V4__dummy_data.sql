@@ -1,3 +1,8 @@
+-- account_product_id가 0인 데이터가 존재하면 삭제
+DELETE FROM account_product WHERE account_product_id = 0;
+-- 새로운 데이터를 삽입
+INSERT INTO account_product (account_product_id, account_type_unique_no, cycle, default_interest_rate, detail, max_deposit_amount, max_interest_rate, min_deposit_amount, title, account_category)
+VALUES (0, '999-1-124b0a6ffc3644', '월', 1.0, '병원비처럼\n예상치 못한 지출을 위해\n자유롭게 돈을 모아보세요', 3000000, 3.0, 1000, '묘이면댕 자유적금', '자유적금');
 -- account 테이블에 더미 데이터 삽입
 INSERT INTO account (account_id, account_no, balance, created_at, interest_rate, maturity_date, name, password, status, updated_at, user_id, account_product_id, user_key)
 VALUES
