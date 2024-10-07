@@ -1,6 +1,7 @@
 package com.ssamba.petsi.notice_service.domain.notice.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "notice")
@@ -34,6 +36,7 @@ public class Notice {
 	@Column(nullable = false)
 	private String content;
 
+	@Setter
 	@Column(nullable = false)
 	private boolean isRead;
 
@@ -41,9 +44,9 @@ public class Notice {
 	private Long link;
 
 	@Column(nullable = false)
-	private LocalDate createdAt;
+	private LocalDateTime createdAt;
 
 	@Column(nullable = false)
-	private LocalDate readAt;
+	private LocalDateTime readAt;
 
 }
