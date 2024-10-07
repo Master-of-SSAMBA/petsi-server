@@ -33,9 +33,9 @@ spring:
       secret: ${USER_KEYCLOAK_SECRET}
     ssl-required: external
 ##swagger : account 부분 서비스로 변경
-#springdoc:
-#  swagger-ui:
-#    path: /api/v1/user/swagger-ui.html
+springdoc:
+  swagger-ui:
+    path: /api/v1/user/swagger-ui.html
 
 #로그 관련
 logging:
