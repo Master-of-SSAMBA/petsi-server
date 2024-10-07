@@ -3,6 +3,7 @@ package com.ssamba.petsi.schedule_service.domain.schedule.service;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -44,13 +45,9 @@ public class ScheduleService {
 
 
 	public List<?> getSchedules(Long userId, String date, Long petId, String status) {
-		String[] dateElements = date.split("-");
-		int year = Integer.parseInt(dateElements[0]);
-		int month = Integer.parseInt(dateElements[1]);
+		YearMonth yearMonth = YearMonth.parse(date, DateTimeFormatter.ofPattern("yyyy-MM"));
 
-		YearMonth yearMonth = YearMonth.of(year, month);
-
-		LocalDate startDate = LocalDate.of(year, month, 1);
+		LocalDate startDate = yearMonth.atDay(1);
 		LocalDate endDate = yearMonth.atEndOfMonth();
 
 		return ScheduleSortingStatus.fromValue(status)
