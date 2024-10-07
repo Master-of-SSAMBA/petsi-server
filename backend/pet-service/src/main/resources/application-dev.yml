@@ -9,8 +9,8 @@ spring:
     #로컬에서 사용할 db로 설정, account 부분을 서비스 이름으로 변경
     url: jdbc:mysql://localhost:3306/petsi_pet?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: petsi
+    password: petsi0909!
   flyway:
     enabled: false #dev에서는 편안한 옵션 선택
   jpa:
@@ -37,12 +37,12 @@ logging:
 cloud:
   aws:
     s3:
-      bucket: ${BUCKET_NAME}
+      bucket: petsi-images-bucket
     stack.auto: false
     region.static: ap-northeast-2
     credentials:
-      accessKey: ${S3_ACCESS_KEY}
-      secretKey: ${S3_SECRET_KEY}
+      accessKey: 515355
+      secretKey: 9j7yqLt4qpllFC/9NwZoiX+fEQOemVcHJu5dcE/1
 
 # Eureka 서버 주소
 eureka:

@@ -87,4 +87,9 @@ public class PetController {
     List<PetCustomDto> findPetCustomDtoById(@PathVariable Long userId, @RequestBody List<Long> pets) {
         return pets.stream().map(id -> petService.getPet(userId, id)).map(PetCustomDto::fromResponseDto).toList();
     }
+
+    @GetMapping("/find-pets-for-user-info/{userId}")
+    List<PetResponseDto> findPetForUserInfo(@PathVariable Long userId) {
+        return petService.getPets(userId);
+    }
 }
