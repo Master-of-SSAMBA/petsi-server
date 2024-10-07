@@ -17,7 +17,7 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
 
     @Query("SELECT new com.ssamba.petsi.expense_service.domain.expense.dto.response.PurchaseSumDto(p.category, SUM(p.cost)) " +
             "FROM Purchase p WHERE p.userId = :userId AND p.purchasedAt BETWEEN :startDate AND :endDate GROUP BY p.category")
-    List<PurchaseSumDto> getSumByCategory(@Param("userId") Long userId,
+    List<PurchaseSumDto> getSumByCategoryBetween(@Param("userId") Long userId,
                                           @Param("startDate") LocalDate startDate,
                                           @Param("endDate") LocalDate endDate);
 }
