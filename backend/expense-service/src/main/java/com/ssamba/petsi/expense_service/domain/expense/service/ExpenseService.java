@@ -3,13 +3,12 @@ package com.ssamba.petsi.expense_service.domain.expense.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssamba.petsi.expense_service.domain.expense.dto.request.*;
-import com.ssamba.petsi.expense_service.domain.expense.dto.response.Expense;
-import com.ssamba.petsi.expense_service.domain.expense.dto.response.MedicalExpenseResponseDto;
-import com.ssamba.petsi.expense_service.domain.expense.dto.response.PurchaseResponseDto;
+import com.ssamba.petsi.expense_service.domain.expense.dto.response.*;
 import com.ssamba.petsi.expense_service.domain.expense.entity.MedicalExpense;
 import com.ssamba.petsi.expense_service.domain.expense.entity.Purchase;
 import com.ssamba.petsi.expense_service.domain.expense.repository.MedicalExpenseRepository;
 import com.ssamba.petsi.expense_service.domain.expense.repository.PurchaseRepository;
+import com.ssamba.petsi.expense_service.global.client.UserClient;
 import com.ssamba.petsi.expense_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.expense_service.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +38,7 @@ public class ExpenseService {
     private static final String AI_PREDICT_URL = "http://ai-service:9008/api/v1/predict_categories";
     private final RestTemplate restTemplate = new RestTemplate();
     private final S3Service s3Service;
+    private final UserClient userClient;
     private final PurchaseRepository purchaseRepository;
     private final MedicalExpenseRepository medicalExpenseRepository;
     private final RedisTemplate<String, String> redisTemplate;
@@ -123,6 +124,34 @@ public class ExpenseService {
         // response에 반려동물 이름 추가해서 반환해야 함
         String petName = "";
         return MedicalExpenseResponseDto.fromEntity(findMedicalExpense(userId, medicalExpenseId), petName);
+    }
+
+    public MonthlyExpenseResponseDto getMonthlyExpense(Long userId) {
+        LocalDate now = LocalDate.now();
+        LocalDate start = now.withDayOfMonth(1);
+        LocalDate end = now.withDayOfMonth(now.lengthOfMonth());
+        int month = now.getMonthValue();
+
+        UserDto userDto = userClient.getUser(userId);
+
+        List<PurchaseSumDto> purchases = purchaseRepository.getSumByCategory(userId, start, end);
+        long medicalExpense = medicalExpenseRepository.sumCostByMonth(start, end);
+
+        Map<String, Long> categoryToSum = purchases.stream()
+                .collect(Collectors.toMap(
+                        PurchaseSumDto::getCategory,
+                        PurchaseSumDto::getSum,
+                        (v1, v2) -> v1,
+                        () -> new HashMap<>(Map.of("사료", 0L, "간식", 0L, "장난감", 0L, "물품", 0L))
+                ));
+
+        long food = categoryToSum.get("사료");
+        long snack = categoryToSum.get("간식");
+        long toy = categoryToSum.get("장난감");
+        long product = categoryToSum.get("물품");
+        long total = food + snack + toy + product + medicalExpense;
+
+        return new MonthlyExpenseResponseDto(userDto.getNickname(), userDto.getImg(), month, total, food, snack, toy, product, medicalExpense);
     }
 
     @Transactional

@@ -6,6 +6,7 @@ import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
 import com.ssamba.petsi.user_service.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import org.keycloak.authorization.client.util.Http;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +57,12 @@ public class UserController {
     @Operation(summary = "내 정보 조회")
     public ResponseEntity<?> getUserInfo(@RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.status(HttpStatus.OK).body(userservice.getUserInfo(userId));
+    }
+
+    @GetMapping("/expense-info")
+    @Operation(summary = "소비용 유저 정보 조회")
+    public ResponseEntity<?> getExpenseInfo(@RequestParam Long userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(userservice.getExpenseInfo(userId));
     }
 
 }
