@@ -46,7 +46,7 @@ public class NoticeService {
 	}
 
 	public int deleteSpecificNotice(Long userId, List<Long> noticeIds) {
-		noticeIds.forEach(noticeRepository::deleteById);
+		noticeRepository.deleteByUserIdAndNoticeIdIn(userId, noticeIds);
 		return getUnreadNoticeCount(userId);
 	}
 

@@ -23,4 +23,6 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
 	int countByUserIdAndIsRead(Long userId, boolean isRead);
 
 	Optional<Notice> findByUserIdAndNoticeId(Long userId, Long noticeId);
+
+	void deleteByUserIdAndNoticeIdIn(Long userId, List<Long> noticeIds);
 }
