@@ -46,7 +46,7 @@ public class NoticeController {
 
 
 	@DeleteMapping("/fcm-one")
-	@Operation(summary = "토큰 전체 삭제")
+	@Operation(summary = "단일 토큰 삭제")
 	public ResponseEntity<?> deleteToken(@RequestHeader("X-User-Id") Long userId, @RequestBody TokenRequestDto dto) {
 		noticeService.deleteToken(userId, dto);
 		return ResponseEntity.status(HttpStatus.OK).body(null);
