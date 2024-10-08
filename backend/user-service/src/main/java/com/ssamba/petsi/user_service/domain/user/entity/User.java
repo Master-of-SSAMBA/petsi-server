@@ -3,6 +3,10 @@ package com.ssamba.petsi.user_service.domain.user.entity;
 import java.time.LocalDateTime;
 
 import com.ssamba.petsi.user_service.domain.user.enums.UserStatus;
+
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.PreUpdate;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -55,11 +59,21 @@ public class User {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @Setter
+    @Column(nullable = false)
+    private String notificationStatus;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         this.status = UserStatus.ACTIVATED.getValue();
+        this.notificationStatus = UserStatus.INACTIVATED.getValue();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 
 }

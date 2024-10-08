@@ -1,6 +1,7 @@
 package com.ssamba.petsi.user_service.domain.user.service;
 
 import com.ssamba.petsi.user_service.domain.user.dto.request.ChangePasswordDto;
+import com.ssamba.petsi.user_service.domain.user.dto.request.NotificationStatusDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.PatchNicknameDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.RegisterKeycloakUserRequestDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
@@ -10,7 +11,6 @@ import com.ssamba.petsi.user_service.domain.user.entity.User;
 import com.ssamba.petsi.user_service.domain.user.enums.UserStatus;
 import com.ssamba.petsi.user_service.domain.user.repository.UserRepository;
 import com.ssamba.petsi.user_service.global.client.PetClient;
-import com.ssamba.petsi.user_service.global.dto.PetCustomDto;
 import com.ssamba.petsi.user_service.global.dto.PetResponseDto;
 import com.ssamba.petsi.user_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.user_service.global.exception.ExceptionCode;
@@ -142,5 +142,17 @@ public class UserService {
         User user = getUserById(userId);
         user.setStatus(UserStatus.INACTIVATED.getValue());
         keycloakService.deactivateUser(user.getEmail());
+    }
+
+    @Transactional
+    public void setNotificationStatus(NotificationStatusDto notificationStatusDto) {
+        User user = getUserById(notificationStatusDto.getUserId());
+        user.setNotificationStatus(notificationStatusDto.getIsActive()
+            ? UserStatus.ACTIVATED.getValue() : UserStatus.INACTIVATED.getValue());
+    }
+
+    public Boolean getNotificationStatus(Long userId) {
+        User user = getUserById(userId);
+        return user.getNotificationStatus().equals(UserStatus.ACTIVATED.getValue());
     }
 }

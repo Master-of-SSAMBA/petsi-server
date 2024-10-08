@@ -1,7 +1,10 @@
 package com.ssamba.petsi.user_service.domain.user.controller;
 
+import java.util.Map;
+
 import com.ssamba.petsi.user_service.domain.user.dto.request.ChangePasswordDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.CheckEmailRequestDto;
+import com.ssamba.petsi.user_service.domain.user.dto.request.NotificationStatusDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.PatchNicknameDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
 import com.ssamba.petsi.user_service.domain.user.service.UserService;
@@ -79,5 +82,10 @@ public class UserController {
     public ResponseEntity<?> leave(@RequestHeader("X-User-Id") Long userId) {
         userservice.leave(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    @GetMapping("/notification/{userId}")
+    public Boolean getNotificationStatus(@PathVariable Long userId) {
+        return userservice.getNotificationStatus(userId);
     }
 }
