@@ -148,7 +148,12 @@ public class UserService {
     @Transactional
     public void setNotificationStatus(NotificationStatusDto notificationStatusDto) {
         User user = getUserById(notificationStatusDto.getUserId());
-        user.setNotification_status(UserStatus.getUserStatus(
-            notificationStatusDto.getValue()).getValue());
+        user.setNotificationStatus(notificationStatusDto.getValue()
+            ? UserStatus.ACTIVATED.getValue() : UserStatus.INACTIVATED.getValue());
+    }
+
+    public Boolean getNotificationStatus(Long userId) {
+        User user = getUserById(userId);
+        return user.getNotificationStatus().equals(UserStatus.ACTIVATED.getValue());
     }
 }

@@ -10,8 +10,4 @@ public enum UserStatus {
 	INACTIVATED("비활성");
 
 	private final String value;
-
-	public static UserStatus getUserStatus(boolean value) {
-		return value ? ACTIVATED : INACTIVATED;
-	}
 }

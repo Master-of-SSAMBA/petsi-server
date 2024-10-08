@@ -83,4 +83,9 @@ public class UserController {
         userservice.leave(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
+
+    @GetMapping("/notification/{userId}")
+    public Boolean getNotificationStatus(@PathVariable Long userId) {
+        return userservice.getNotificationStatus(userId);
+    }
 }
