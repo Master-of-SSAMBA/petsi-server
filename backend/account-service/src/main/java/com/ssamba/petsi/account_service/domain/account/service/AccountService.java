@@ -292,7 +292,8 @@ public class AccountService {
 		Account account = accountRepository.findByAccountIdAndStatusAndUserIdAndAccountNo(checkAccountPassword.getAccountId(),
 			AccountStatus.ACTIVATED.getValue(), userId, checkAccountPassword.getAccountNo()).orElseThrow(
 				() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND));
-
+		
+		System.out.println(account.getStatus() + " " + account.getAccountNo() + " " + account.getPassword());
 		if(account.getPassword().equals(checkAccountPassword.getPassword())) {
 			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_PASSWORD);
 		}
