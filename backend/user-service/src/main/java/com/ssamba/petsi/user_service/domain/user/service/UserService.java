@@ -11,7 +11,6 @@ import com.ssamba.petsi.user_service.domain.user.entity.User;
 import com.ssamba.petsi.user_service.domain.user.enums.UserStatus;
 import com.ssamba.petsi.user_service.domain.user.repository.UserRepository;
 import com.ssamba.petsi.user_service.global.client.PetClient;
-import com.ssamba.petsi.user_service.global.dto.PetCustomDto;
 import com.ssamba.petsi.user_service.global.dto.PetResponseDto;
 import com.ssamba.petsi.user_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.user_service.global.exception.ExceptionCode;
@@ -148,7 +147,7 @@ public class UserService {
     @Transactional
     public void setNotificationStatus(NotificationStatusDto notificationStatusDto) {
         User user = getUserById(notificationStatusDto.getUserId());
-        user.setNotificationStatus(notificationStatusDto.getValue()
+        user.setNotificationStatus(notificationStatusDto.getIsActive()
             ? UserStatus.ACTIVATED.getValue() : UserStatus.INACTIVATED.getValue());
     }
 
