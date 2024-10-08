@@ -23,6 +23,11 @@ spring:
     hibernate:
       ddl-auto: none
       format_sql: true
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 #swagger : account 부분 서비스로 변경
 springdoc:

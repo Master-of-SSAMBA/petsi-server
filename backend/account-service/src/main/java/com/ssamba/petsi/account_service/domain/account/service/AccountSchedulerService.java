@@ -18,7 +18,9 @@ import com.ssamba.petsi.account_service.domain.account.enums.RecurringTransactio
 import com.ssamba.petsi.account_service.domain.account.repository.AccountRepository;
 import com.ssamba.petsi.account_service.domain.account.repository.RecurringTransactionRepository;
 import com.ssamba.petsi.account_service.global.client.PictureClient;
+import com.ssamba.petsi.account_service.global.dto.NotificationProducerDto;
 import com.ssamba.petsi.account_service.global.dto.PictureMonthlyRequestDto;
+import com.ssamba.petsi.account_service.global.kafka.KafkaProducer;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +33,7 @@ public class AccountSchedulerService {
 	private final AccountRepository accountRepository;
 	private final PictureClient pictureClient;
 	private final AccountFinApiService accountFinApiService;
+	private final KafkaProducer kafkaProducer;
 
 	@Retryable(
 		value = { Exception.class },
@@ -47,6 +50,7 @@ public class AccountSchedulerService {
 			try {
 				accountFinApiService.addBalance(account.getAccount(), account.getAmount(),
 					account.getAccount().getLinkedAccount().getAccountNumber());
+				sendNotification(account.getAccount());
 			} catch (Exception e) {
 				account.setStatus(RecurringTransactionStatus.UNCOMPLETED.getValue());
 			}
@@ -162,6 +166,11 @@ public class AccountSchedulerService {
 		return transaction.getTransactionType().equals("1")
 			? balance - transaction.getTransactionBalance()
 			: balance + transaction.getTransactionBalance();
+	}
+
+	//알림 kafka 전송
+	private void sendNotification(Account account) {
+		kafkaProducer.send(NotificationProducerDto.toNoticeProducerDto(account));
 	}
 
 }
