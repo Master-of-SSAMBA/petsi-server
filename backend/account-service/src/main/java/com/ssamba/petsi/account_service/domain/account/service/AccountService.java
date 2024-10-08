@@ -79,9 +79,9 @@ public class AccountService {
 
 	public void createAccountBySteps(CreateAccountRequestDto createAccountRequestDto, String userKey, Long userId) {
 
-		//1. 인증 코드 체크
-		accountFinApiService.checkAuthCode(userKey, createAccountRequestDto.getAccountNo(),
-			createAccountRequestDto.getCode());
+		// //1. 인증 코드 체크
+		// accountFinApiService.checkAuthCode(userKey, createAccountRequestDto.getAccountNo(),
+		// 	createAccountRequestDto.getCode());
 
 		//2. 계좌 상품 조회
 		AccountProduct product = accountProductRepository.findById(createAccountRequestDto.getAccountProductId())

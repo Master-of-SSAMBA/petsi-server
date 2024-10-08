@@ -34,8 +34,8 @@ public class CreateAccountRequestDto {
 	private String password;
 	private String accountNo;
 	private String bankName;
-	@Length(min = 4, max = 4)
-	private String code;
+	// @Length(min = 4, max = 4)
+	// private String code;
 	private Boolean isAuto;
 
 	public static LinkedAccount toLinkedAccount(CreateAccountRequestDto createAccountRequestDto, Account account) {
