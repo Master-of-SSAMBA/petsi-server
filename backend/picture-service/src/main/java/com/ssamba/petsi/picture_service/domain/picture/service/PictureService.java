@@ -5,8 +5,11 @@ import com.ssamba.petsi.picture_service.domain.picture.dto.response.PictureRespo
 import com.ssamba.petsi.picture_service.domain.picture.dto.response.PredictResponse;
 import com.ssamba.petsi.picture_service.domain.picture.entity.Picture;
 import com.ssamba.petsi.picture_service.domain.picture.repository.PictureRepository;
+import com.ssamba.petsi.picture_service.global.dto.NoticeProducerDto;
 import com.ssamba.petsi.picture_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.picture_service.global.exception.ExceptionCode;
+import com.ssamba.petsi.picture_service.global.kafka.KafkaProducer;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
@@ -46,6 +49,7 @@ public class PictureService {
     private final PictureRepository pictureRepository;
     private final RestTemplate restTemplate = new RestTemplate();
     private final S3Service s3Service;
+    private final KafkaProducer kafkaProducer;
 
     @Transactional(readOnly = true)
     public List<PictureResponseDto.Response> getPictures(long userId, int page) {
@@ -121,11 +125,21 @@ public class PictureService {
 
             pictureRepository.save(picture);
             recordAuthentication(userId);
+            sendNotification(userId);
         } catch (Exception e) {
             // 사진 업로드 오류 처리
             e.printStackTrace();
             throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    //알림보내는 로직
+    private void sendNotification(long userId) {
+        LocalDate date = LocalDate.now();
+        int year = date.getYear();
+        int month = date.getMonthValue();
+        Long pictureCnt = (long)getMonthlyPictures(year, month, userId).size();
+        kafkaProducer.send(NoticeProducerDto.toNoticeProducerDto(pictureCnt, userId));
     }
 
     @Transactional(readOnly = true)
