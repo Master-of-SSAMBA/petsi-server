@@ -3,6 +3,8 @@ package com.ssamba.petsi.notification_service.domain.notification.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.ssamba.petsi.notification_service.domain.notification.dto.kafka.NotificationConsumerDto;
+import com.ssamba.petsi.notification_service.domain.notification.dto.kafka.NotificationProducerDto;
 import com.ssamba.petsi.notification_service.domain.notification.dto.response.NotificationResponseDto;
 import com.ssamba.petsi.notification_service.domain.notification.entity.Notification;
 import com.ssamba.petsi.notification_service.domain.notification.repository.NotificationRepository;
@@ -54,5 +56,9 @@ public class NotificationService {
 		);
 		notification.setRead(true);
 		return getUnreadNotificationCount(userId);
+	}
+
+	public void saveNotification(NotificationConsumerDto consumer) {
+		notificationRepository.save(NotificationConsumerDto.toEntity(consumer));
 	}
 }
