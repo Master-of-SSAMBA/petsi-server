@@ -293,7 +293,7 @@ public class AccountService {
 			AccountStatus.ACTIVATED.getValue(), userId, checkAccountPassword.getAccountNo()).orElseThrow(
 				() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND));
 		
-		if(account.getPassword().equals(checkAccountPassword.getPassword())) {
+		if(!account.getPassword().equals(checkAccountPassword.getPassword())) {
 			throw new BusinessLogicException(ExceptionCode.INVALID_ACCOUNT_PASSWORD);
 		}
 	}
