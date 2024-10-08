@@ -11,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class KafkaProducer {
 
-	private final KafkaTemplate<String, NoticeProducerDto<String>> kafkaTemplate;
+	private final KafkaTemplate<String, NoticeProducerDto<NoticeProducerDto.ScheduleNoticeInfo>> kafkaTemplate;
 
-	public void send(NoticeProducerDto<String> noticeProducerDto) {
+	public void send(NoticeProducerDto<NoticeProducerDto.ScheduleNoticeInfo> noticeProducerDto) {
 		kafkaTemplate.send("schedule", noticeProducerDto);
 	}
 
