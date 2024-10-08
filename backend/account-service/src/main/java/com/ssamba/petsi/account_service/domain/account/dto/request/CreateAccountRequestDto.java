@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
 import com.ssamba.petsi.account_service.domain.account.entity.AccountProduct;
@@ -20,50 +21,36 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CreateAccountRequestDto {
 	@NotNull
-	@Length(min = 1)
 	private Long accountProductId;
-	@NotNull
-	@Length(min = 1, max = 31)
-	private int nextTransactionDay;
-	@Length(min = 1000, max = 3000000)
-	private Long amount;
 	private List<Long> pets;
 	private String name;
 	@NotNull
 	@Length(min = 4, max = 4)
 	private String password;
-	private String accountNo;
-	private String bankName;
-	// @Length(min = 4, max = 4)
-	// private String code;
+
+	@NotNull
 	private Boolean isAuto;
 
-	public static LinkedAccount toLinkedAccount(CreateAccountRequestDto createAccountRequestDto, Account account) {
-		LinkedAccount linkedAccount = LinkedAccount.builder()
-			.account(account)
-			.accountNumber(createAccountRequestDto.getAccountNo())
-			.bankName(createAccountRequestDto.getBankName())
-			.build();
+	private String accountNo;
+	@Min(1)
+	@Max(31)
+	private int nextTransactionDay;
+	@Min(10000)
+	@Max(3000000)
+	private Long amount;
 
-		return linkedAccount;
+
+	public static LinkedAccount toLinkedAccount(CreateAccountRequestDto createAccountRequestDto, Account account) {
+
+		return LinkedAccount.builder()
+			.account(account)
+			.accountNumber("9991988005402710")
+			.bankName("싸피은행")
+			.build();
 	}
 
-	public static Account toAccount(CreateAccountRequestDto createAccountRequestDto, AccountProduct accountProduct,
-		String accountNo, Long userId, String userKey) {
-		LocalDate date = LocalDate.now();
-		date = date.plusYears(20);
-
-		Account account = Account.builder()
-			.accountNo(accountNo)
-			.accountProduct(accountProduct)
-			.password(createAccountRequestDto.getPassword())
-			.maturityDate(date)
-			.name(createAccountRequestDto.getName())
-			.userId(userId)
-			.userKey(userKey)
-			.build();
-
-		return account;
+	public static Account toAccount(CreateAccountRequestDto dto, String accountNo, Long userId, String userKey, AccountProduct product) {
+		return new Account(product, userId, userKey, accountNo, dto.getName(), dto.getPassword());
 	}
 
 	public static RecurringTransaction toRecurringTransaction(CreateAccountRequestDto createAccountRequestDto,

@@ -91,6 +91,15 @@ public class Account {
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
 	private List<PetToAccount> petToAccounts;
 
+	public Account(AccountProduct product, Long userId, String userKey, String accountNo, String name, String password) {
+		this.accountProduct = product;
+		this.userId = userId;
+		this.userKey = userKey;
+		this.accountNo = accountNo;
+		this.name = name;
+		this.password = password;
+	}
+
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();
@@ -98,6 +107,7 @@ public class Account {
 		this.balance = 0L;
 		this.interestRate = 1.0;
 		this.status = AccountStatus.ACTIVATED.getValue();
+		this.maturityDate = LocalDate.now().plusYears(10);
 	}
 
 }
