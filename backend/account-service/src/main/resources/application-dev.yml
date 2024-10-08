@@ -33,6 +33,11 @@ spring:
   fin:
     api_key: ${FIN_API_KEY}
     manager-account: ${MANAGER_ACCOUNT_NO}
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 springdoc:
   swagger-ui:
     path: /petsi/swagger-ui.html
