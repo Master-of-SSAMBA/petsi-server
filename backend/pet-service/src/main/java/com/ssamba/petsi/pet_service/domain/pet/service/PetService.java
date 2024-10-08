@@ -2,7 +2,6 @@ package com.ssamba.petsi.pet_service.domain.pet.service;
 
 import com.ssamba.petsi.pet_service.domain.pet.dto.request.PetCreateRequestDto;
 import com.ssamba.petsi.pet_service.domain.pet.dto.request.PetUpdateRequestDto;
-import com.ssamba.petsi.pet_service.domain.pet.dto.response.DateResponseDto;
 import com.ssamba.petsi.pet_service.domain.pet.dto.response.PetResponseDto;
 import com.ssamba.petsi.pet_service.domain.pet.entity.Pet;
 import com.ssamba.petsi.pet_service.domain.pet.enums.PetStatus;
@@ -14,8 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +31,7 @@ public class PetService {
         List<Pet> pets = petRepository.findAllByUserId(userId);
         return pets.stream()
                 .filter(pet -> PetStatus.ACTIVATED.getValue().equals(pet.getStatus()))
-                .map(PetResponseDto::fromEntity)
+                .map(p -> new PetResponseDto(p, calAge(p.getBirthdate())))
                 .toList();
     }
 
@@ -48,7 +47,7 @@ public class PetService {
             throw new BusinessLogicException(ExceptionCode.PET_USER_NOT_MATCH);
         }
 
-        return PetResponseDto.fromEntity(pet);
+        return PetResponseDto.fromEntity(pet, calAge(pet.getBirthdate()));
     }
 
     @Transactional
@@ -134,4 +133,16 @@ public class PetService {
         // MIME 타입이 허용된 목록에 있는지 확인
         return mimeType != null && Arrays.asList(validMimeTypes).contains(mimeType);
     }
+
+    private PetResponseDto.Age calAge(LocalDate birthDate) {
+        LocalDate today = LocalDate.now();
+        long daysBetween = ChronoUnit.MONTHS.between(birthDate, today);
+
+        long year = daysBetween / 12;
+        long month = daysBetween % 12;
+        if(year == 0 && month == 0) month = 1;
+
+        return new PetResponseDto.Age(year, month);
+    }
+
 }
