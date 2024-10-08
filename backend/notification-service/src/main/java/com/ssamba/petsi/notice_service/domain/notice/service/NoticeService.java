@@ -6,9 +6,11 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssamba.petsi.notice_service.domain.notice.dto.request.TokenRequestDto;
 import com.ssamba.petsi.notice_service.domain.notice.dto.response.NoticeResponseDto;
 import com.ssamba.petsi.notice_service.domain.notice.entity.Notice;
 import com.ssamba.petsi.notice_service.domain.notice.repository.NoticeRepository;
+import com.ssamba.petsi.notice_service.domain.notice.repository.UserTokenRepository;
 import com.ssamba.petsi.notice_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.notice_service.global.exception.ExceptionCode;
 
@@ -20,6 +22,19 @@ import lombok.RequiredArgsConstructor;
 public class NoticeService {
 
 	private final NoticeRepository noticeRepository;
+	private final UserTokenRepository userTokenRepository;
+
+	public void saveToken(Long userId, TokenRequestDto dto) {
+		userTokenRepository.save(dto.toEntity(userId, dto));
+	}
+
+	public void deleteAllTokens(Long userId) {
+		userTokenRepository.deleteAllByUserId(userId);
+	}
+
+	public void deleteToken(Long userId, TokenRequestDto dto) {
+		userTokenRepository.deleteByUserIdAndToken(userId, dto.getToken());
+	}
 
 	@Transactional(readOnly = true)
 	public int getUnreadNoticeCount(Long userId) {
@@ -57,4 +72,5 @@ public class NoticeService {
 		notice.setRead(true);
 		return getUnreadNoticeCount(userId);
 	}
+
 }
