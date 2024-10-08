@@ -2,7 +2,7 @@ server:
   port: 8080 #실행할 포트로 설정
 spring:
   config:
-    import: optional:file:backend/user-service/.env[.properties]
+    import: optional:file:.env[.properties]
   application:
     name: user-service #현재 서비스 이름으로 변경
   datasource:

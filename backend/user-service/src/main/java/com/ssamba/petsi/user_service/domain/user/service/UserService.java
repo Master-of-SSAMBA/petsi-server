@@ -1,6 +1,7 @@
 package com.ssamba.petsi.user_service.domain.user.service;
 
 import com.ssamba.petsi.user_service.domain.user.dto.request.ChangePasswordDto;
+import com.ssamba.petsi.user_service.domain.user.dto.request.NotificationStatusDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.PatchNicknameDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.RegisterKeycloakUserRequestDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
@@ -142,5 +143,12 @@ public class UserService {
         User user = getUserById(userId);
         user.setStatus(UserStatus.INACTIVATED.getValue());
         keycloakService.deactivateUser(user.getEmail());
+    }
+
+    @Transactional
+    public void setNotificationStatus(NotificationStatusDto notificationStatusDto) {
+        User user = getUserById(notificationStatusDto.getUserId());
+        user.setNotification_status(UserStatus.getUserStatus(
+            notificationStatusDto.getValue()).getValue());
     }
 }

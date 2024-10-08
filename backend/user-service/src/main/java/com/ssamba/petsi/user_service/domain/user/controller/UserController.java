@@ -1,7 +1,10 @@
 package com.ssamba.petsi.user_service.domain.user.controller;
 
+import java.util.Map;
+
 import com.ssamba.petsi.user_service.domain.user.dto.request.ChangePasswordDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.CheckEmailRequestDto;
+import com.ssamba.petsi.user_service.domain.user.dto.request.NotificationStatusDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.PatchNicknameDto;
 import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
 import com.ssamba.petsi.user_service.domain.user.service.UserService;
