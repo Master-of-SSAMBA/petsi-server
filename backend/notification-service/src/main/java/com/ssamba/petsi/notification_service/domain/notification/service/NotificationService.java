@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.ssamba.petsi.notification_service.domain.notification.dto.kafka.NotificationConsumerDto;
-import com.ssamba.petsi.notification_service.domain.notification.dto.kafka.NotificationProducerDto;
 import com.ssamba.petsi.notification_service.domain.notification.dto.response.NotificationResponseDto;
 import com.ssamba.petsi.notification_service.domain.notification.entity.Notification;
 import com.ssamba.petsi.notification_service.domain.notification.repository.NotificationRepository;
