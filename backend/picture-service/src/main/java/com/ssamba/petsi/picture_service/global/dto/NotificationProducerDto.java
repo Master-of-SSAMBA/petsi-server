@@ -5,13 +5,13 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class NoticeProducerDto<T> {
+public class NotificationProducerDto<T> {
 	private Long userId;
 	private T content;
 	private Long id;
 
-	public static NoticeProducerDto<Long> toNoticeProducerDto(Long pictureCnt, Long userId) {
-		return new NoticeProducerDto<Long>(
+	public static NotificationProducerDto<Long> toNoticeProducerDto(Long pictureCnt, Long userId) {
+		return new NotificationProducerDto<Long>(
 			userId,
 			pictureCnt,
 			null);

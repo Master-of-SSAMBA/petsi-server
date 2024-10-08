@@ -18,7 +18,7 @@ import com.ssamba.petsi.account_service.domain.account.enums.RecurringTransactio
 import com.ssamba.petsi.account_service.domain.account.repository.AccountRepository;
 import com.ssamba.petsi.account_service.domain.account.repository.RecurringTransactionRepository;
 import com.ssamba.petsi.account_service.global.client.PictureClient;
-import com.ssamba.petsi.account_service.global.dto.NoticeProducerDto;
+import com.ssamba.petsi.account_service.global.dto.NotificationProducerDto;
 import com.ssamba.petsi.account_service.global.dto.PictureMonthlyRequestDto;
 import com.ssamba.petsi.account_service.global.kafka.KafkaProducer;
 
@@ -170,7 +170,7 @@ public class AccountSchedulerService {
 
 	//알림 kafka 전송
 	private void sendNotification(Account account) {
-		kafkaProducer.send(NoticeProducerDto.toNoticeProducerDto(account));
+		kafkaProducer.send(NotificationProducerDto.toNoticeProducerDto(account));
 	}
 
 }

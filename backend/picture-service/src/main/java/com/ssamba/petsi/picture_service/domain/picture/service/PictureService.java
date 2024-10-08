@@ -5,14 +5,13 @@ import com.ssamba.petsi.picture_service.domain.picture.dto.response.PictureRespo
 import com.ssamba.petsi.picture_service.domain.picture.dto.response.PredictResponse;
 import com.ssamba.petsi.picture_service.domain.picture.entity.Picture;
 import com.ssamba.petsi.picture_service.domain.picture.repository.PictureRepository;
-import com.ssamba.petsi.picture_service.global.dto.NoticeProducerDto;
+import com.ssamba.petsi.picture_service.global.dto.NotificationProducerDto;
 import com.ssamba.petsi.picture_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.picture_service.global.exception.ExceptionCode;
 import com.ssamba.petsi.picture_service.global.kafka.KafkaProducer;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -139,7 +138,7 @@ public class PictureService {
         int year = date.getYear();
         int month = date.getMonthValue();
         Long pictureCnt = (long)getMonthlyPictures(year, month, userId).size();
-        kafkaProducer.send(NoticeProducerDto.toNoticeProducerDto(pictureCnt, userId));
+        kafkaProducer.send(NotificationProducerDto.toNoticeProducerDto(pictureCnt, userId));
     }
 
     @Transactional(readOnly = true)

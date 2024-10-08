@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.Schedule;
 import com.ssamba.petsi.schedule_service.domain.schedule.repository.ScheduleRepository;
-import com.ssamba.petsi.schedule_service.global.dto.NoticeProducerDto;
+import com.ssamba.petsi.schedule_service.global.dto.NotificationProducerDto;
 import com.ssamba.petsi.schedule_service.global.kafka.KafkaProducer;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class ScheduleSchedulerService {
 	void init() {
 		List<Schedule> list = scheduleRepository.findAllByNextScheduleDate(LocalDate.now().plusDays(1));
 		list.forEach(schedule -> {
-			kafkaProducer.send(NoticeProducerDto.toNoticeProducerDto(schedule));
+			kafkaProducer.send(NotificationProducerDto.toNoticeProducerDto(schedule));
 		});
 
 	}

@@ -7,13 +7,13 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class NoticeProducerDto<T> {
+public class NotificationProducerDto<T> {
 	private Long userId;
 	private T content;
 	private Long id;
 
-	public static NoticeProducerDto<ScheduleNoticeInfo> toNoticeProducerDto(Schedule schedule) {
-		return new NoticeProducerDto<ScheduleNoticeInfo>(
+	public static NotificationProducerDto<ScheduleNoticeInfo> toNoticeProducerDto(Schedule schedule) {
+		return new NotificationProducerDto<ScheduleNoticeInfo>(
 			schedule.getScheduleCategory().getUserId(),
 			new ScheduleNoticeInfo(
 				schedule.getScheduleCategory().getTitle(),

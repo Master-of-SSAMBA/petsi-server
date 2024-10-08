@@ -7,13 +7,13 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class NoticeProducerDto<T> {
+public class NotificationProducerDto<T> {
 	private Long userId;
 	private T content;
 	private Long id;
 
-	public static NoticeProducerDto<AccountNoticeInfo> toNoticeProducerDto(Account account) {
-		return new NoticeProducerDto<AccountNoticeInfo>(
+	public static NotificationProducerDto<AccountNoticeInfo> toNoticeProducerDto(Account account) {
+		return new NotificationProducerDto<AccountNoticeInfo>(
 			account.getUserId(),
 			new AccountNoticeInfo(
 				account.getName(),

@@ -3,7 +3,7 @@ package com.ssamba.petsi.account_service.global.kafka;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import com.ssamba.petsi.account_service.global.dto.NoticeProducerDto;
+import com.ssamba.petsi.account_service.global.dto.NotificationProducerDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class KafkaProducer {
 
-	private final KafkaTemplate<String, NoticeProducerDto<NoticeProducerDto.AccountNoticeInfo>> kafkaTemplate;
+	private final KafkaTemplate<String, NotificationProducerDto<NotificationProducerDto.AccountNoticeInfo>> kafkaTemplate;
 
-	public void send(NoticeProducerDto<NoticeProducerDto.AccountNoticeInfo> noticeProducerDto) {
-		kafkaTemplate.send("transfer-success", noticeProducerDto);
+	public void send(NotificationProducerDto<NotificationProducerDto.AccountNoticeInfo> notificationProducerDto) {
+		kafkaTemplate.send("transfer-success", notificationProducerDto);
 	}
 
 }
