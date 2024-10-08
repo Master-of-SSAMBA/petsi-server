@@ -9,14 +9,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public class NoticeProducerDto<T> {
 	private Long userId;
-	private String category;
 	private T content;
 	private Long id;
 
 	public static NoticeProducerDto<AccountNoticeInfo> toNoticeProducerDto(Account account) {
 		return new NoticeProducerDto<AccountNoticeInfo>(
 			account.getUserId(),
-			"transfer-success",
 			new AccountNoticeInfo(
 				account.getName(),
 				account.getRecurringTransaction().getAmount()),
