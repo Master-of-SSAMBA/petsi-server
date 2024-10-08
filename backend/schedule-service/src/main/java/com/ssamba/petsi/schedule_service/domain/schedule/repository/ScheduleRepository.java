@@ -36,4 +36,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 	List<Schedule> getAllScheduledListWithPetId(Long userId, LocalDate startDate, LocalDate endDate, Long petId, String status);
 
 	boolean existsByDescriptionAndScheduleCategory(String description, ScheduleCategory scheduleCategory);
+
+	List<Schedule> findAllByNextScheduleDate(LocalDate localDate);
 }
