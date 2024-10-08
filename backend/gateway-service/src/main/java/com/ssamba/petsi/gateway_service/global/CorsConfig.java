@@ -11,7 +11,7 @@ public class CorsConfig implements WebFluxConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://petsi-frontend-bucket.s3-website.ap-northeast-2.amazonaws.com")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTION")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTION")
                 .allowedHeaders("*")
                 .allowCredentials(true)
                 .maxAge(3600);
