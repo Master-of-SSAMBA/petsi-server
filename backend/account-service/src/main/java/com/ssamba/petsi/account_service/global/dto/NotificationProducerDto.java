@@ -7,24 +7,20 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class NotificationProducerDto<T> {
+public class NotificationProducerDto {
 	private Long userId;
-	private T content;
+	private String category;
+	private String content;
 	private Long id;
 
-	public static NotificationProducerDto<AccountNoticeInfo> toNoticeProducerDto(Account account) {
-		return new NotificationProducerDto<AccountNoticeInfo>(
+	public static NotificationProducerDto toNoticeProducerDto(Account account) {
+		return new NotificationProducerDto(
 			account.getUserId(),
-			new AccountNoticeInfo(
-				account.getName(),
-				account.getRecurringTransaction().getAmount()),
-			account.getAccountId());
+			"bank",
+			account.getName() + " 계좌에 " + account.getRecurringTransaction().getAmount() + "원이 입금되었어요.",
+			account.getAccountId()
+		);
 	}
 
-	@AllArgsConstructor
-	public static class AccountNoticeInfo {
-		private String accountName;
-		private Long amount;
-	}
 
 }

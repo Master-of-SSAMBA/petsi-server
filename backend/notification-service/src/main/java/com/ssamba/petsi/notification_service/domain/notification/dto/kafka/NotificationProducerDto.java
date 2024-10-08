@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class NotificationProducerDto<T> {
+public class NotificationProducerDto {
     private Long userId;
     private String category;
     private String content;

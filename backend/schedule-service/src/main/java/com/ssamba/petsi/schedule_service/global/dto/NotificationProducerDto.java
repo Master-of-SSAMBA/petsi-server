@@ -7,24 +7,17 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class NotificationProducerDto<T> {
+public class NotificationProducerDto {
 	private Long userId;
-	private T content;
+	private String category;
+	private String content;
 	private Long id;
 
-	public static NotificationProducerDto<ScheduleNoticeInfo> toNoticeProducerDto(Schedule schedule) {
-		return new NotificationProducerDto<ScheduleNoticeInfo>(
+	public static NotificationProducerDto toNoticeProducerDto(Schedule schedule) {
+		return new NotificationProducerDto(
 			schedule.getScheduleCategory().getUserId(),
-			new ScheduleNoticeInfo(
-				schedule.getScheduleCategory().getTitle(),
-				schedule.getDescription()
-			),
+			"plan",
+			"내일 " + schedule.getScheduleCategory().getTitle() + "-" + schedule.getDescription() + " 일정이 예정되어 있어요",
 			schedule.getScheduleId());
-	}
-
-	@AllArgsConstructor
-	public static class ScheduleNoticeInfo {
-		private String scheduleCategory;
-		private String schedule;
 	}
 }

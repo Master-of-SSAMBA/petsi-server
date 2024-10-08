@@ -5,15 +5,17 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class NotificationProducerDto<T> {
+public class NotificationProducerDto {
 	private Long userId;
-	private T content;
+	private String category;
+	private String content;
 	private Long id;
 
-	public static NotificationProducerDto<Long> toNoticeProducerDto(Long pictureCnt, Long userId) {
-		return new NotificationProducerDto<Long>(
+	public static NotificationProducerDto toNoticeProducerDto(Long pictureCnt, Long userId) {
+		return new NotificationProducerDto(
 			userId,
-			pictureCnt,
+			"streak",
+			"이번 달 " + pictureCnt + "일 째 인증 중이에요! 계속 이어나가세요.",
 			null);
 	}
 

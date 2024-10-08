@@ -20,8 +20,7 @@ public class ScheduleSchedulerService {
 	private final KafkaProducer kafkaProducer;
 
 	void init() {
-		List<Schedule> list = scheduleRepository.findAllByNextScheduleDate(LocalDate.now().plusDays(1));
-		list.forEach(schedule -> {
+		scheduleRepository.findAllByNextScheduleDate(LocalDate.now().plusDays(1)).forEach(schedule -> {
 			kafkaProducer.send(NotificationProducerDto.toNoticeProducerDto(schedule));
 		});
 

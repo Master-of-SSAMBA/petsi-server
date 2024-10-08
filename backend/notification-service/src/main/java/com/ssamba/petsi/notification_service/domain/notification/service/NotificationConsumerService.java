@@ -13,7 +13,7 @@ public class NotificationConsumerService {
     private final NotificationService notificationService;
 
     @KafkaListener(topics = "kafka-topic")
-    public void consumeUploadPictureNotification(NotificationProducerDto<?> producer) {
+    public void consumeUploadPictureNotification(NotificationProducerDto producer) {
         NotificationConsumerDto consumer = NotificationConsumerDto.fromProducer(producer);
         notificationService.saveNotification(consumer);
         firebaseService.sendPushNotification(consumer);

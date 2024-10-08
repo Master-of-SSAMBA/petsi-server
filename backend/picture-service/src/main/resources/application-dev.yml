@@ -2,7 +2,7 @@ server:
   port: 9004 #실행할 포트로 설정
 spring:
   config:
-    import: optional:file:.env
+    import: optional:file:.env[.properties]
   application:
     name: picture-service #현재 서비스 이름으로 변경
   datasource:

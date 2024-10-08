@@ -24,7 +24,7 @@ public class NotificationConsumerDto {
                 .build();
     }
 
-    public static NotificationConsumerDto fromProducer(NotificationProducerDto<?> producer) {
+    public static NotificationConsumerDto fromProducer(NotificationProducerDto producer) {
         return NotificationConsumerDto.builder()
                 .userId(producer.getUserId())
                 .id(producer.getId())
