@@ -11,7 +11,7 @@ public class TokenRequestDto {
 
 	public UserToken toEntity(Long userId, TokenRequestDto dto) {
 		return UserToken.builder()
-			.token(token)
+			.token(dto.getToken())
 			.userId(userId)
 			.build();
 	}

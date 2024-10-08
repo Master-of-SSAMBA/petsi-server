@@ -24,13 +24,12 @@ public class NotificationConsumerDto {
                 .build();
     }
 
-    public static NotificationConsumerDto fromProducer(NotificationProducerDto<?> producer
-    ,String category, String content) {
+    public static NotificationConsumerDto fromProducer(NotificationProducerDto<?> producer) {
         return NotificationConsumerDto.builder()
                 .userId(producer.getUserId())
                 .id(producer.getId())
-                .category(category)
-                .content(content)
+                .category(producer.getCategory())
+                .content(producer.getContent())
                 .build();
     }
 }
