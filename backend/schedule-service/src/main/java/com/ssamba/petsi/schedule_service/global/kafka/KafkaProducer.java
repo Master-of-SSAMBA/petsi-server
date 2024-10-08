@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class KafkaProducer {
 
-	private final KafkaTemplate<String, NotificationProducerDto<NotificationProducerDto.ScheduleNoticeInfo>> kafkaTemplate;
+	private final KafkaTemplate<String, NotificationProducerDto> kafkaTemplate;
 
-	public void send(NotificationProducerDto<NotificationProducerDto.ScheduleNoticeInfo> notificationProducerDto) {
-		kafkaTemplate.send("schedule", notificationProducerDto);
+	public void send(NotificationProducerDto notificationProducerDto) {
+		kafkaTemplate.send("kafka-topic", notificationProducerDto);
 	}
 
 }
