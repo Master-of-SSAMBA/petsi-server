@@ -77,41 +77,44 @@ public class AccountService {
 		accountFinApiService.openAccountAuth(userKey, openAccountAuthRequestDto.getAccountNo());
 	}
 
-	public void createAccountBySteps(CreateAccountRequestDto createAccountRequestDto, String userKey, Long userId) {
+	public void createAccount(CreateAccountRequestDto createAccountRequestDto, String userKey, Long userId) {
 
 		// //1. 인증 코드 체크
 		// accountFinApiService.checkAuthCode(userKey, createAccountRequestDto.getAccountNo(),
 		// 	createAccountRequestDto.getCode());
 
-		//2. 계좌 상품 조회
+		//계좌 상품 조회
 		AccountProduct product = accountProductRepository.findById(createAccountRequestDto.getAccountProductId())
 			.orElseThrow(() -> new BusinessLogicException(ExceptionCode.ACCOUNT_CATEGORY_NOT_FOUND));
 
-		//3. 계좌 번호 갖고오기
+		//계좌 번호 갖고오기
 		String accountNo = accountFinApiService.createDemandDepositAccount(product.getAccountTypeUniqueNo(), userKey);
 
-		//4. DB에 저장
+		//DB에 저장
 		Account account = accountRepository.save(
-			CreateAccountRequestDto.toAccount(createAccountRequestDto, product, accountNo, userId, userKey));
+			CreateAccountRequestDto.toAccount(createAccountRequestDto, accountNo, userId, userKey, product));
 
-		//5. 연결된 계좌 저장
-		linkedAccountRepository.save(
-			CreateAccountRequestDto.toLinkedAccount(createAccountRequestDto, account));
+		//계좌에 펫 지정
+		addPetsToAccount(createAccountRequestDto.getPets(), account);
 
-		//6. Pet 매핑
-		List<Long> petIds = createAccountRequestDto.getPets();
+		//계좌 연결 및 주기 설정
+		addTransaction(account, createAccountRequestDto, userKey);
+	}
+
+	public void addPetsToAccount(List<Long> petIds, Account account) {
 		petIds.forEach(petId ->
 			petToAccountRepository.save(
 				new PetToAccount(null, account, petId)
 			)
 		);
+	}
 
-		//7. 주기적 거래 저장
-		if (createAccountRequestDto.getIsAuto()) {
+	public void addTransaction(Account account, CreateAccountRequestDto dto, String userKey) {
+		if (dto.getIsAuto()) {
+			linkedAccountRepository.save(CreateAccountRequestDto.toLinkedAccount(dto, account));
 			recurringTransactionRepository.save(CreateAccountRequestDto.toRecurringTransaction(
-				createAccountRequestDto, account));
+				dto, account));
 		}
-
 	}
 
 	@Transactional(readOnly = true)

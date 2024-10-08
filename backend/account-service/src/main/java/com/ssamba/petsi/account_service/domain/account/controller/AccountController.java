@@ -52,11 +52,11 @@ public class AccountController {
 	}
 
 	@PostMapping("")
-	@Operation(summary = "1원 송금 인증 및 계좌 생성")
+	@Operation(summary = "계좌 생성")
 	public ResponseEntity<?> checkAccountAuth(@RequestHeader("X-User-Id") Long userId,
 		@RequestHeader("X-User-Key") String userKey,
 		@Valid @RequestBody CreateAccountRequestDto createAccountRequestDto) {
-		accountService.createAccountBySteps(createAccountRequestDto, userKey, userId);
+		accountService.createAccount(createAccountRequestDto, userKey, userId);
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
