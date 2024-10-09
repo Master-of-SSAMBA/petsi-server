@@ -3,6 +3,8 @@ package com.ssamba.petsi.account_service.domain.account.dto.response;
 import java.util.List;
 
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
+import com.ssamba.petsi.account_service.global.dto.PetCustomDto;
+import com.ssamba.petsi.account_service.global.dto.PetResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class GetAllAcountsResponseDto {
+public class GetAllAccountsResponseDto {
 
 	private int pictureCnt;
 	private double interest;
@@ -26,7 +28,7 @@ public class GetAllAcountsResponseDto {
 		private String accountNo;
 		private String name;
 		@Setter
-		private String petPicture;
+		List<PetCustomDto> petList;
 		@Setter
 		private Long balance;
 		private Double interestRate;
@@ -34,11 +36,11 @@ public class GetAllAcountsResponseDto {
 		private String status;
 
 
-		private AccountDto(Account account, String petPicture) {
+		private AccountDto(Account account, List<PetCustomDto> petList) {
 			this.accountId = account.getAccountId();
 			this.accountNo = account.getAccountNo();
 			this.name = account.getName();
-			this.petPicture = petPicture;
+			this.petList = petList;
 			this.balance = account.getBalance();
 			this.interestRate = account.getInterestRate();
 			this.productName = account.getAccountProduct().getTitle();

@@ -4,10 +4,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,7 +23,7 @@ import com.ssamba.petsi.account_service.domain.account.dto.request.UpdateRecurri
 import com.ssamba.petsi.account_service.domain.account.dto.response.AccountHolderNameResponseDto;
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAccountDetailsResponseDto;
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAccountHistoryResponseDto;
-import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllAcountsResponseDto;
+import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllAccountsResponseDto;
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllProductsResponseDto;
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
 import com.ssamba.petsi.account_service.domain.account.entity.AccountProduct;
@@ -119,7 +116,7 @@ public class AccountService {
 	}
 
 	@Transactional(readOnly = true)
-	public GetAllAcountsResponseDto getAllAccounts(Long userId, String userKey) {
+	public GetAllAccountsResponseDto getAllAccounts(Long userId, String userKey) {
 		//이번 달 인증 횟수
 		int pictureCnt = pictureClient.getMonthlyPicture(
 			new PictureMonthlyRequestDto(userId, 2024, LocalDate.now().getMonth().getValue())).size();
@@ -136,9 +133,9 @@ public class AccountService {
 		//db에 있는 계좌 리스트 불러오기
 		List<Account> localAccountList = accountRepository.findAllByUserIdAndStatus(userId, AccountStatus.ACTIVATED.getValue());
 
-		List<GetAllAcountsResponseDto.AccountDto> returnList = localAccountList.stream()
+		List<GetAllAccountsResponseDto.AccountDto> returnList = localAccountList.stream()
 			.map(account -> {
-				GetAllAcountsResponseDto.AccountDto dto = GetAllAcountsResponseDto.AccountDto.from(account);
+				GetAllAccountsResponseDto.AccountDto dto = GetAllAccountsResponseDto.AccountDto.from(account);
 
 				// PetToAccount에서 첫 번째 petId 가져오기
 				List<Long> petIds = account.getPetToAccounts().stream()
@@ -146,14 +143,7 @@ public class AccountService {
 					.toList();
 
 				// petList가 비어 있거나, petId와 일치하는 PetCustomDto를 찾지 못하면 null 설정
-				dto.setPetPicture(Optional.ofNullable(petIds)
-					.filter(ids -> !ids.isEmpty())
-					.flatMap(ids -> petList.stream()
-						.filter(p -> p.getPetId().equals(ids.get(0)))
-						.findFirst()
-						.map(PetCustomDto::getPetImg))
-					.orElse(null));
-
+				dto.setPetList(petClient.findPetCustomDtoById(userId, petIds));
 
 				// FinApiResponseDto와 accountNo를 매칭하여 balance 설정
 				return accountList.stream()
@@ -168,7 +158,7 @@ public class AccountService {
 			.toList();
 
 
-		return new GetAllAcountsResponseDto(pictureCnt, interest, returnList);
+		return new GetAllAccountsResponseDto(pictureCnt, interest, returnList);
 	}
 
 	public void deleteAccount(Long userId, String userKey, Long accountId) {
@@ -245,6 +235,11 @@ public class AccountService {
 
 		returnDto.setBalance(accountFinApiService.inquireDemandDepositAccount(userKey, account.getAccountNo()).getAccountBalance());
 
+		List<Long> petIds = account.getPetToAccounts().stream()
+			.map(PetToAccount::getPetId)
+			.toList();
+
+		returnDto.setPetList(petClient.findPetCustomDtoById(userId, petIds));
 		returnDto.setTransactionHistory(getAccountHistory(userId, userKey, accountId, 0, 7));
 		return returnDto;
 	}

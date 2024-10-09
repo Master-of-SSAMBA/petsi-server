@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
+import com.ssamba.petsi.account_service.global.dto.PetCustomDto;
+import com.ssamba.petsi.account_service.global.dto.PetResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +27,8 @@ public class GetAccountDetailsResponseDto {
 	private int expireDdays;
 	private Double currentMonthlyInterest;
 	private LocalDate expireDate;
+	@Setter
+	List<PetCustomDto> petList;
 	@Setter
 	private List<GetAccountHistoryResponseDto> transactionHistory;
 
