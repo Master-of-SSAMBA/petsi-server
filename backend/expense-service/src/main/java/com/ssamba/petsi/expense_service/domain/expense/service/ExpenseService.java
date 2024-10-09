@@ -8,6 +8,7 @@ import com.ssamba.petsi.expense_service.domain.expense.entity.MedicalExpense;
 import com.ssamba.petsi.expense_service.domain.expense.entity.Purchase;
 import com.ssamba.petsi.expense_service.domain.expense.repository.MedicalExpenseRepository;
 import com.ssamba.petsi.expense_service.domain.expense.repository.PurchaseRepository;
+import com.ssamba.petsi.expense_service.global.client.PetClient;
 import com.ssamba.petsi.expense_service.global.client.UserClient;
 import com.ssamba.petsi.expense_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.expense_service.global.exception.ExceptionCode;
@@ -26,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +39,7 @@ public class ExpenseService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final S3Service s3Service;
     private final UserClient userClient;
+    private final PetClient petClient;
     private final PurchaseRepository purchaseRepository;
     private final MedicalExpenseRepository medicalExpenseRepository;
     private final RedisTemplate<String, String> redisTemplate;
@@ -121,9 +122,9 @@ public class ExpenseService {
 
     @Transactional(readOnly = true)
     public MedicalExpenseResponseDto getMedicalExpense(Long userId, Long medicalExpenseId) {
-        // response에 반려동물 이름 추가해서 반환해야 함
-        String petName = "";
-        return MedicalExpenseResponseDto.fromEntity(findMedicalExpense(userId, medicalExpenseId), petName);
+        MedicalExpense medicalExpense =  findMedicalExpense(userId, medicalExpenseId);
+        PetDto petDto = petClient.findPetInfo(medicalExpense.getPetId());
+        return MedicalExpenseResponseDto.fromEntity(medicalExpense, petDto.getPetName());
     }
 
     public ChartResponseDto getMonthlyExpense(Long userId, LocalDate startDate, LocalDate endDate) {

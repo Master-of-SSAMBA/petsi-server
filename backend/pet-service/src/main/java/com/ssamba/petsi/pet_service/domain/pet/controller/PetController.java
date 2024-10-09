@@ -92,4 +92,11 @@ public class PetController {
     List<PetResponseDto> findPetForUserInfo(@PathVariable Long userId) {
         return petService.getPets(userId);
     }
+
+    @GetMapping("/find-by-pet-id")
+    PetCustomDto findPetInfo(@RequestParam Long petId) {
+        return petService.getPetInfo(petId);
+    }
+
+
 }

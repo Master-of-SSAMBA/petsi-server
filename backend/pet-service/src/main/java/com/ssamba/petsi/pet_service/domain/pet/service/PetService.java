@@ -2,6 +2,7 @@ package com.ssamba.petsi.pet_service.domain.pet.service;
 
 import com.ssamba.petsi.pet_service.domain.pet.dto.request.PetCreateRequestDto;
 import com.ssamba.petsi.pet_service.domain.pet.dto.request.PetUpdateRequestDto;
+import com.ssamba.petsi.pet_service.domain.pet.dto.response.PetCustomDto;
 import com.ssamba.petsi.pet_service.domain.pet.dto.response.PetResponseDto;
 import com.ssamba.petsi.pet_service.domain.pet.entity.Pet;
 import com.ssamba.petsi.pet_service.domain.pet.enums.PetStatus;
@@ -120,6 +121,14 @@ public class PetService {
         if(userId != pet.getUserId()) throw new BusinessLogicException(ExceptionCode.PET_USER_NOT_MATCH);
 
         pet.deletePet();
+    }
+
+    @Transactional
+    public PetCustomDto getPetInfo(Long petId) {
+        Pet pet = petRepository.findByPetId(petId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.PET_NOT_FOUND));
+
+        return new PetCustomDto(petId, pet.getName(), pet.getImage());
     }
 
     // 확장자 확인 메서드
