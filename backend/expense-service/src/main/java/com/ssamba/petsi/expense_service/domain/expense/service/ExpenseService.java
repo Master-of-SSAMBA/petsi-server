@@ -126,25 +126,35 @@ public class ExpenseService {
         return MedicalExpenseResponseDto.fromEntity(findMedicalExpense(userId, medicalExpenseId), petName);
     }
 
-    public MonthlyExpenseResponseDto getMonthlyExpense(Long userId) {
-        LocalDate now = LocalDate.now();
-        LocalDate start = now.withDayOfMonth(1);
-        LocalDate end = now.withDayOfMonth(now.lengthOfMonth());
-        int month = now.getMonthValue();
-
+    public ChartResponseDto getMonthlyExpense(Long userId, LocalDate startDate, LocalDate endDate) {
         UserDto userDto = userClient.getUser(userId);
-        List<PurchaseSumDto> purchases = purchaseRepository.getSumByCategoryBetween(userId, start, end);
-        long medicalExpense = medicalExpenseRepository.sumCostByMonth(start, end);
+        List<PurchaseSumDto> purchases = purchaseRepository.getSumByCategoryBetween(userId, startDate, endDate);
+        long medicalExpense = medicalExpenseRepository.sumCostByBetween(startDate, endDate);
         purchases.add(new PurchaseSumDto("의료비", medicalExpense));
 
         long total = medicalExpense;
         for(PurchaseSumDto p : purchases) {
-            total += p.getSum();
+            total += p.getData();
         }
 
         Collections.sort(purchases);
 
-        return new MonthlyExpenseResponseDto(userDto.getNickname(), userDto.getImg(), month, total, purchases);
+        List<String> labels = new ArrayList<>();
+        List<Long> datas = new ArrayList<>();
+        List<Long> rates = new ArrayList<>();
+
+        for(PurchaseSumDto p : purchases) {
+            if(p.getData() == 0) continue;
+
+            double data = ((double) p.getData() / (double) total) * 100;
+            long rate = (long) Math.floor(data);
+
+            labels.add(p.getLabels());
+            datas.add(p.getData());
+            rates.add(rate);
+        }
+
+        return new ChartResponseDto(userDto.getNickname(), userDto.getImg(), startDate, endDate, total, new ChartResponseDto.ChartElement(labels, datas, rates));
     }
 
     @Transactional
@@ -161,17 +171,18 @@ public class ExpenseService {
 
     @Transactional
     public void deletePurchase(Long userId, long purchaseId) {
-        Purchase purchase = findPurchase(userId, purchaseId);
-        if (purchase.getImg() != null) {
-            s3Service.delete(purchase.getImg());
-        }
-        purchaseRepository.delete(purchase);
+        purchaseRepository.deleteByUserIdAndPurchaseId(userId, purchaseId);
     }
 
     @Transactional
     public void deleteMedicalExpense(Long userId, long medicalExpenseId) {
-        MedicalExpense medicalExpense = findMedicalExpense(userId, medicalExpenseId);
-        medicalExpenseRepository.delete(medicalExpense);
+        medicalExpenseRepository.deleteByUserIdAndMedicalExpenseId(userId, medicalExpenseId);
+    }
+
+    @Transactional
+    public void deleteExpenses(Long userId, ExpenseDeleteRequestDto expenses) {
+        purchaseRepository.deleteByUserIdAndPurchaseIdIn(userId, expenses.getPurchases());
+        medicalExpenseRepository.deleteByUserIdAndMedicalExpenseIdIn(userId, expenses.getMedicalExpenses());
     }
 
     // 구매 내역 검증 및 조회

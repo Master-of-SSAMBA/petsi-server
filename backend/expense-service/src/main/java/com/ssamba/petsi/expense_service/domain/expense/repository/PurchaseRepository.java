@@ -20,4 +20,8 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     List<PurchaseSumDto> getSumByCategoryBetween(@Param("userId") Long userId,
                                           @Param("startDate") LocalDate startDate,
                                           @Param("endDate") LocalDate endDate);
+
+    void deleteByUserIdAndPurchaseIdIn(Long userId, List<Long> purchases);
+
+    void deleteByUserIdAndPurchaseId(Long userId, long purchaseId);
 }
