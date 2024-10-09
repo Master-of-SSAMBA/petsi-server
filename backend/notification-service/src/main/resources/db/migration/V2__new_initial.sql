@@ -10,7 +10,7 @@ CREATE TABLE notification (
     link_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL,
     read_at TIMESTAMP NULL,
-    PRIMARY KEY (notice_id)
+    PRIMARY KEY (notification_id)
 );
 
 DROP TABLE IF EXISTS user_token;
