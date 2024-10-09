@@ -32,8 +32,6 @@ spring:
   kafka:
     bootstrap-servers: kafka:9092
     producer:
-      group-id: notification-group
-      auto-offset-reset: earliest
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
