@@ -9,6 +9,7 @@ import com.ssamba.petsi.pet_service.domain.pet.dto.response.PetResponseDto;
 import com.ssamba.petsi.pet_service.domain.pet.service.PetService;
 import com.ssamba.petsi.pet_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.pet_service.global.exception.ExceptionCode;
+import com.ssamba.petsi.pet_service.global.mapper.ValidatingObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,7 @@ import java.util.Map;
 public class PetController {
 
     private final PetService petService;
+    private final ValidatingObjectMapper validatingObjectMapper;
 
     @GetMapping
     public ResponseEntity<?> findAll(@RequestHeader("X-User-Id") Long userId) {
@@ -41,14 +43,17 @@ public class PetController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createPet(@RequestHeader("X-User-Id") Long userId, @RequestPart("reqDto") String reqDto, @RequestPart(value = "image", required = false) MultipartFile image) {
+    public ResponseEntity<?> createPet(@RequestHeader("X-User-Id") Long userId,
+                                       @RequestPart("reqDto") String reqDto,
+                                       @RequestPart(value = "image", required = false) MultipartFile image) {
         // JSON 데이터를 객체로 변환
-        ObjectMapper objectMapper = new ObjectMapper();
         PetCreateRequestDto petDto;
         try {
-            petDto = objectMapper.readValue(reqDto, PetCreateRequestDto.class);
+            petDto = validatingObjectMapper.readAndValidate(reqDto, PetCreateRequestDto.class);
         } catch (JsonProcessingException e) {
             throw new BusinessLogicException(ExceptionCode.INVALID_DATA_FORMAT);
+        } catch (ValidatingObjectMapper.ValidationException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
         petService.savePet(userId, petDto, image);
@@ -56,14 +61,17 @@ public class PetController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updatePet(@RequestHeader("X-User-Id") Long userId, @RequestPart("reqDto") String reqDto, @RequestPart(value = "image", required = false) MultipartFile image) {
+    public ResponseEntity<?> updatePet(@RequestHeader("X-User-Id") Long userId,
+                                       @RequestPart("reqDto") String reqDto,
+                                       @RequestPart(value = "image", required = false) MultipartFile image) {
         // JSON 데이터를 객체로 변환
-        ObjectMapper objectMapper = new ObjectMapper();
         PetUpdateRequestDto petDto;
         try {
-            petDto = objectMapper.readValue(reqDto, PetUpdateRequestDto.class);
+            petDto = validatingObjectMapper.readAndValidate(reqDto, PetUpdateRequestDto.class);
         } catch (JsonProcessingException e) {
             throw new BusinessLogicException(ExceptionCode.INVALID_DATA_FORMAT);
+        } catch (ValidatingObjectMapper.ValidationException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
         petService.updatePet(userId, petDto, image);
