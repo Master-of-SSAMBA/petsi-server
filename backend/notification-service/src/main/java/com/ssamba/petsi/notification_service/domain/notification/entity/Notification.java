@@ -47,12 +47,13 @@ public class Notification {
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private LocalDateTime readAt;
 
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();
+		this.isRead = false;
 	}
 
 	@PreUpdate

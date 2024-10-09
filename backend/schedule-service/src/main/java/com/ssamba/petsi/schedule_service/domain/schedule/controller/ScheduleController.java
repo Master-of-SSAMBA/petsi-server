@@ -22,8 +22,11 @@ import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateSched
 import com.ssamba.petsi.schedule_service.domain.schedule.dto.request.UpdateScheduleRequestDto;
 import com.ssamba.petsi.schedule_service.domain.schedule.entity.ScheduleCategory;
 import com.ssamba.petsi.schedule_service.domain.schedule.enums.ScheduleSortingStatus;
+import com.ssamba.petsi.schedule_service.domain.schedule.repository.ScheduleRepository;
 import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleCategoryService;
 import com.ssamba.petsi.schedule_service.domain.schedule.service.ScheduleService;
+import com.ssamba.petsi.schedule_service.global.dto.NotificationProducerDto;
+import com.ssamba.petsi.schedule_service.global.kafka.KafkaProducer;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

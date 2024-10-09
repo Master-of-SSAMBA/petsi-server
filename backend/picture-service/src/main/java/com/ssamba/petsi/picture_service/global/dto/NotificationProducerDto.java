@@ -11,7 +11,7 @@ public class NotificationProducerDto {
 	private String content;
 	private Long id;
 
-	public static NotificationProducerDto toNoticeProducerDto(Long pictureCnt, Long userId) {
+	public static NotificationProducerDto toNoticeProducerDto(int pictureCnt, Long userId) {
 		return new NotificationProducerDto(
 			userId,
 			"streak",

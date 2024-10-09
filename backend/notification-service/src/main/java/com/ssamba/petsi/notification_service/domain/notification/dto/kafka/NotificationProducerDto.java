@@ -3,6 +3,7 @@ package com.ssamba.petsi.notification_service.domain.notification.dto.kafka;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@Deprecated
 @Getter
 @AllArgsConstructor
 public class NotificationProducerDto {

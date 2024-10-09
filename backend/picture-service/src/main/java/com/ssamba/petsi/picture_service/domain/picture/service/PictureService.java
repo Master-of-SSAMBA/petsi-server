@@ -1,5 +1,6 @@
 package com.ssamba.petsi.picture_service.domain.picture.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssamba.petsi.picture_service.domain.picture.dto.response.DateResponseDto;
 import com.ssamba.petsi.picture_service.domain.picture.dto.response.PictureResponseDto;
 import com.ssamba.petsi.picture_service.domain.picture.dto.response.PredictResponse;
@@ -133,11 +134,11 @@ public class PictureService {
     }
 
     //알림보내는 로직
-    private void sendNotification(long userId) {
+    public void sendNotification(long userId) {
         LocalDate date = LocalDate.now();
         int year = date.getYear();
         int month = date.getMonthValue();
-        Long pictureCnt = (long)getMonthlyPictures(year, month, userId).size();
+        int pictureCnt = getMonthlyPictures(year, month, userId).size();
         kafkaProducer.send(NotificationProducerDto.toNoticeProducerDto(pictureCnt, userId));
     }
 
