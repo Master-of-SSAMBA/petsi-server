@@ -287,6 +287,4 @@ public class ExpenseService {
         // MIME 타입이 허용된 목록에 있는지 확인
         return mimeType != null && Arrays.asList(validMimeTypes).contains(mimeType);
     }
-
-
 }
