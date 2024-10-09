@@ -20,7 +20,7 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     show-sql: false
     hibernate:
-      ddl-auto: none #dev에서는 편안한 옵션 선택
+      ddl-auto: update #dev에서는 편안한 옵션 선택
       format_sql: true
   kafka:
     bootstrap-servers: localhost:9092
@@ -28,15 +28,7 @@ spring:
       group-id: notification-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring:
-          json:
-            trusted:
-              packages: "*"
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 #swagger : account 부분 서비스로 변경
 springdoc:

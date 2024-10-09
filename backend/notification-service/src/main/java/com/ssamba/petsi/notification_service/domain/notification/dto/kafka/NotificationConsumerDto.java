@@ -4,10 +4,12 @@ import com.ssamba.petsi.notification_service.domain.notification.entity.Notifica
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @Builder
 @AllArgsConstructor
+@ToString
 public class NotificationConsumerDto {
     private Long userId;
     private String category;
@@ -19,17 +21,8 @@ public class NotificationConsumerDto {
                 .userId(consumer.getUserId())
                 .category(consumer.getCategory())
                 .content(consumer.getContent())
-                .isRead(false)
                 .linkId(consumer.getId())
                 .build();
     }
 
-    public static NotificationConsumerDto fromProducer(NotificationProducerDto producer) {
-        return NotificationConsumerDto.builder()
-                .userId(producer.getUserId())
-                .id(producer.getId())
-                .category(producer.getCategory())
-                .content(producer.getContent())
-                .build();
-    }
 }
