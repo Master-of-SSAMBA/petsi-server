@@ -162,6 +162,10 @@ public class ExpenseService {
     @Transactional
     public void deletePurchase(Long userId, long purchaseId) {
         Purchase purchase = findPurchase(userId, purchaseId);
+
+        if(purchase.getUserId() != userId)
+            throw new BusinessLogicException(ExceptionCode.PURCHASE_USER_NOT_MATCH);
+
         if (purchase.getImg() != null) {
             s3Service.delete(purchase.getImg());
         }
@@ -171,7 +175,15 @@ public class ExpenseService {
     @Transactional
     public void deleteMedicalExpense(Long userId, long medicalExpenseId) {
         MedicalExpense medicalExpense = findMedicalExpense(userId, medicalExpenseId);
+        if(medicalExpense.getUserId() != userId)
+            throw new BusinessLogicException(ExceptionCode.MEDICAL_EXPENSE_USER_NOT_MATCH);
         medicalExpenseRepository.delete(medicalExpense);
+    }
+
+    @Transactional
+    public void deleteExpenses(Long userId, ExpenseDeleteRequestDto expenses) {
+        purchaseRepository.deleteByUserIdAndPurchaseIdIn(userId, expenses.getPurchases());
+        medicalExpenseRepository.deleteByUserIdAndMedicalExpenseIdIn(userId, expenses.getMedicalExpenses());
     }
 
     // 구매 내역 검증 및 조회
@@ -276,4 +288,6 @@ public class ExpenseService {
         // MIME 타입이 허용된 목록에 있는지 확인
         return mimeType != null && Arrays.asList(validMimeTypes).contains(mimeType);
     }
+
+
 }

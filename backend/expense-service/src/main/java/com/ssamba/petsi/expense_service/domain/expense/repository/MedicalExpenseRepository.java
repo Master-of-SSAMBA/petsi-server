@@ -13,4 +13,6 @@ public interface MedicalExpenseRepository extends JpaRepository<MedicalExpense, 
 
     @Query("SELECT COALESCE(SUM(me.cost), 0) FROM MedicalExpense me WHERE me.visitedAt BETWEEN :startDate AND :endDate")
     long sumCostByMonth(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    void deleteByUserIdAndMedicalExpenseIdIn(Long userId, List<Long> medicalExpenses);
 }
