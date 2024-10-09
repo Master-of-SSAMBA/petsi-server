@@ -68,6 +68,7 @@ public class Account {
 	@JoinColumn(name = "account_product_id", nullable = false)
 	private AccountProduct accountProduct;
 
+	@Setter
 	@OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
 	private LinkedAccount linkedAccount;
 

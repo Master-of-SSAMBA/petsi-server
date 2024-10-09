@@ -30,6 +30,7 @@ import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllAcount
 import com.ssamba.petsi.account_service.domain.account.dto.response.GetAllProductsResponseDto;
 import com.ssamba.petsi.account_service.domain.account.entity.Account;
 import com.ssamba.petsi.account_service.domain.account.entity.AccountProduct;
+import com.ssamba.petsi.account_service.domain.account.entity.LinkedAccount;
 import com.ssamba.petsi.account_service.domain.account.entity.PetToAccount;
 import com.ssamba.petsi.account_service.domain.account.entity.RecurringTransaction;
 import com.ssamba.petsi.account_service.domain.account.enums.AccountStatus;
@@ -119,13 +120,20 @@ public class AccountService {
 
 	@Transactional(readOnly = true)
 	public GetAllAcountsResponseDto getAllAccounts(Long userId, String userKey) {
+		//이번 달 인증 횟수
 		int pictureCnt = pictureClient.getMonthlyPicture(
 			new PictureMonthlyRequestDto(userId, 2024, LocalDate.now().getMonth().getValue())).size();
+
+		//이번 달 예상 이자
 		double interest = Math.min(1 + pictureCnt * 0.1, 3);
 
+		//전체 펫 리스트 불러오기
 		List<PetCustomDto> petList = petClient.findAllWithPetCustomDto(userId);
 
+		//유저가 갖고있는 모든 계좌 리스트 불러오기
 		List<FinApiResponseDto.AccountListResponseDto> accountList = accountFinApiService.inquireDemandDepositAccountList(userKey);
+
+		//db에 있는 계좌 리스트 불러오기
 		List<Account> localAccountList = accountRepository.findAllByUserIdAndStatus(userId, AccountStatus.ACTIVATED.getValue());
 
 		List<GetAllAcountsResponseDto.AccountDto> returnList = localAccountList.stream()
@@ -175,7 +183,7 @@ public class AccountService {
 		}
 
 		accountFinApiService.deleteDemandDepositAccount(userKey, account.getAccountNo(),
-			account.getLinkedAccount().getAccountNumber());
+			"9991988005402710");
 	}
 
 	public void updateRecurringTransaction(UpdateRecurringTransactionRequestDto updateRecurringTransactionRequestDto,
@@ -184,10 +192,13 @@ public class AccountService {
 			updateRecurringTransactionRequestDto.getAccountId(), AccountStatus.ACTIVATED.getValue(), userId).orElseThrow(
 				() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND)
 		);
-
-		if (account.getRecurringTransaction().getAmount() == updateRecurringTransactionRequestDto.getAmount()
-			&& account.getRecurringTransaction().getPaymentDate() == updateRecurringTransactionRequestDto.getDay()) {
-			throw new BusinessLogicException(ExceptionCode.EMPTY_REQUEST);
+		
+		//이체 없다면
+		if(account.getRecurringTransaction()==null) {
+			//todo: linkedaccount 저장
+			account.setRecurringTransaction(new RecurringTransaction());
+			//todo: recurringtransaction 저장
+			account.setLinkedAccount(new LinkedAccount());
 		}
 
 		account.getRecurringTransaction().setAmount(updateRecurringTransactionRequestDto.getAmount());
@@ -219,7 +230,7 @@ public class AccountService {
 
 	@Transactional(readOnly = true)
 	public GetAccountDetailsResponseDto getAccountDetails(Long userId, String userKey, Long accountId) {
-		Account account = accountRepository.findByIdWithRecurringTransaction(accountId).orElseThrow(
+		Account account = accountRepository.findById(accountId).orElseThrow(
 			() -> new BusinessLogicException(ExceptionCode.ACCOUNT_NOT_FOUND)
 		);
 
