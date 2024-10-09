@@ -32,13 +32,8 @@ public class CreateAccountRequestDto {
 	private Boolean isAuto;
 
 	private String accountNo;
-	@Min(1)
-	@Max(31)
 	private int nextTransactionDay;
-	@Min(10000)
-	@Max(3000000)
 	private Long amount;
-
 
 	public static LinkedAccount toLinkedAccount(CreateAccountRequestDto createAccountRequestDto, Account account) {
 
