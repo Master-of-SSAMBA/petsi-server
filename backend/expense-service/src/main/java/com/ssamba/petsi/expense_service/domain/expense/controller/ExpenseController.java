@@ -114,6 +114,13 @@ public class ExpenseController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping
+    @Operation(summary = "소비 내역 삭제")
+    public ResponseEntity<?> deleteExpense(@RequestHeader("X-User-Id") Long userId, @RequestBody @Valid ExpenseDeleteRequestDto expenses) {
+        expenseService.deleteExpenses(userId, expenses);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/purchase")
     @Operation(summary = "구매 내역 삭제")
     public ResponseEntity<?> deletePurchase(@RequestHeader("X-User-Id") Long userId,
