@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
 
@@ -62,17 +63,20 @@ public class ExpenseController {
     }
 
     @GetMapping
-    @Operation(summary = "구매 목록 전체 조회")
-    public ResponseEntity<?> findPurchases(@RequestHeader("X-User-Id") Long userId,
+    @Operation(summary = "소비 목록 전체 조회")
+    public ResponseEntity<?> findExpenses(@RequestHeader("X-User-Id") Long userId,
                                         @RequestParam(name = "page", defaultValue = "0") int page,
+                                        @RequestParam(name = "period", required = false) String period,
                                         @RequestParam(name = "startDate", required = false) LocalDate startDate,
                                         @RequestParam(name = "endDate", required = false) LocalDate endDate) {
-        if(endDate == null) {
-            endDate = LocalDate.now();
-        }
 
-        if(startDate == null) {
+        LocalDate today = LocalDate.now();
+        if(period == null || period.isEmpty()) {
+            startDate = today.with(TemporalAdjusters.firstDayOfMonth());
+            endDate = today.with(TemporalAdjusters.lastDayOfMonth());
+        } else if (period.equals("all")){
             startDate = LocalDate.of(2000, 1, 1);
+            endDate = today;
         }
 
         return ResponseEntity.ok(expenseService.getExpenses(userId, page, startDate, endDate));
@@ -92,10 +96,24 @@ public class ExpenseController {
         return ResponseEntity.ok(expenseService.getMedicalExpense(userId, medicalExpenseId));
     }
 
-    @GetMapping("/monthly-expense")
-    @Operation(summary = "월 별 소비 금액 조회")
-    public ResponseEntity<?> findMonthlyExpense(@RequestHeader("X-User-Id") Long userId) {
-        return ResponseEntity.ok(expenseService.getMonthlyExpense(userId));
+    @GetMapping("/chart")
+    @Operation(summary = "기간 별 소비 금액 및 비율 조회")
+    public ResponseEntity<?> findExpenseInfo(@RequestHeader("X-User-Id") Long userId,
+                                             @RequestParam(name = "page", defaultValue = "0") int page,
+                                             @RequestParam(name = "period", required = false) String period,
+                                             @RequestParam(name = "startDate", required = false) LocalDate startDate,
+                                             @RequestParam(name = "endDate", required = false) LocalDate endDate) {
+
+        LocalDate today = LocalDate.now();
+        if(period == null || period.isEmpty()) {
+            startDate = today.with(TemporalAdjusters.firstDayOfMonth());
+            endDate = today.with(TemporalAdjusters.lastDayOfMonth());
+        } else if (period.equals("all")){
+            startDate = LocalDate.of(2000, 1, 1);
+            endDate = today;
+        }
+
+        return ResponseEntity.ok(expenseService.getMonthlyExpense(userId, startDate, endDate));
     }
 
     @PutMapping("/purchase")

@@ -22,4 +22,6 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
                                           @Param("endDate") LocalDate endDate);
 
     void deleteByUserIdAndPurchaseIdIn(Long userId, List<Long> purchases);
+
+    void deleteByUserIdAndPurchaseId(Long userId, long purchaseId);
 }
