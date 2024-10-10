@@ -11,9 +11,13 @@ import com.ssamba.petsi.user_service.domain.user.entity.User;
 import com.ssamba.petsi.user_service.domain.user.enums.UserStatus;
 import com.ssamba.petsi.user_service.domain.user.repository.UserRepository;
 import com.ssamba.petsi.user_service.global.client.PetClient;
+import com.ssamba.petsi.user_service.global.dto.NotificationProducerDto;
 import com.ssamba.petsi.user_service.global.dto.PetResponseDto;
 import com.ssamba.petsi.user_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.user_service.global.exception.ExceptionCode;
+import com.ssamba.petsi.user_service.global.kafka.KafkaProducer;
+
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +37,7 @@ public class UserService {
     private final FinApiService finApiService;
     private final S3Service s3Service;
     private final PetClient petClient;
+    private final KafkaProducer kafkaProducer;
 
     @Transactional
     public void signup(SignupRequestDto signupRequestDto) {
@@ -154,5 +159,12 @@ public class UserService {
     public Boolean getNotificationStatus(Long userId) {
         User user = getUserById(userId);
         return user.getNotificationStatus().equals(UserStatus.ACTIVATED.getValue());
+    }
+
+    @Scheduled(cron = "0 0 18 * * *")
+    private void sendNotification() {
+        userRepository.findAll().forEach(user -> {
+            kafkaProducer.send(NotificationProducerDto.toNoticeProducerDto(user.getNickname(), user.getUserId()));
+        });
     }
 }

@@ -32,6 +32,12 @@ spring:
     credentials:
       secret: ${USER_KEYCLOAK_SECRET}
     ssl-required: external
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
 ##swagger : account 부분 서비스로 변경
 springdoc:
   swagger-ui:
