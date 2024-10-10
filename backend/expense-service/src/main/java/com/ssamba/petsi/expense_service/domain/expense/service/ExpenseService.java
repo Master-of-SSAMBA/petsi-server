@@ -14,6 +14,7 @@ import com.ssamba.petsi.expense_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.expense_service.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.HttpEntity;
@@ -26,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +44,7 @@ public class ExpenseService {
     private final PurchaseRepository purchaseRepository;
     private final MedicalExpenseRepository medicalExpenseRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private final AsyncTaskExecutor taskExecutor;
     private final ObjectMapper objectMapper;
 
     @Transactional
@@ -78,23 +80,43 @@ public class ExpenseService {
 
     @Transactional
     public void saveExpenseAi(Long userId, MarketLoginDto marketLoginDto) {
-        ResponseEntity<List<PurchaseAiSaveDto>> response = restTemplate.exchange(
-                AI_PREDICT_URL,
-                HttpMethod.POST,
-                new HttpEntity<>(marketLoginDto),
-                new ParameterizedTypeReference<List<PurchaseAiSaveDto>>() {
+        CompletableFuture<List<Purchase>> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                // AI 예측 API 호출
+                ResponseEntity<List<PurchaseAiSaveDto>> response = restTemplate.exchange(
+                        AI_PREDICT_URL,
+                        HttpMethod.POST,
+                        new HttpEntity<>(marketLoginDto),
+                        new ParameterizedTypeReference<List<PurchaseAiSaveDto>>() {}
+                );
+                List<PurchaseAiSaveDto> data = response.getBody();
+
+                if (data != null) {
+                    // Purchase 엔티티 생성 및 저장
+                    List<Purchase> purchases = data.stream()
+                            .map(p -> new Purchase(userId, p))
+                            .toList();
+
+                    return purchaseRepository.saveAll(purchases);
                 }
-        );
+                return new ArrayList<>();
+            } catch (Exception e) {
+                throw new CompletionException(e);
+            }
+        }, taskExecutor);
 
-        List<PurchaseAiSaveDto> data = response.getBody();
-
-        assert data != null;
-        List<Purchase> saveDto = data.stream()
-                .map(p -> new Purchase(userId, p))
-                .toList();
-
-        purchaseRepository.saveAll(saveDto);
-
+        try {
+            // 여기서 결과를 얻을 때까지 기다립니다 (최대 aiTimeout 밀리초)
+            future.get(300000, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            throw new RuntimeException("AI 처리 시간이 초과되었습니다.", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("작업이 중단되었습니다.", e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException("AI 처리 중 오류가 발생했습니다.", e.getCause());
+        }
     }
 
     @Transactional
