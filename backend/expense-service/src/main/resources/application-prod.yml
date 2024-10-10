@@ -26,7 +26,7 @@ spring:
   data:
     redis:
       host: j11a403.p.ssafy.io
-      port: 6379
+      port: 6382
       password: ${DB_PASSWORD}
       timeout: 5000
 
