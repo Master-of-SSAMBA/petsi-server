@@ -49,7 +49,7 @@ public class PurchaseResponseDto implements Expense {
                 .purchaseId(purchase.getPurchaseId())
                 .title(purchase.getTitle())
                 // 프론트에서 쓰는 img 디폴트 경로로 바꾸어야 함, 현재는 임시
-                .img(Optional.ofNullable(purchase.getImg()).orElse("default.img"))
+                .img(purchase.getImg())
                 .option(Optional.ofNullable(purchase.getDetail()).orElse(""))
                 .purchasedAt(purchase.getPurchasedAt())
                 .quantity(purchase.getQuantity())
