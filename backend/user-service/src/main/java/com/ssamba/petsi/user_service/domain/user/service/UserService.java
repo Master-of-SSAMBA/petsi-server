@@ -162,7 +162,7 @@ public class UserService {
     }
 
     @Scheduled(cron = "0 0 18 * * *")
-    private void sendNotification() {
+    public void sendNotification() {
         userRepository.findAll().forEach(user -> {
             kafkaProducer.send(NotificationProducerDto.toNoticeProducerDto(user.getNickname(), user.getUserId()));
         });
