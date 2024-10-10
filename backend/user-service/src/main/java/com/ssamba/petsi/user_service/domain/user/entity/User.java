@@ -39,7 +39,7 @@ public class User {
     private String name;
 
     @Setter
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nickname;
 
     @Setter
