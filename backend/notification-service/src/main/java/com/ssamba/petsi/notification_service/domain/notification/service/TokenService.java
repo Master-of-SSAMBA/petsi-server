@@ -17,7 +17,10 @@ public class TokenService {
     private final UserTokenRepository userTokenRepository;
 
     public void saveToken(Long userId, TokenRequestDto dto) {
-        userTokenRepository.save(dto.toEntity(userId, dto));
+        if (!userTokenRepository.existsByUserIdAndToken(userId, dto.getToken())) {
+            System.out.println("saving...");
+            userTokenRepository.save(dto.toEntity(userId, dto));
+        }
     }
 
     public void deleteAllTokens(Long userId) {
