@@ -24,8 +24,6 @@ public class FirebaseService {
                 .putData("title", "Petsi")
                 .putData("category", consumer.getCategory())
                 .putData("body", consumer.getContent())
-                .putData("userId", String.valueOf(consumer.getUserId()))
-                .putData("id", String.valueOf(consumer.getId()))
                 .setWebpushConfig(WebpushConfig.builder().putHeader("ttl", "1000")
                     .setNotification(new WebpushNotification("Petsi", consumer.getContent()))
                     .build())

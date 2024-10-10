@@ -86,7 +86,7 @@ public class NotificationController {
 
 	@GetMapping("/test")
 	public void test() {
-		firebaseService.sendPushNotification(new NotificationConsumerDto(1L, "d", "d", 1L));
+		firebaseService.sendPushNotification(new NotificationConsumerDto(1L, "upload-picture", "다환님, 오늘 사진 인증 하셨나요?", null));
 	}
 
 

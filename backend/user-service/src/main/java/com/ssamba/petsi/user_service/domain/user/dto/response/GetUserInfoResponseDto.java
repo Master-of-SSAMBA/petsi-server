@@ -14,9 +14,9 @@ public class GetUserInfoResponseDto {
 	private String nickname;
 	private String email;
 	private String profileImage;
-	private List<PetResponseDto> pets;
+	private List<PetUserInfoResponseDto> pets;
 
-	public GetUserInfoResponseDto(User user, List<PetResponseDto> petList) {
+	public GetUserInfoResponseDto(User user, List<PetUserInfoResponseDto> petList) {
 		this.userId = user.getUserId();
 		this.nickname = user.getNickname();
 		this.email = user.getEmail();

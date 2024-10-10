@@ -7,6 +7,7 @@ import com.ssamba.petsi.user_service.domain.user.dto.request.RegisterKeycloakUse
 import com.ssamba.petsi.user_service.domain.user.dto.request.SignupRequestDto;
 import com.ssamba.petsi.user_service.domain.user.dto.response.ExpenseInfoResponseDto;
 import com.ssamba.petsi.user_service.domain.user.dto.response.GetUserInfoResponseDto;
+import com.ssamba.petsi.user_service.domain.user.dto.response.PetUserInfoResponseDto;
 import com.ssamba.petsi.user_service.domain.user.entity.User;
 import com.ssamba.petsi.user_service.domain.user.enums.UserStatus;
 import com.ssamba.petsi.user_service.domain.user.repository.UserRepository;
@@ -24,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -124,10 +127,20 @@ public class UserService {
 	public GetUserInfoResponseDto getUserInfo(Long userId) {
         User user = getUserById(userId);
 
-        List<PetResponseDto> petList = petClient.findPetForUserInfo(userId);
-
-        return new GetUserInfoResponseDto(user, petList);
+        return new GetUserInfoResponseDto(user, petClient.findPetForUserInfo(userId).stream().map(PetUserInfoResponseDto::new).toList());
 	}
+
+    // 나이 계산 메서드
+    private long[] calAge(LocalDate birthDate) {
+        LocalDate today = LocalDate.now();
+        long monthsBetween = ChronoUnit.MONTHS.between(birthDate, today);
+
+        long year = monthsBetween / 12;
+        long month = monthsBetween % 12;
+        if (year == 0 && month == 0) month = 1;
+
+        return new long[]{year, month}; // year과 month를 배열로 반환
+    }
 
     @Transactional(readOnly = true)
     public ExpenseInfoResponseDto getExpenseInfo(Long userId) {
