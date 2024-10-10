@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class TokenRequestDto {
 	private String token;
 
