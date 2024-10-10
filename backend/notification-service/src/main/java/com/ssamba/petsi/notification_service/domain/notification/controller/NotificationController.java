@@ -1,6 +1,7 @@
 package com.ssamba.petsi.notification_service.domain.notification.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ssamba.petsi.notification_service.domain.notification.dto.kafka.NotificationConsumerDto;
 import com.ssamba.petsi.notification_service.domain.notification.dto.request.TokenRequestDto;
@@ -73,8 +74,8 @@ public class NotificationController {
 
 	@DeleteMapping("/delete")
 	@Operation(summary = "특정 id의 알림 삭제하기")
-	public ResponseEntity<?> deleteNotification(@RequestHeader("X-User-Id") Long userId, @RequestBody List<Long> notificationIds) {
-		return ResponseEntity.status(HttpStatus.OK).body(notificationService.deleteSpecificNotification(userId, notificationIds));
+	public ResponseEntity<?> deleteNotification(@RequestHeader("X-User-Id") Long userId, @RequestBody Map<String, Long> notificationId) {
+		return ResponseEntity.status(HttpStatus.OK).body(notificationService.deleteSpecificNotification(userId, notificationId.get("notificationId")));
 	}
 
 	@PatchMapping("/{notificationId}")

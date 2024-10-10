@@ -44,8 +44,8 @@ public class NotificationService {
 		return getUnreadNotificationCount(userId);
 	}
 
-	public int deleteSpecificNotification(Long userId, List<Long> notificationIds) {
-		notificationRepository.deleteByUserIdAndNotificationIdIn(userId, notificationIds);
+	public int deleteSpecificNotification(Long userId, Long notificationId) {
+		notificationRepository.deleteByUserIdAndNotificationId(userId, notificationId);
 		return getUnreadNotificationCount(userId);
 	}
 
