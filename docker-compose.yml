@@ -108,6 +108,8 @@ services:
   notification-service:
     image: "petsi/notification-service"
     container_name: "notification-service"
+    volumes:
+      - /home/ubuntu/firebase/GoogleServiceAccount.json:/app/src/main/resources/firebase/GoogleServiceAccount.json
     environment:
       - TZ=Asia/Seoul
       - SPRING_PROFILES_ACTIVE=prod
