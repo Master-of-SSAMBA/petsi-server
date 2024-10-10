@@ -124,7 +124,7 @@ public class PictureService {
                     .build();
 
             pictureRepository.save(picture);
-            recordAuthentication(userId);
+//            recordAuthentication(userId);
         } catch (Exception e) {
             // 사진 업로드 오류 처리
             e.printStackTrace();
