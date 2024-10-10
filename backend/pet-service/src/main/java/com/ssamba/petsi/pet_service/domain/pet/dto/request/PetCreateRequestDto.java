@@ -41,6 +41,11 @@ public class PetCreateRequestDto {
     @Digits(integer = 2, fraction = 2, message = "소숫점 둘째자리 까지만 가능합니다.")
     private Double weight;
 
+    @AssertTrue(message = "생일은 오늘 또는 과거의 날짜여야 합니다.")
+    private boolean isValidBirthDate() {
+        return !birthDate.isAfter(LocalDate.now());
+    }
+
     public Pet convertToPet(Long userId, String image) {
         return Pet.builder()
                 .userId(userId)

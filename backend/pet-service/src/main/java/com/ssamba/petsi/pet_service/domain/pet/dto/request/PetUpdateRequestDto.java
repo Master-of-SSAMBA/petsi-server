@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.ssamba.petsi.pet_service.domain.pet.entity.Pet;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,4 +44,8 @@ public class PetUpdateRequestDto {
     @Digits(integer = 2, fraction = 2, message = "몸무게는 소숫점 둘째 자리 까지만 가능합니다.")
     private Double weight;
 
+    @AssertTrue(message = "생일은 오늘 또는 과거의 날짜여야 합니다.")
+    private boolean isValidBirthDate() {
+        return !birthDate.isAfter(LocalDate.now());
+    }
 }
