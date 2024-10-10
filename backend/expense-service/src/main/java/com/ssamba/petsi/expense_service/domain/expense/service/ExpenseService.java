@@ -150,7 +150,7 @@ public class ExpenseService {
     }
 
     public ChartResponseDto getMonthlyExpense(Long userId, LocalDate startDate, LocalDate endDate) {
-//        UserDto userDto = userClient.getUser(userId);
+        UserDto userDto = userClient.getUser(userId);
         List<PurchaseSumDto> purchases = purchaseRepository.getSumByCategoryBetween(userId, startDate, endDate);
         long medicalExpense = medicalExpenseRepository.sumCostByBetween(userId, startDate, endDate);
         purchases.add(new PurchaseSumDto("의료비", medicalExpense));
@@ -177,7 +177,7 @@ public class ExpenseService {
             rates.add(rate);
         }
 
-        return new ChartResponseDto("1", "1", startDate, endDate, total, new ChartResponseDto.ChartElement(labels, datas, rates));
+        return new ChartResponseDto(userDto.getNickname(), userDto.getImg(), startDate, endDate, total, new ChartResponseDto.ChartElement(labels, datas, rates));
     }
 
     @Transactional
