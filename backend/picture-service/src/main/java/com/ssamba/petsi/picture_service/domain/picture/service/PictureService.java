@@ -135,7 +135,8 @@ public class PictureService {
     @Transactional(readOnly = true)
     public PictureResponseDto.Count getCount(Long userId) {
         long count = pictureRepository.countByUserId(userId);
-        return new PictureResponseDto.Count(count);
+        double interestRate = Math.min(3, 1 + count * 0.1);
+        return new PictureResponseDto.Count(count, interestRate);
     }
 
     @Transactional(readOnly = true)

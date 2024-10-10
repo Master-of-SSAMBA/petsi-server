@@ -29,6 +29,7 @@ public class PictureResponseDto {
     @AllArgsConstructor
     public static class Count {
         private Long pictureCnt;
+        private Double interestRate;
     }
 
 }
