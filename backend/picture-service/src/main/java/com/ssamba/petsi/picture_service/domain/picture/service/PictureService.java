@@ -125,21 +125,11 @@ public class PictureService {
 
             pictureRepository.save(picture);
             recordAuthentication(userId);
-            sendNotification(userId);
         } catch (Exception e) {
             // 사진 업로드 오류 처리
             e.printStackTrace();
             throw new BusinessLogicException(ExceptionCode.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    //알림보내는 로직
-    public void sendNotification(long userId) {
-        LocalDate date = LocalDate.now();
-        int year = date.getYear();
-        int month = date.getMonthValue();
-        int pictureCnt = getMonthlyPictures(year, month, userId).size();
-        kafkaProducer.send(NotificationProducerDto.toNoticeProducerDto(pictureCnt, userId));
     }
 
     @Transactional(readOnly = true)
