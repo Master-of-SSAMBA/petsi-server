@@ -11,4 +11,6 @@ public interface UserTokenRepository extends JpaRepository<UserToken, Long> {
 	void deleteByUserIdAndToken(Long userId, String token);
 
 	List<UserToken> findUserTokensByUserId(Long userId);
+
+	boolean existsByUserIdAndToken(Long userId, String token);
 }

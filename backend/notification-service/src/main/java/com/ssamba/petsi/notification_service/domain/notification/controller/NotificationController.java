@@ -2,9 +2,13 @@ package com.ssamba.petsi.notification_service.domain.notification.controller;
 
 import java.util.List;
 
+import com.ssamba.petsi.notification_service.domain.notification.dto.kafka.NotificationConsumerDto;
 import com.ssamba.petsi.notification_service.domain.notification.dto.request.TokenRequestDto;
+import com.ssamba.petsi.notification_service.domain.notification.service.FirebaseService;
 import com.ssamba.petsi.notification_service.domain.notification.service.NotificationService;
 import com.ssamba.petsi.notification_service.domain.notification.service.TokenService;
+
+import org.checkerframework.checker.units.qual.N;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +34,7 @@ public class NotificationController {
 
 	private final NotificationService notificationService;
 	private final TokenService tokenService;
+	private final FirebaseService firebaseService;
 
 	@PostMapping("/fcm")
 	@Operation(summary = "토큰 저장하기")
@@ -78,5 +83,11 @@ public class NotificationController {
 		return ResponseEntity.status(HttpStatus.OK).body(notificationService.readNotification(userId, notificationId));
 
 	}
+
+	@GetMapping("/test")
+	public void test() {
+		firebaseService.sendPushNotification(new NotificationConsumerDto(1L, "d", "d", 1L));
+	}
+
 
 }

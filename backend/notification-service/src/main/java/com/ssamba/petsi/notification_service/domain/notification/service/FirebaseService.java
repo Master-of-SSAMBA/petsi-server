@@ -3,6 +3,8 @@ package com.ssamba.petsi.notification_service.domain.notification.service;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.WebpushConfig;
+import com.google.firebase.messaging.WebpushNotification;
 import com.ssamba.petsi.notification_service.domain.notification.dto.kafka.NotificationConsumerDto;
 import com.ssamba.petsi.notification_service.global.exception.BusinessLogicException;
 import com.ssamba.petsi.notification_service.global.exception.ExceptionCode;
@@ -24,6 +26,9 @@ public class FirebaseService {
                 .putData("body", consumer.getContent())
                 .putData("userId", String.valueOf(consumer.getUserId()))
                 .putData("id", String.valueOf(consumer.getId()))
+                .setWebpushConfig(WebpushConfig.builder().putHeader("ttl", "1000")
+                    .setNotification(new WebpushNotification("Petsi", consumer.getContent()))
+                    .build())
                 .build();
             try {
                 FirebaseMessaging.getInstance().send(message);
